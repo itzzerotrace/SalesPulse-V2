@@ -1,12 +1,18 @@
 interface Props{
+
 name:string;
+
 role:string;
+
 }
 
 
 export default function TeamMemberCard({
+
 name,
+
 role
+
 }:Props){
 
 
@@ -18,9 +24,13 @@ border
 bg-white
 p-6
 shadow-sm
+">
+
+
+<div className="
 flex
 items-center
-gap-5
+gap-4
 ">
 
 
@@ -32,6 +42,7 @@ bg-purple-100
 flex
 items-center
 justify-center
+text-xl
 font-black
 text-purple-700
 ">
@@ -41,25 +52,108 @@ text-purple-700
 </div>
 
 
+
 <div>
 
-<h3 className="
+<h2 className="
+text-xl
 font-black
 ">
 
 {name}
 
-</h3>
+</h2>
 
 
 <p className="
-text-sm
 text-slate-500
+font-semibold
 ">
 
 {role}
 
 </p>
+
+
+</div>
+
+
+</div>
+
+
+
+<div className="
+mt-6
+grid
+grid-cols-3
+gap-3
+">
+
+
+<div>
+
+<p className="
+text-xs
+text-slate-500
+">
+
+GP
+
+</p>
+
+<p className="
+font-black
+">
+
+--
+
+</p>
+
+</div>
+
+
+<div>
+
+<p className="
+text-xs
+text-slate-500
+">
+
+Voice
+
+</p>
+
+<p className="
+font-black
+">
+
+--
+
+</p>
+
+</div>
+
+
+<div>
+
+<p className="
+text-xs
+text-slate-500
+">
+
+HSI
+
+</p>
+
+<p className="
+font-black
+">
+
+--
+
+</p>
+
+</div>
 
 
 </div>

@@ -1,6 +1,10 @@
 import DashboardShell from "@/components/layout/DashboardShell";
 import LogoutButton from "@/components/auth/LogoutButton";
 
+import SettingsCard from "@/components/settings/SettingsCard";
+import ProfileSettings from "@/components/settings/ProfileSettings";
+import Preferences from "@/components/settings/Preferences";
+
 
 export default function SettingsPage(){
 
@@ -10,7 +14,9 @@ return (
 <DashboardShell>
 
 
-<div className="space-y-8">
+<div className="
+space-y-8
+">
 
 
 <div>
@@ -26,11 +32,11 @@ Settings
 
 
 <p className="
-text-slate-500
 mt-2
+text-slate-500
 ">
 
-Manage your account preferences.
+Manage your SalesPulse account.
 
 </p>
 
@@ -40,38 +46,53 @@ Manage your account preferences.
 
 
 <div className="
-rounded-3xl
-border
-bg-white
-p-8
+grid
+gap-6
+lg:grid-cols-2
 ">
 
 
-<h2 className="
-text-xl
-font-black
+<SettingsCard title="Profile">
+
+<ProfileSettings/>
+
+</SettingsCard>
+
+
+
+
+<SettingsCard title="Preferences">
+
+<Preferences/>
+
+</SettingsCard>
+
+
+
+<SettingsCard title="Account">
+
+<div className="
+space-y-4
 ">
-
-Account
-
-</h2>
 
 
 <p className="
-mt-3
 text-slate-500
 ">
 
-Profile settings will appear here.
+Manage your account access.
 
 </p>
 
 
-<div className="mt-6">
-
 <LogoutButton/>
 
+
 </div>
+
+
+</SettingsCard>
+
 
 
 </div>

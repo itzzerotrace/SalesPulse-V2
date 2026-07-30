@@ -8,9 +8,10 @@ return (
 text-sm
 font-black
 text-purple-600
+uppercase
 ">
 
-TEAM MANAGEMENT
+Team Management
 
 </p>
 
@@ -19,6 +20,7 @@ TEAM MANAGEMENT
 mt-2
 text-4xl
 font-black
+text-slate-900
 ">
 
 My Team
@@ -27,12 +29,11 @@ My Team
 
 
 <p className="
-mt-2
-text-lg
+mt-3
 text-slate-500
 ">
 
-Manage employees and performance.
+Manage employees, performance, and goals.
 
 </p>
 

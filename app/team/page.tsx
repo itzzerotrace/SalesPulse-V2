@@ -10,10 +10,44 @@ return (
 <DashboardShell>
 
 
-<div className="space-y-8">
+<div className="
+space-y-8
+">
 
 
 <TeamHeader/>
+
+
+<div className="
+rounded-3xl
+bg-purple-600
+p-8
+text-white
+">
+
+
+<h2 className="
+text-3xl
+font-black
+">
+
+El Dorado
+
+</h2>
+
+
+<p className="
+mt-2
+opacity-80
+">
+
+3 Employees
+
+</p>
+
+
+</div>
+
 
 
 <div className="
@@ -25,7 +59,7 @@ md:grid-cols-3
 
 <TeamMemberCard
 name="Bryce"
-role="Sales Associate"
+role="Manager"
 />
 
 

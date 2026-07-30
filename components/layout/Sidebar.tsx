@@ -9,8 +9,7 @@ Target,
 Trophy,
 Users,
 BarChart3,
-Settings,
-Store
+Settings
 } from "lucide-react";
 
 
@@ -48,7 +47,7 @@ icon:Trophy
 
 {
 title:"Team",
-href:"/employees",
+href:"/team",
 icon:Users
 },
 
@@ -68,7 +67,6 @@ icon:Settings
 
 
 export default function Sidebar(){
-
 
 return (
 
@@ -140,7 +138,6 @@ Retail Intelligence
 
 
 
-
 <nav className="
 space-y-2
 flex-1
@@ -148,7 +145,6 @@ flex-1
 
 
 {navigation.map((item)=>{
-
 
 const Icon=item.icon;
 
@@ -176,17 +172,20 @@ hover:text-white
 
 >
 
+
 <Icon size={20}/>
 
+
 <span className="font-semibold">
+
 {item.title}
+
 </span>
 
 
 </Link>
 
 )
-
 
 })}
 
@@ -228,7 +227,9 @@ E
 <div>
 
 <p className="font-bold">
+
 El Dorado
+
 </p>
 
 
@@ -246,6 +247,7 @@ Stockton, CA
 
 
 </div>
+
 
 
 <div className="
