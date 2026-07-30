@@ -1,133 +1,40 @@
-"use client";
-
-import {useState} from "react";
-
-
-export default function NewSalePage(){
-
-
-const [gp,setGp]=useState("");
-const [voice,setVoice]=useState("");
-const [hsi,setHsi]=useState("");
-const [bts,setBts]=useState("");
-const [accessories,setAccessories]=useState("");
+import DashboardShell from "@/components/layout/DashboardShell";
+import SalesHeader from "@/components/sales/SalesHeader";
+import SalesSummary from "@/components/sales/SalesSummary";
+import SalesFormCard from "@/components/sales/SalesFormCard";
+import RecentSales from "@/components/sales/RecentSales";
 
 
-
-function submitSale(){
-
-console.log({
-gp,
-voice,
-hsi,
-bts,
-accessories
-});
-
-
-alert("Sale saved");
-
-}
-
-
+export default function SalesPage(){
 
 return (
 
-<div className="min-h-screen bg-slate-50 p-8">
+<DashboardShell>
 
 
-<div className="mx-auto max-w-3xl">
+<div className="
+space-y-8
+">
 
 
-<p className="text-sm font-bold text-purple-600">
-SALES ENTRY
-</p>
+<SalesHeader/>
 
 
-<h1 className="mt-2 text-4xl font-black">
-Add Sale
-</h1>
-
-
-<p className="mt-2 text-slate-500">
-Record today's performance.
-</p>
+<SalesSummary/>
 
 
 
-
-<div className="mt-8 rounded-3xl border bg-white p-8 shadow-sm">
-
-
-<div className="grid gap-5 md:grid-cols-2">
-
-
-
-<input
-className="rounded-xl border p-4"
-placeholder="Gross Profit"
-value={gp}
-onChange={(e)=>setGp(e.target.value)}
-/>
+<div className="
+grid
+gap-6
+lg:grid-cols-2
+">
 
 
-
-<input
-className="rounded-xl border p-4"
-placeholder="Voice Activations"
-value={voice}
-onChange={(e)=>setVoice(e.target.value)}
-/>
+<SalesFormCard/>
 
 
-
-<input
-className="rounded-xl border p-4"
-placeholder="HSI"
-value={hsi}
-onChange={(e)=>setHsi(e.target.value)}
-/>
-
-
-
-<input
-className="rounded-xl border p-4"
-placeholder="BTS"
-value={bts}
-onChange={(e)=>setBts(e.target.value)}
-/>
-
-
-
-<input
-className="rounded-xl border p-4"
-placeholder="Accessories"
-value={accessories}
-onChange={(e)=>setAccessories(e.target.value)}
-/>
-
-
-</div>
-
-
-
-
-<button
-onClick={submitSale}
-className="
-mt-8
-rounded-xl
-bg-purple-600
-px-8
-py-4
-font-bold
-text-white
-"
->
-
-Save Sale
-
-</button>
+<RecentSales/>
 
 
 </div>
@@ -136,8 +43,8 @@ Save Sale
 </div>
 
 
-</div>
+</DashboardShell>
 
-);
+)
 
 }
