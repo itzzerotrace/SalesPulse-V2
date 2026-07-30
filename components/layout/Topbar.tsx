@@ -1,31 +1,130 @@
 "use client";
 
 
+import {
+Bell,
+ChevronDown
+} from "lucide-react";
+
+
 export default function Topbar(){
+
 
 return (
 
-<header className="flex items-center justify-between border-b border-slate-200 bg-white px-8 py-5">
+<header className="
+h-24
+bg-white
+border-b
+border-slate-200
+flex
+items-center
+justify-between
+px-8
+">
 
 
 <div>
 
-<h2 className="text-2xl font-black text-slate-900">
-Dashboard
+<h2 className="
+text-xl
+font-black
+text-slate-900
+">
+
+El Dorado • Stockton
+
 </h2>
 
-<p className="text-sm text-slate-500">
-Track your performance and goals
+
+<p className="
+text-sm
+text-slate-500
+">
+
+May 2026 Performance
+
+</p>
+
+
+</div>
+
+
+
+<div className="
+flex
+items-center
+gap-4
+">
+
+
+<button className="
+rounded-xl
+border
+p-3
+hover:bg-slate-50
+">
+
+<Bell size={20}/>
+
+</button>
+
+
+
+<button className="
+flex
+items-center
+gap-3
+rounded-xl
+border
+px-4
+py-2
+">
+
+
+<div className="
+h-10
+w-10
+rounded-full
+bg-purple-600
+flex
+items-center
+justify-center
+text-white
+font-bold
+">
+
+B
+
+</div>
+
+
+<div>
+
+<p className="font-bold">
+Bryce
+
+</p>
+
+<p className="
+text-xs
+text-slate-500
+">
+
+Sales Associate
+
 </p>
 
 </div>
 
 
-<button className="rounded-xl border border-slate-200 bg-white px-5 py-3 font-semibold">
+<ChevronDown size={16}/>
 
-Account
 
 </button>
+
+
+</div>
 
 
 </header>
