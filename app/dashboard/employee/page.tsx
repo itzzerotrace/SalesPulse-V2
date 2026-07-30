@@ -1,9 +1,13 @@
 import DashboardShell from "@/components/layout/DashboardShell";
-import StatCard from "@/components/ui/StatCard";
-import Card from "@/components/ui/Card";
-import Button from "@/components/ui/Button";
-import ChartCard from "@/components/dashboard/ChartCard";
-import ActivityCard from "@/components/dashboard/ActivityCard";
+
+import KpiCard from "@/components/dashboard/KpiCard";
+import PerformanceScore from "@/components/dashboard/PerformanceScore";
+import GoalProgressCard from "@/components/dashboard/GoalProgressCard";
+import StoreRanking from "@/components/dashboard/StoreRanking";
+import SalesChart from "@/components/dashboard/SalesChart";
+import ActivityFeed from "@/components/dashboard/ActivityFeed";
+import CoachingInsight from "@/components/dashboard/CoachingInsight";
+import ActionButton from "@/components/ui/ActionButton";
 
 
 export default function EmployeeDashboard(){
@@ -17,19 +21,19 @@ return (
 <div className="space-y-8">
 
 
-<section className="
+<div className="
 flex
-items-center
 justify-between
+items-center
 ">
 
 
 <div>
 
 <p className="
-text-sm
-font-black
 text-purple-600
+font-black
+text-sm
 ">
 
 EL DORADO • STOCKTON
@@ -38,24 +42,22 @@ EL DORADO • STOCKTON
 
 
 <h1 className="
-mt-2
 text-4xl
 font-black
-text-slate-900
+mt-2
 ">
 
-Good morning, Bryce 👋
+Good morning Bryce 👋
 
 </h1>
 
 
 <p className="
-mt-2
-text-lg
 text-slate-500
+mt-2
 ">
 
-Here's your sales performance today.
+Here is your performance overview.
 
 </p>
 
@@ -64,196 +66,113 @@ Here's your sales performance today.
 
 
 
-<Button>
+<ActionButton>
 
 + Enter Sale
 
-</Button>
+</ActionButton>
 
 
-</section>
+</div>
 
 
 
 
 
-<section className="
+<div className="
 grid
 gap-6
 md:grid-cols-4
 ">
 
 
-<StatCard
+<KpiCard
 title="Gross Profit"
-value="--"
+value="$--"
 change="Tracking"
+icon="💰"
 />
 
 
-<StatCard
+<KpiCard
 title="Voice"
 value="--"
 change="Monthly"
+icon="📱"
 />
 
 
-<StatCard
+<KpiCard
 title="HSI"
 value="--"
 change="Monthly"
+icon="🌐"
 />
 
 
-<StatCard
+<KpiCard
 title="Accessories"
 value="--"
 change="Monthly"
+icon="🎧"
 />
 
 
-</section>
+</div>
 
 
 
 
 
-<section className="
+<div className="
 grid
 gap-6
 lg:grid-cols-3
 ">
 
 
-<div className="lg:col-span-2">
-
-<ChartCard
-
-title="Performance Trend"
-
-subtitle="Your sales activity over time"
-
->
-
-<div className="
-h-48
-rounded-2xl
-bg-slate-50
-flex
-items-center
-justify-center
-text-slate-400
-font-semibold
-">
-
-Chart coming soon
-
-</div>
-
-
-</ChartCard>
-
-
-</div>
-
-
-
-
-<Card className="p-8">
-
-
-<h2 className="
-text-xl
-font-black
-">
-
-Goal Progress
-
-</h2>
-
-
-<div className="
-mt-6
-h-4
-rounded-full
-bg-slate-100
-">
-
-
-<div className="
-h-4
-w-[0%]
-rounded-full
-bg-gradient-to-r
-from-purple-600
-to-indigo-600
-">
-
-</div>
-
-
-</div>
-
-
-<p className="
-mt-4
-text-sm
-text-slate-500
-">
-
-Monthly goal tracking
-
-</p>
-
-
-</Card>
-
-
-
-</section>
-
-
-
-
-
-<section>
-
-
-<Card className="p-8">
-
-
-<h2 className="
-text-xl
-font-black
-mb-6
-">
-
-Recent Activity
-
-</h2>
-
-
-<div className="space-y-4">
-
-
-<ActivityCard
-
-title="No sales recorded"
-
-description="Your recent sales will appear here."
-
+<PerformanceScore
+score={86}
 />
 
 
+<GoalProgressCard
+title="Monthly Goal"
+current="$--"
+goal="$--"
+percent={75}
+/>
+
+
+<StoreRanking/>
+
 
 </div>
 
 
-</Card>
 
 
-</section>
 
+<SalesChart/>
+
+
+
+
+
+<div className="
+grid
+gap-6
+lg:grid-cols-2
+">
+
+
+<ActivityFeed/>
+
+
+<CoachingInsight/>
+
+
+</div>
 
 
 
