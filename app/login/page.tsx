@@ -1,75 +1,319 @@
+"use client";
+
 import Link from "next/link";
+import {useState} from "react";
+import {useRouter} from "next/navigation";
 
-export default function LoginPage() {
-  return (
-    <main className="min-h-screen bg-slate-50 flex items-center justify-center px-6">
-
-      <div className="w-full max-w-md">
-
-        <div className="text-center mb-8">
-          <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-purple-600 text-2xl font-black text-white">
-            S
-          </div>
-
-          <h1 className="mt-4 text-3xl font-black text-slate-900">
-            SalesPulse
-          </h1>
-
-          <p className="mt-2 text-slate-500">
-            Wireless Retail Performance Platform
-          </p>
-        </div>
+import {login} from "@/lib/auth/login";
+import {getProfile} from "@/lib/auth/profile";
 
 
-        <div className="rounded-3xl border border-slate-200 bg-white p-8 shadow-xl">
+export default function LoginPage(){
 
-          <h2 className="text-2xl font-bold text-slate-900">
-            Sign In
-          </h2>
-
-          <p className="mt-2 text-slate-500">
-            Access your performance dashboard
-          </p>
+const router=useRouter();
 
 
-          <div className="mt-6 space-y-4">
+const [email,setEmail]=useState("");
 
-            <input
-              className="w-full rounded-xl border border-slate-300 px-4 py-3"
-              placeholder="Email"
-            />
+const [password,setPassword]=useState("");
 
-            <input
-              type="password"
-              className="w-full rounded-xl border border-slate-300 px-4 py-3"
-              placeholder="Password"
-            />
+const [error,setError]=useState("");
+
+const [loading,setLoading]=useState(false);
 
 
-            <button className="w-full rounded-xl bg-purple-600 py-3 font-bold text-white hover:bg-purple-700">
-              Sign In
-            </button>
 
-          </div>
+async function handleLogin(){
 
 
-          <div className="mt-6 text-center text-sm text-slate-500">
+try{
 
-            Need an account?{" "}
+setLoading(true);
 
-            <Link
-              href="/register"
-              className="font-bold text-purple-600"
-            >
-              Register
-            </Link>
+setError("");
 
-          </div>
 
-        </div>
+const user=await login(
+email,
+password
+);
 
-      </div>
 
-    </main>
-  );
+const profile=await getProfile(
+user.id
+);
+
+
+
+if(profile.status!=="approved"){
+
+throw new Error(
+"Account pending approval"
+);
+
+}
+
+
+
+switch(profile.role){
+
+
+case "admin":
+
+router.push("/admin/dashboard");
+
+break;
+
+
+case "manager":
+
+router.push("/dashboard/manager");
+
+break;
+
+
+case "regional":
+
+router.push("/dashboard/regional");
+
+break;
+
+
+default:
+
+router.push("/dashboard/employee");
+
+
+}
+
+
+}
+
+catch(err:any){
+
+setError(err.message);
+
+}
+
+finally{
+
+setLoading(false);
+
+}
+
+
+}
+
+
+
+return (
+
+<main className="
+min-h-screen
+bg-slate-50
+flex
+items-center
+justify-center
+px-6
+">
+
+
+<div className="
+w-full
+max-w-md
+">
+
+
+<div className="
+text-center
+mb-8
+">
+
+<div className="
+mx-auto
+flex
+h-14
+w-14
+items-center
+justify-center
+rounded-2xl
+bg-purple-600
+text-2xl
+font-black
+text-white
+">
+
+S
+
+</div>
+
+
+<h1 className="
+mt-4
+text-3xl
+font-black
+">
+
+SalesPulse
+
+</h1>
+
+
+<p className="
+mt-2
+text-slate-500
+">
+
+Wireless Retail Performance Platform
+
+</p>
+
+
+</div>
+
+
+
+
+<div className="
+rounded-3xl
+border
+bg-white
+p-8
+shadow-xl
+">
+
+
+<h2 className="
+text-2xl
+font-bold
+">
+
+Sign In
+
+</h2>
+
+
+<div className="
+mt-6
+space-y-4
+">
+
+
+<input
+
+value={email}
+
+onChange={(e)=>setEmail(e.target.value)}
+
+className="
+w-full
+rounded-xl
+border
+px-4
+py-3
+"
+
+placeholder="Email"
+
+/>
+
+
+<input
+
+type="password"
+
+value={password}
+
+onChange={(e)=>setPassword(e.target.value)}
+
+className="
+w-full
+rounded-xl
+border
+px-4
+py-3
+"
+
+placeholder="Password"
+
+/>
+
+
+{error &&
+
+<p className="
+text-red-500
+font-bold
+text-sm
+">
+
+{error}
+
+</p>
+
+}
+
+
+
+<button
+
+onClick={handleLogin}
+
+disabled={loading}
+
+className="
+w-full
+rounded-xl
+bg-purple-600
+py-3
+font-bold
+text-white
+"
+
+>
+
+{loading
+?"Signing in..."
+:"Sign In"
+}
+
+</button>
+
+
+</div>
+
+
+
+<div className="
+mt-6
+text-center
+text-sm
+text-slate-500
+">
+
+Need an account?{" "}
+
+<Link
+href="/register"
+className="font-bold text-purple-600"
+>
+
+Register
+
+</Link>
+
+
+</div>
+
+
+</div>
+
+
+</div>
+
+
+</main>
+
+)
+
 }

@@ -1,7 +1,8 @@
 import DashboardShell from "@/components/layout/DashboardShell";
+import LogoutButton from "@/components/auth/LogoutButton";
 
 
-export default function ReportsPage(){
+export default function SettingsPage(){
 
 
 return (
@@ -12,14 +13,30 @@ return (
 <div className="space-y-8">
 
 
+<div>
+
 <h1 className="
 text-4xl
 font-black
 ">
 
-Reports
+Settings
 
 </h1>
+
+
+<p className="
+text-slate-500
+mt-2
+">
+
+Manage your account preferences.
+
+</p>
+
+
+</div>
+
 
 
 <div className="
@@ -35,7 +52,7 @@ text-xl
 font-black
 ">
 
-Sales Reports
+Account
 
 </h2>
 
@@ -45,9 +62,16 @@ mt-3
 text-slate-500
 ">
 
-Reporting tools coming next.
+Profile settings will appear here.
 
 </p>
+
+
+<div className="mt-6">
+
+<LogoutButton/>
+
+</div>
 
 
 </div>
