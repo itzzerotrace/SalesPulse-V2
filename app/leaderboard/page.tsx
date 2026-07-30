@@ -1,4 +1,6 @@
 import DashboardShell from "@/components/layout/DashboardShell";
+import LeaderboardHeader from "@/components/leaderboard/LeaderboardHeader";
+import EmployeeRankingCard from "@/components/leaderboard/EmployeeRankingCard";
 
 
 export default function Leaderboard(){
@@ -7,38 +9,47 @@ return (
 
 <DashboardShell>
 
+
+<div className="space-y-8">
+
+
+<LeaderboardHeader/>
+
+
 <div className="
-rounded-3xl
-bg-white
-border
-p-8
+space-y-4
 ">
 
 
-<h1 className="
-text-3xl
-font-black
-">
-
-Leaderboard
-
-</h1>
+<EmployeeRankingCard
+rank={1}
+name="Bryce"
+score="92%"
+/>
 
 
-<p className="
-mt-3
-text-slate-500
-">
+<EmployeeRankingCard
+rank={2}
+name="Sarah"
+score="88%"
+/>
 
-Top performers will appear here.
 
-</p>
+<EmployeeRankingCard
+rank={3}
+name="Mike"
+score="82%"
+/>
 
 
 </div>
 
+
+</div>
+
+
 </DashboardShell>
 
-);
+)
 
 }
