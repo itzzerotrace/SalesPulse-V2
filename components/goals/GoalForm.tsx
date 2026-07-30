@@ -1,0 +1,179 @@
+"use client";
+
+import {useState} from "react";
+
+
+export default function GoalForm(){
+
+
+const [employee,setEmployee]=useState("");
+
+const [month,setMonth]=useState("August");
+
+const [voice,setVoice]=useState("");
+
+const [upgrades,setUpgrades]=useState("");
+
+const [hsi,setHsi]=useState("");
+
+const [mim,setMim]=useState("");
+
+const [bts,setBts]=useState("");
+
+const [accessories,setAccessories]=useState("");
+
+
+
+function save(){
+
+
+console.log({
+
+employee,
+
+month,
+
+voice,
+
+upgrades,
+
+hsi,
+
+mim,
+
+bts,
+
+accessories
+
+});
+
+
+alert("Goals saved");
+
+}
+
+
+
+return (
+
+<div className="
+rounded-3xl
+border
+bg-white
+p-8
+shadow-sm
+">
+
+
+<h2 className="
+text-2xl
+font-black
+">
+
+Set Monthly Goals
+
+</h2>
+
+
+<div className="
+mt-6
+grid
+gap-5
+md:grid-cols-2
+">
+
+
+<input
+className="rounded-xl border p-4"
+placeholder="Employee Name"
+value={employee}
+onChange={(e)=>setEmployee(e.target.value)}
+/>
+
+
+<input
+className="rounded-xl border p-4"
+placeholder="Month"
+value={month}
+onChange={(e)=>setMonth(e.target.value)}
+/>
+
+
+<input
+className="rounded-xl border p-4"
+placeholder="Voice Goal"
+value={voice}
+onChange={(e)=>setVoice(e.target.value)}
+/>
+
+
+<input
+className="rounded-xl border p-4"
+placeholder="Upgrade Goal"
+value={upgrades}
+onChange={(e)=>setUpgrades(e.target.value)}
+/>
+
+
+<input
+className="rounded-xl border p-4"
+placeholder="HSI Goal"
+value={hsi}
+onChange={(e)=>setHsi(e.target.value)}
+/>
+
+
+<input
+className="rounded-xl border p-4"
+placeholder="MiM Goal"
+value={mim}
+onChange={(e)=>setMim(e.target.value)}
+/>
+
+
+<input
+className="rounded-xl border p-4"
+placeholder="BTS Goal"
+value={bts}
+onChange={(e)=>setBts(e.target.value)}
+/>
+
+
+<input
+className="rounded-xl border p-4"
+placeholder="Accessory Goal"
+value={accessories}
+onChange={(e)=>setAccessories(e.target.value)}
+/>
+
+
+</div>
+
+
+
+<button
+
+onClick={save}
+
+className="
+mt-8
+rounded-2xl
+bg-purple-600
+px-8
+py-4
+font-black
+text-white
+"
+
+>
+
+Save Goals
+
+</button>
+
+
+</div>
+
+)
+
+}

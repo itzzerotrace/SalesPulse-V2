@@ -8,7 +8,8 @@ return (
 <div className="
 grid
 gap-6
-md:grid-cols-4
+md:grid-cols-3
+lg:grid-cols-6
 ">
 
 
@@ -21,10 +22,18 @@ icon="💰"
 
 
 <KpiCard
-title="Voice"
+title="New Voice"
 value="--"
 change="Today"
 icon="📱"
+/>
+
+
+<KpiCard
+title="MiM"
+value="--"
+change="Today"
+icon="🔄"
 />
 
 
@@ -41,6 +50,14 @@ title="BTS"
 value="--"
 change="Today"
 icon="🏢"
+/>
+
+
+<KpiCard
+title="Commission"
+value="$--"
+change="Estimated"
+icon="💵"
 />
 
 
