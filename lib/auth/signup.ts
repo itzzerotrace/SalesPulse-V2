@@ -3,8 +3,7 @@ import { createClient } from "@/lib/supabase/client";
 export async function signUp(
   email: string,
   password: string,
-  fullName: string,
-  role: string
+  fullName: string
 ) {
 
   const supabase = createClient();
@@ -22,7 +21,7 @@ export async function signUp(
 
 
   if (!data.user) {
-    throw new Error("User creation failed");
+    throw new Error("Account creation failed");
   }
 
 
@@ -30,9 +29,10 @@ export async function signUp(
     .from("profiles")
     .insert({
       id: data.user.id,
-      email,
       full_name: fullName,
-      role,
+      email: email,
+      role: "employee",
+      status: "pending"
     });
 
 
@@ -42,4 +42,5 @@ export async function signUp(
 
 
   return data.user;
+
 }

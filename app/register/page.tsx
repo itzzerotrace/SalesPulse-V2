@@ -1,157 +1,121 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
 import { signUp } from "@/lib/auth/signup";
 import { useRouter } from "next/navigation";
 
-export default function RegisterPage() {
 
-  const router = useRouter();
+export default function RegisterPage(){
 
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [role, setRole] = useState("employee");
-  const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
+const router = useRouter();
 
-
-  async function handleRegister() {
-
-    try {
-
-      setLoading(true);
-      setError("");
-
-      await signUp(
-        email,
-        password,
-        name,
-        role
-      );
-
-      router.push("/dashboard");
-
-    } catch (err: any) {
-
-      setError(err.message);
-
-    } finally {
-
-      setLoading(false);
-
-    }
-
-  }
+const [name,setName] = useState("");
+const [email,setEmail] = useState("");
+const [password,setPassword] = useState("");
+const [message,setMessage] = useState("");
 
 
-  return (
 
-    <main className="min-h-screen bg-slate-50 flex items-center justify-center px-6">
+async function handleSignup(){
 
-      <div className="w-full max-w-md">
+try{
 
-        <div className="rounded-3xl border bg-white p-8 shadow-xl">
-
-          <h1 className="text-3xl font-black">
-            Create Account
-          </h1>
-
-          <p className="mt-2 text-slate-500">
-            Join your SalesPulse team
-          </p>
+await signUp(
+ email,
+ password,
+ name
+);
 
 
-          <div className="mt-6 space-y-4">
+setMessage(
+"Account created. Waiting for admin approval."
+);
 
 
-            <input
-              className="w-full rounded-xl border px-4 py-3"
-              placeholder="Full Name"
-              value={name}
-              onChange={(e)=>setName(e.target.value)}
-            />
+setTimeout(()=>{
+ router.push("/login");
+},2000);
 
 
-            <input
-              className="w-full rounded-xl border px-4 py-3"
-              placeholder="Email"
-              value={email}
-              onChange={(e)=>setEmail(e.target.value)}
-            />
+}catch(error:any){
+
+setMessage(error.message);
+
+}
+
+}
 
 
-            <input
-              type="password"
-              className="w-full rounded-xl border px-4 py-3"
-              placeholder="Password"
-              value={password}
-              onChange={(e)=>setPassword(e.target.value)}
-            />
+
+return (
+
+<main className="min-h-screen bg-slate-50 flex items-center justify-center">
 
 
-            <select
-              className="w-full rounded-xl border px-4 py-3"
-              value={role}
-              onChange={(e)=>setRole(e.target.value)}
-            >
-
-              <option value="employee">
-                Employee
-              </option>
-
-              <option value="manager">
-                Store Manager
-              </option>
-
-              <option value="regional">
-                Regional Manager
-              </option>
-
-            </select>
+<div className="bg-white border rounded-3xl shadow-xl p-8 w-full max-w-md">
 
 
-            <button
-              onClick={handleRegister}
-              disabled={loading}
-              className="w-full rounded-xl bg-purple-600 py-3 font-bold text-white"
-            >
-
-              {loading ? "Creating..." : "Create Account"}
-
-            </button>
+<h1 className="text-3xl font-black">
+Request Access
+</h1>
 
 
-            {error && (
-              <p className="text-sm text-red-600">
-                {error}
-              </p>
-            )}
+<p className="text-slate-500 mt-2">
+Your account will be reviewed by an administrator.
+</p>
 
 
-          </div>
+<div className="mt-6 space-y-4">
 
 
-          <p className="mt-6 text-center text-sm">
-
-            Already have an account?{" "}
-
-            <Link
-              href="/login"
-              className="font-bold text-purple-600"
-            >
-              Sign In
-            </Link>
-
-          </p>
+<input
+className="w-full border rounded-xl p-3"
+placeholder="Full Name"
+value={name}
+onChange={(e)=>setName(e.target.value)}
+/>
 
 
-        </div>
+<input
+className="w-full border rounded-xl p-3"
+placeholder="Email"
+value={email}
+onChange={(e)=>setEmail(e.target.value)}
+/>
 
-      </div>
 
-    </main>
+<input
+type="password"
+className="w-full border rounded-xl p-3"
+placeholder="Password"
+value={password}
+onChange={(e)=>setPassword(e.target.value)}
+/>
 
-  );
+
+<button
+onClick={handleSignup}
+className="w-full bg-purple-600 text-white rounded-xl p-3 font-bold"
+>
+Create Account
+</button>
+
+
+{message && (
+<p className="text-sm text-center mt-3">
+{message}
+</p>
+)}
+
+
+</div>
+
+
+</div>
+
+
+</main>
+
+);
+
 }
