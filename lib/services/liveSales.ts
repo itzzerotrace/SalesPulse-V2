@@ -4,6 +4,7 @@ import {getUserContext} from "@/lib/auth/userContext";
 
 export async function getLiveSales(){
 
+
 const context = await getUserContext();
 
 
@@ -18,19 +19,24 @@ return [];
 const supabase = await createClient();
 
 
+
 let query = supabase
 
 .from("sales")
 
 .select(`
+
 *,
+
 profiles(
 full_name
 ),
+
 stores(
 name,
 region_id
 )
+
 `)
 
 .order(
@@ -42,10 +48,14 @@ ascending:false
 
 
 
-if(context.profile.role === "manager"){
+const role=context.profile.role;
 
 
-query = query.eq(
+
+if(role==="manager"){
+
+
+query=query.eq(
 
 "store_id",
 
@@ -58,37 +68,12 @@ context.profile.store_id
 
 
 
-if(context.profile.role === "regional_manager"){
-
-
-
-const storeId = context.profile.store_id;
-
+if(role==="regional_manager"){
 
 
 const {
-
-data:store
-
-}=await supabase
-
-.from("stores")
-
-.select("region_id")
-
-.eq("id",storeId)
-
-.single();
-
-
-
-if(store){
-
-
-const {
-
-data:stores
-
+data:stores,
+error
 }=await supabase
 
 .from("stores")
@@ -96,26 +81,38 @@ data:stores
 .select("id")
 
 .eq(
+
 "region_id",
-store.region_id
+
+context.profile.region_id
+
 );
 
 
 
-const ids =
-stores?.map(
-(store)=>store.id
-) || [];
+if(error){
+
+throw error;
+
+}
+
+
+
+const ids=(stores || [])
+
+.map(
+(store:any)=>store.id
+);
 
 
 
 query=query.in(
+
 "store_id",
+
 ids
+
 );
-
-
-}
 
 
 
@@ -124,18 +121,17 @@ ids
 
 
 const {
-
 data,
-
 error
-
 }=await query;
 
 
 
-if(error)
+if(error){
 
 throw error;
+
+}
 
 
 

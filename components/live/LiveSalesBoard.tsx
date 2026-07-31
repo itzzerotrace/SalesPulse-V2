@@ -70,12 +70,13 @@ font-black
 
 
 
-<div className="
-space-y-4
-">
 
 
-{sales.length === 0 && (
+<div className="space-y-4">
+
+
+
+{sales.length===0 && (
 
 <div className="
 bg-white/10
@@ -91,6 +92,8 @@ No sales yet today.
 
 
 
+
+
 {sales.map((sale:any)=>(
 
 
@@ -102,14 +105,21 @@ className="
 bg-white/10
 rounded-2xl
 p-6
-flex
-justify-between
 "
 
 >
 
 
+
+<div className="
+flex
+justify-between
+items-start
+">
+
+
 <div>
+
 
 <p className="
 font-black
@@ -125,7 +135,7 @@ text-xl
 text-slate-400
 ">
 
-{sale.stores?.name}
+{sale.stores?.name || "Store"}
 
 </p>
 
@@ -135,20 +145,180 @@ text-slate-400
 
 
 <div className="
-text-purple-400
-font-black
-text-2xl
+text-right
 ">
 
-Sale
+
+<p className="
+text-3xl
+font-black
+text-purple-400
+">
+
+${sale.gp || 0}
+
+</p>
+
+
+<p className="
+text-sm
+text-slate-400
+">
+
+Gross Profit
+
+</p>
+
 
 </div>
+
+
+</div>
+
+
+
+
+
+<div className="
+grid
+grid-cols-4
+gap-3
+mt-6
+">
+
+
+<div className="bg-white/10 rounded-xl p-3">
+
+<p className="text-slate-400 text-xs">
+Voice
+</p>
+
+<p className="font-black">
+{sale.voice || 0}
+</p>
+
+</div>
+
+
+
+<div className="bg-white/10 rounded-xl p-3">
+
+<p className="text-slate-400 text-xs">
+MiM
+</p>
+
+<p className="font-black">
+{sale.mim || 0}
+</p>
+
+</div>
+
+
+
+<div className="bg-white/10 rounded-xl p-3">
+
+<p className="text-slate-400 text-xs">
+Upgrade
+</p>
+
+<p className="font-black">
+{sale.upgrade || 0}
+</p>
+
+</div>
+
+
+
+<div className="bg-white/10 rounded-xl p-3">
+
+<p className="text-slate-400 text-xs">
+HSI
+</p>
+
+<p className="font-black">
+{sale.hsi || 0}
+</p>
+
+</div>
+
+
+</div>
+
+
+
+
+
+<div className="
+grid
+grid-cols-3
+gap-3
+mt-3
+">
+
+
+<div className="bg-white/10 rounded-xl p-3">
+
+<p className="text-slate-400 text-xs">
+BTS
+</p>
+
+<p className="font-black">
+{sale.bts || 0}
+</p>
+
+</div>
+
+
+
+<div className="bg-white/10 rounded-xl p-3">
+
+<p className="text-slate-400 text-xs">
+Accessories
+</p>
+
+<p className="font-black">
+${sale.accessories || 0}
+</p>
+
+</div>
+
+
+
+<div className="bg-white/10 rounded-xl p-3">
+
+<p className="text-slate-400 text-xs">
+Commission
+</p>
+
+<p className="font-black text-green-400">
+${((sale.mrc || 0) * .10).toFixed(2)}
+</p>
+
+</div>
+
+
+</div>
+
+
+
+
+<p className="
+mt-4
+text-xs
+text-slate-400
+">
+
+{new Date(sale.created_at).toLocaleString()}
+
+</p>
+
 
 
 </div>
 
 
 ))}
+
 
 
 </div>
