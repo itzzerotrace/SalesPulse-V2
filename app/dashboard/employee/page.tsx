@@ -9,8 +9,30 @@ import ActivityFeed from "@/components/dashboard/ActivityFeed";
 import CoachingInsight from "@/components/dashboard/CoachingInsight";
 import ActionButton from "@/components/ui/ActionButton";
 
+import {getDashboardStats} from "@/lib/dashboard/getDashboardStats";
 
-export default function EmployeeDashboard(){
+
+
+export default async function EmployeeDashboard(){
+
+
+const stats = await getDashboardStats();
+
+
+
+const month = stats?.month || {
+
+gp:0,
+voice:0,
+mim:0,
+upgrade:0,
+hsi:0,
+bts:0,
+accessories:0,
+commission:0
+
+};
+
 
 
 return (
@@ -19,6 +41,7 @@ return (
 
 
 <div className="space-y-8">
+
 
 
 <div className="
@@ -86,36 +109,117 @@ md:grid-cols-4
 ">
 
 
+
 <KpiCard
+
 title="Gross Profit"
-value="$--"
-change="Tracking"
+
+value={`$${month.gp.toFixed(0)}`}
+
+change="MTD"
+
 icon="💰"
+
 />
 
 
+
 <KpiCard
+
 title="Voice"
-value="--"
-change="Monthly"
+
+value={String(month.voice)}
+
+change="MTD"
+
 icon="📱"
+
 />
 
 
+
 <KpiCard
+
+title="MiM"
+
+value={String(month.mim)}
+
+change="MTD"
+
+icon="🔄"
+
+/>
+
+
+
+<KpiCard
+
+title="Upgrade"
+
+value={String(month.upgrade)}
+
+change="MTD"
+
+icon="⬆️"
+
+/>
+
+
+
+<KpiCard
+
 title="HSI"
-value="--"
-change="Monthly"
+
+value={String(month.hsi)}
+
+change="MTD"
+
 icon="🌐"
+
 />
+
 
 
 <KpiCard
-title="Accessories"
-value="--"
-change="Monthly"
-icon="🎧"
+
+title="BTS"
+
+value={String(month.bts)}
+
+change="MTD"
+
+icon="📡"
+
 />
+
+
+
+<KpiCard
+
+title="Accessories"
+
+value={`$${month.accessories.toFixed(0)}`}
+
+change="MTD"
+
+icon="🎧"
+
+/>
+
+
+
+<KpiCard
+
+title="Commission"
+
+value={`$${month.commission.toFixed(2)}`}
+
+change="MTD"
+
+icon="💵"
+
+/>
+
 
 
 </div>
@@ -137,10 +241,15 @@ score={86}
 
 
 <GoalProgressCard
+
 title="Monthly Goal"
+
 current="$--"
+
 goal="$--"
+
 percent={75}
+
 />
 
 
@@ -173,6 +282,7 @@ lg:grid-cols-2
 
 
 </div>
+
 
 
 

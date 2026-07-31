@@ -216,12 +216,12 @@ type:"New Voice"
 
 }
 
-catch(error){
+catch(error:any){
 
-console.error(error);
+console.error("SAVE SALE ERROR:", error);
 
 alert(
-"Failed to save sale"
+error?.message || "Failed to save sale"
 );
 
 }
