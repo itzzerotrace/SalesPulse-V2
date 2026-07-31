@@ -1,43 +1,95 @@
-import { createClient } from "@/lib/supabase/client";
+import {createClient} from "@/lib/supabase/client";
 
 
 export async function getPendingUsers(){
 
-const supabase = createClient();
+
+const supabase=createClient();
 
 
-const {data,error}=await supabase
+
+const {
+
+data,
+
+error
+
+}=await supabase
+
 .from("profiles")
-.select("*")
-.eq("status","pending");
+
+.select(`
+*,
+stores(
+name
+)
+`)
+
+.eq(
+"status",
+"pending"
+);
 
 
-if(error) throw error;
+
+if(error)
+
+throw error;
+
 
 
 return data;
+
 
 }
 
 
 
 export async function approveUser(
+
 id:string,
-role:string
+
+role:string,
+
+store_id?:string
+
 ){
+
 
 const supabase=createClient();
 
 
-const {error}=await supabase
+
+const {
+
+error
+
+}=await supabase
+
 .from("profiles")
+
 .update({
+
 status:"approved",
-role:role
+
+role,
+
+store_id:store_id || null,
+
+approved_at:new Date().toISOString()
+
 })
-.eq("id",id);
+
+.eq(
+"id",
+id
+);
 
 
-if(error) throw error;
+
+if(error)
+
+throw error;
+
 
 }

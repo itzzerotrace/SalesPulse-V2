@@ -3,7 +3,7 @@ export default function SalesQuickAction(){
 return (
 
 <a
-href="/sales/new"
+href="/sales"
 className="
 rounded-3xl
 bg-gradient-to-br
@@ -13,6 +13,8 @@ p-8
 block
 text-white
 shadow-lg
+hover:scale-[1.02]
+transition
 "
 >
 
@@ -32,7 +34,7 @@ mt-2
 opacity-80
 ">
 
-Add today's numbers.
+Add today's customer sales.
 
 </p>
 

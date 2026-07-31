@@ -1,6 +1,7 @@
 "use client";
 
 import {useState} from "react";
+import {createGoal} from "@/lib/services/goals";
 
 
 export default function GoalForm(){
@@ -22,33 +23,52 @@ const [bts,setBts]=useState("");
 
 const [accessories,setAccessories]=useState("");
 
+const [message,setMessage]=useState("");
 
 
-function save(){
+
+async function save(){
 
 
-console.log({
+try{
 
-employee,
+
+await createGoal({
+
+employee_name:employee,
 
 month,
 
-voice,
+year:2026,
 
-upgrades,
+voice_goal:Number(voice),
 
-hsi,
+upgrade_goal:Number(upgrades),
 
-mim,
+hsi_goal:Number(hsi),
 
-bts,
+mim_goal:Number(mim),
 
-accessories
+bts_goal:Number(bts),
+
+accessory_goal:Number(accessories)
 
 });
 
 
-alert("Goals saved");
+setMessage("Goals saved successfully");
+
+
+}
+
+catch(error){
+
+console.error(error);
+
+setMessage("Error saving goals");
+
+}
+
 
 }
 
@@ -83,64 +103,56 @@ md:grid-cols-2
 ">
 
 
-<input
-className="rounded-xl border p-4"
+<input className="rounded-xl border p-4"
 placeholder="Employee Name"
 value={employee}
 onChange={(e)=>setEmployee(e.target.value)}
 />
 
 
-<input
-className="rounded-xl border p-4"
+<input className="rounded-xl border p-4"
 placeholder="Month"
 value={month}
 onChange={(e)=>setMonth(e.target.value)}
 />
 
 
-<input
-className="rounded-xl border p-4"
+<input className="rounded-xl border p-4"
 placeholder="Voice Goal"
 value={voice}
 onChange={(e)=>setVoice(e.target.value)}
 />
 
 
-<input
-className="rounded-xl border p-4"
+<input className="rounded-xl border p-4"
 placeholder="Upgrade Goal"
 value={upgrades}
 onChange={(e)=>setUpgrades(e.target.value)}
 />
 
 
-<input
-className="rounded-xl border p-4"
+<input className="rounded-xl border p-4"
 placeholder="HSI Goal"
 value={hsi}
 onChange={(e)=>setHsi(e.target.value)}
 />
 
 
-<input
-className="rounded-xl border p-4"
+<input className="rounded-xl border p-4"
 placeholder="MiM Goal"
 value={mim}
 onChange={(e)=>setMim(e.target.value)}
 />
 
 
-<input
-className="rounded-xl border p-4"
+<input className="rounded-xl border p-4"
 placeholder="BTS Goal"
 value={bts}
 onChange={(e)=>setBts(e.target.value)}
 />
 
 
-<input
-className="rounded-xl border p-4"
+<input className="rounded-xl border p-4"
 placeholder="Accessory Goal"
 value={accessories}
 onChange={(e)=>setAccessories(e.target.value)}
@@ -170,6 +182,18 @@ text-white
 Save Goals
 
 </button>
+
+
+
+<p className="
+mt-4
+font-bold
+text-green-600
+">
+
+{message}
+
+</p>
 
 
 </div>

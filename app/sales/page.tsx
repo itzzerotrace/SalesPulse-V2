@@ -1,8 +1,13 @@
 import DashboardShell from "@/components/layout/DashboardShell";
-import SalesHistoryTable from "@/components/sales/SalesHistoryTable";
+import SalesHeader from "@/components/sales/SalesHeader";
+import SalesSummary from "@/components/sales/SalesSummary";
+import SalesFormCard from "@/components/sales/SalesFormCard";
+import RecentSales from "@/components/sales/RecentSales";
+import RoleGate from "@/components/auth/RoleGate";
 
 
-export default function SalesHistory(){
+export default function SalesPage(){
+
 
 return (
 
@@ -12,32 +17,57 @@ return (
 <div className="space-y-8">
 
 
+<SalesHeader/>
+
+
+<SalesSummary/>
+
+
+
+<div className="
+grid
+gap-6
+xl:grid-cols-[1fr_360px]
+">
+
+
 <div>
 
-<h1 className="
-text-4xl
-font-black
-">
-
-Sales History
-
-</h1>
-
-
-<p className="
-mt-2
-text-slate-500
-">
-
-Review your submitted sales.
-
-</p>
-
+<SalesFormCard/>
 
 </div>
 
 
-<SalesHistoryTable/>
+
+
+<RoleGate
+
+allowedRoles={[
+"manager",
+"regional",
+"admin"
+]}
+
+>
+
+
+<div className="
+sticky
+top-6
+h-fit
+">
+
+<RecentSales/>
+
+</div>
+
+
+</RoleGate>
+
+
+
+</div>
+
 
 
 </div>

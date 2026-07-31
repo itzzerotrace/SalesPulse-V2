@@ -1,46 +1,86 @@
 import { createClient } from "@/lib/supabase/client";
 
+
 export async function signUp(
-  email: string,
-  password: string,
-  fullName: string
-) {
 
-  const supabase = createClient();
+email:string,
 
+password:string,
 
-  const { data, error } = await supabase.auth.signUp({
-    email,
-    password,
-  });
+fullName:string
+
+){
 
 
-  if (error) {
-    throw error;
-  }
+const supabase=createClient();
 
 
-  if (!data.user) {
-    throw new Error("Account creation failed");
-  }
+
+const {
+
+data,
+
+error
+
+}=await supabase.auth.signUp({
+
+email,
+
+password
+
+});
 
 
-  const { error: profileError } = await supabase
-    .from("profiles")
-    .insert({
-      id: data.user.id,
-      full_name: fullName,
-      email: email,
-      role: "employee",
-      status: "pending"
-    });
+
+if(error)
+
+throw error;
 
 
-  if (profileError) {
-    throw profileError;
-  }
+
+if(!data.user)
+
+throw new Error(
+"Account creation failed"
+);
 
 
-  return data.user;
+
+const {
+
+error:profileError
+
+}=await supabase
+
+.from("profiles")
+
+.insert({
+
+id:data.user.id,
+
+full_name:fullName,
+
+email,
+
+role:"employee",
+
+status:"pending",
+
+store_id:null,
+
+district_id:null
+
+});
+
+
+
+if(profileError)
+
+throw profileError;
+
+
+
+return data.user;
+
 
 }

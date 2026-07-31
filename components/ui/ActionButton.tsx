@@ -1,18 +1,33 @@
+import Link from "next/link";
+
+
 interface ActionButtonProps{
 
 children:React.ReactNode;
 
+href?:string;
+
 }
 
 
+
 export default function ActionButton({
-children
+
+children,
+
+href="/sales"
+
 }:ActionButtonProps){
+
 
 
 return (
 
-<button className="
+<Link
+
+href={href}
+
+className="
 rounded-2xl
 bg-gradient-to-r
 from-purple-600
@@ -25,12 +40,18 @@ shadow-lg
 shadow-purple-200
 hover:scale-105
 transition
-">
+inline-block
+"
+
+>
+
 
 {children}
 
-</button>
+
+</Link>
 
 );
+
 
 }

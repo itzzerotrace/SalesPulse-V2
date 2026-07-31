@@ -1,6 +1,8 @@
 "use client";
 
 import Link from "next/link";
+import {useEffect,useState} from "react";
+
 import {
 Home,
 PlusCircle,
@@ -9,11 +11,14 @@ Target,
 Trophy,
 Users,
 BarChart3,
-Settings
+Settings,
+Radio
 } from "lucide-react";
 
+import {createClient} from "@/lib/supabase/client";
 
-const navigation=[
+
+const baseNavigation=[
 
 {
 title:"Dashboard",
@@ -23,7 +28,7 @@ icon:Home
 
 {
 title:"Enter Sale",
-href:"/sales/new",
+href:"/sales",
 icon:PlusCircle
 },
 
@@ -66,7 +71,107 @@ icon:Settings
 ];
 
 
+const liveSalesItem={
+
+title:"Live Sales",
+
+href:"/live-sales",
+
+icon:Radio
+
+};
+
+
+
 export default function Sidebar(){
+
+
+const [role,setRole]=useState<string|null>(null);
+
+
+
+useEffect(()=>{
+
+
+async function loadRole(){
+
+
+const supabase=createClient();
+
+
+
+const {
+
+data:{
+user
+
+}
+
+}=await supabase.auth.getUser();
+
+
+
+if(!user)
+
+return;
+
+
+
+const {
+
+data:profile
+
+}=await supabase
+
+.from("profiles")
+
+.select("role")
+
+.eq("id",user.id)
+
+.single();
+
+
+
+setRole(profile?.role || null);
+
+
+}
+
+
+
+loadRole();
+
+
+},[]);
+
+
+
+const navigation =
+
+role==="manager" ||
+
+role==="regional_manager" ||
+
+role==="admin"
+
+?
+
+[
+
+...baseNavigation.slice(0,2),
+
+liveSalesItem,
+
+...baseNavigation.slice(2)
+
+]
+
+:
+
+baseNavigation;
+
+
 
 return (
 
@@ -146,6 +251,7 @@ flex-1
 
 {navigation.map((item)=>{
 
+
 const Icon=item.icon;
 
 
@@ -186,6 +292,7 @@ hover:text-white
 </Link>
 
 )
+
 
 })}
 
@@ -267,6 +374,6 @@ font-bold
 
 </aside>
 
-);
+)
 
 }
