@@ -9,42 +9,29 @@ const supabase = await createClient();
 
 
 const {
-
 data:{
 user
-
 }
-
 }=await supabase.auth.getUser();
 
 
 
-if(!user)
+if(!user){
 
 return null;
+
+}
 
 
 
 const {
-
-data:profile
-
+data:profile,
+error:profileError
 }=await supabase
 
 .from("profiles")
 
-.select(`
-*,
-stores(
-id,
-name,
-region_id,
-regions(
-id,
-name
-)
-)
-`)
+.select("*")
 
 .eq(
 "id",
@@ -55,11 +42,102 @@ user.id
 
 
 
+if(profileError){
+
+console.log(
+"PROFILE FETCH ERROR",
+profileError
+);
+
 return {
 
 user,
 
-profile
+profile:null
+
+};
+
+}
+
+
+
+let store=null;
+
+
+
+if(profile.store_id){
+
+
+const {
+data
+}=await supabase
+
+.from("stores")
+
+.select(`
+id,
+name,
+region_id
+`)
+
+.eq(
+"id",
+profile.store_id
+)
+
+.single();
+
+
+store=data;
+
+
+}
+
+
+
+let region=null;
+
+
+
+if(profile.region_id){
+
+
+const {
+data
+}=await supabase
+
+.from("regions")
+
+.select("*")
+
+.eq(
+"id",
+profile.region_id
+)
+
+.single();
+
+
+region=data;
+
+
+}
+
+
+
+return {
+
+user,
+
+profile:{
+
+...profile,
+
+store,
+
+region
+
+}
 
 };
 

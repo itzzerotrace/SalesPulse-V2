@@ -7,42 +7,43 @@ function calculateSales(sales:any[]){
 return {
 
 gp:sales.reduce(
-(total,s)=>total + Number(s.gp || 0),
+(sum,s)=>sum + Number(s.gp || 0),
 0
 ),
 
 voice:sales.reduce(
-(total,s)=>total + Number(s.voice || 0),
+(sum,s)=>sum + Number(s.voice || 0),
 0
 ),
 
 mim:sales.reduce(
-(total,s)=>total + Number(s.mim || 0),
+(sum,s)=>sum + Number(s.mim || 0),
 0
 ),
 
 upgrade:sales.reduce(
-(total,s)=>total + Number(s.upgrade || 0),
+(sum,s)=>sum + Number(s.upgrade || 0),
 0
 ),
 
 hsi:sales.reduce(
-(total,s)=>total + Number(s.hsi || 0),
+(sum,s)=>sum + Number(s.hsi || 0),
 0
 ),
 
 bts:sales.reduce(
-(total,s)=>total + Number(s.bts || 0),
+(sum,s)=>sum + Number(s.bts || 0),
 0
 ),
 
 accessories:sales.reduce(
-(total,s)=>total + Number(s.accessories || 0),
+(sum,s)=>sum + Number(s.accessories || 0),
 0
 ),
 
-commission:sales.reduce(
-(total,s)=>total + Number(s.mrc || 0),
+commission:
+sales.reduce(
+(sum,s)=>sum + Number(s.mrc || 0),
 0
 ) * .10
 
@@ -57,8 +58,13 @@ export async function getDashboardStats(){
 
 const supabase = await createClient();
 
-
 const context = await getUserContext();
+
+
+console.log(
+"DASHBOARD CONTEXT",
+context
+);
 
 
 
@@ -70,26 +76,24 @@ return null;
 
 
 
-let query = supabase
-
-.from("sales")
-
-.select("*");
-
-
-
 const role=context.profile.role;
+
+
+let sales:any[]=[];
 
 
 
 if(role==="employee"){
 
+const {data,error}=await supabase
+.from("sales")
+.select("*")
+.eq("employee_id",context.user.id);
 
-query=query.eq(
-"employee_id",
-context.user.id
-);
 
+if(error) throw error;
+
+sales=data || [];
 
 }
 
@@ -97,12 +101,15 @@ context.user.id
 
 if(role==="manager"){
 
+const {data,error}=await supabase
+.from("sales")
+.select("*")
+.eq("store_id",context.profile.store_id);
 
-query=query.eq(
-"store_id",
-context.profile.store_id
-);
 
+if(error) throw error;
+
+sales=data || [];
 
 }
 
@@ -110,98 +117,86 @@ context.profile.store_id
 
 if(role==="regional_manager"){
 
-
-
-const {
-
-data:stores
-
-}=await supabase
-
+const {data:stores,error:storeError}=await supabase
 .from("stores")
-
 .select("id")
-
-.eq(
-"region_id",
-context.profile.region_id
-);
+.eq("region_id",context.profile.region_id);
 
 
+if(storeError) throw storeError;
 
-const ids=(stores || [])
 
-.map(
+const ids=(stores || []).map(
 (store:any)=>store.id
 );
 
 
-
-query=query.in(
-"store_id",
+console.log(
+"REGIONAL STORES",
 ids
 );
 
+
+
+const {data,error}=await supabase
+.from("sales")
+.select("*")
+.in("store_id",ids);
+
+
+if(error) throw error;
+
+
+sales=data || [];
 
 }
 
 
 
-const {
+if(role==="admin"){
 
-data:sales,
-
-error
-
-}=await query;
+const {data,error}=await supabase
+.from("sales")
+.select("*");
 
 
+if(error) throw error;
 
-if(error)
+sales=data || [];
 
-throw error;
+}
 
 
 
-const allSales=sales || [];
+console.log(
+"DASHBOARD SALES",
+sales
+);
 
 
 
 const now=new Date();
 
-
-
 const monthStart=new Date(
-
 now.getFullYear(),
-
 now.getMonth(),
-
 1
-
 );
 
 
 
-const monthSales=allSales.filter(
-(sale:any)=>
-
-new Date(
-sale.created_at
-)>=monthStart
-
+const monthSales=sales.filter(
+(s:any)=>
+new Date(s.created_at)>=monthStart
 );
 
 
 
-const todaySales=allSales.filter(
-(sale:any)=>
-
-new Date(
-sale.created_at
-).toDateString()
-===now.toDateString()
-
+const todaySales=sales.filter(
+(s:any)=>
+new Date(s.created_at).toDateString()
+===
+now.toDateString()
 );
 
 
@@ -212,7 +207,7 @@ month:calculateSales(monthSales),
 
 today:calculateSales(todaySales),
 
-total:calculateSales(allSales)
+total:calculateSales(sales)
 
 };
 
