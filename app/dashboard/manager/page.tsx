@@ -1,14 +1,38 @@
 import DashboardShell from "@/components/layout/DashboardShell";
 import PageHeader from "@/components/ui/PageHeader";
+
 import ManagerKpis from "@/components/dashboard/ManagerKpis";
 import StoreScore from "@/components/dashboard/StoreScore";
 import EmployeeLeaderboard from "@/components/dashboard/EmployeeLeaderboard";
 import TeamGoalCard from "@/components/dashboard/TeamGoalCard";
 import CoachingCenter from "@/components/dashboard/CoachingCenter";
 import SalesChart from "@/components/dashboard/SalesChart";
+import KpiCard from "@/components/dashboard/KpiCard";
+
+import {getDashboardStats} from "@/lib/dashboard/getDashboardStats";
 
 
-export default function ManagerDashboard(){
+
+export default async function ManagerDashboard(){
+
+
+const stats = await getDashboardStats();
+
+
+
+const month = stats?.month || {
+
+gp:0,
+voice:0,
+mim:0,
+upgrade:0,
+hsi:0,
+bts:0,
+accessories:0,
+commission:0
+
+};
+
 
 
 return (
@@ -26,6 +50,122 @@ title="El Dorado Store"
 subtitle="Manager performance overview"
 
 />
+
+
+
+<div className="
+grid
+gap-6
+md:grid-cols-4
+">
+
+
+<KpiCard
+
+title="Gross Profit"
+
+value={`$${month.gp.toFixed(0)}`}
+
+change="Store MTD"
+
+icon="💰"
+
+/>
+
+
+<KpiCard
+
+title="Voice"
+
+value={String(month.voice)}
+
+change="Store MTD"
+
+icon="📱"
+
+/>
+
+
+<KpiCard
+
+title="MiM"
+
+value={String(month.mim)}
+
+change="Store MTD"
+
+icon="🔄"
+
+/>
+
+
+<KpiCard
+
+title="Upgrade"
+
+value={String(month.upgrade)}
+
+change="Store MTD"
+
+icon="⬆️"
+
+/>
+
+
+<KpiCard
+
+title="HSI"
+
+value={String(month.hsi)}
+
+change="Store MTD"
+
+icon="🌐"
+
+/>
+
+
+<KpiCard
+
+title="BTS"
+
+value={String(month.bts)}
+
+change="Store MTD"
+
+icon="📡"
+
+/>
+
+
+<KpiCard
+
+title="Accessories"
+
+value={`$${month.accessories.toFixed(0)}`}
+
+change="Store MTD"
+
+icon="🎧"
+
+/>
+
+
+<KpiCard
+
+title="Commission"
+
+value={`$${month.commission.toFixed(2)}`}
+
+change="Store MTD"
+
+icon="💵"
+
+/>
+
+
+</div>
+
 
 
 
@@ -49,6 +189,7 @@ lg:grid-cols-3
 
 
 </div>
+
 
 
 
