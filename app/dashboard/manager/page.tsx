@@ -55,7 +55,7 @@ sm:space-y-8
 
 <PageHeader
 
-title={`${profile?.store?.name || "Store"} Store`}
+title={`${profile?.store?.name || "Store"}`}
 
 subtitle={`${profile?.store?.name || "Store"} manager performance overview`}
 
