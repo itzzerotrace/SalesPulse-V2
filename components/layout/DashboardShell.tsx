@@ -1,22 +1,20 @@
 import Sidebar from "./Sidebar";
 import Topbar from "./Topbar";
 
-import {getUserProfile} from "@/lib/auth/userProfile";
 
+export default function DashboardShell({
 
-export default async function DashboardShell({
+children,
 
-children
+profile
 
 }:{
 
-children:React.ReactNode
+children:React.ReactNode,
+
+profile?:any
 
 }){
-
-
-const profile = await getUserProfile();
-
 
 
 return (
