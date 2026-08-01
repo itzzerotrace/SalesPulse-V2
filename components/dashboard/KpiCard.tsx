@@ -1,47 +1,70 @@
 interface KpiCardProps {
+
 title:string;
+
 value:string;
+
 change:string;
+
 icon:string;
+
 positive?:boolean;
+
 }
 
 
+
 export default function KpiCard({
+
 title,
+
 value,
+
 change,
+
 icon,
+
 positive=true
+
 }:KpiCardProps){
+
 
 
 return (
 
 <div className="
-rounded-3xl
+rounded-2xl
 border
 border-slate-200
 bg-white
-p-6
+p-4
+sm:p-6
 shadow-sm
-hover:shadow-md
 transition
+hover:shadow-md
 ">
 
 
-<div className="flex justify-between">
+
+<div className="
+flex
+items-start
+justify-between
+">
 
 
 <div className="
-h-12
-w-12
-rounded-2xl
+h-9
+w-9
+sm:h-12
+sm:w-12
+rounded-xl
 bg-purple-100
 flex
 items-center
 justify-center
-text-2xl
+text-lg
+sm:text-2xl
 ">
 
 {icon}
@@ -53,11 +76,15 @@ text-2xl
 
 
 
+
+
 <p className="
-mt-5
-text-sm
-font-semibold
-text-slate-500
+mt-3
+sm:mt-5
+text-xs
+sm:text-sm
+font-bold
+text-slate-600
 ">
 
 {title}
@@ -66,11 +93,14 @@ text-slate-500
 
 
 
+
 <h2 className="
-mt-2
-text-4xl
+mt-1
+text-2xl
+sm:text-4xl
 font-black
 text-slate-900
+break-words
 ">
 
 {value}
@@ -79,9 +109,11 @@ text-slate-900
 
 
 
+
 <p className={`
-mt-3
-text-sm
+mt-2
+text-xs
+sm:text-sm
 font-bold
 ${positive ? "text-green-600":"text-red-500"}
 `}>
@@ -91,8 +123,9 @@ ${positive ? "text-green-600":"text-red-500"}
 </p>
 
 
+
 </div>
 
-);
+)
 
 }

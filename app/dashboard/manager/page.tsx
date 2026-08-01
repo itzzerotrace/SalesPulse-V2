@@ -47,7 +47,8 @@ return (
 
 
 <div className="
-space-y-8
+space-y-5
+sm:space-y-8
 ">
 
 
@@ -66,8 +67,10 @@ subtitle={`${profile?.store?.name || "Store"} manager performance overview`}
 
 <div className="
 grid
-gap-6
-md:grid-cols-4
+grid-cols-2
+gap-3
+sm:gap-5
+lg:grid-cols-4
 ">
 
 
@@ -194,7 +197,7 @@ icon="💵"
 
 <div className="
 grid
-gap-6
+gap-5
 lg:grid-cols-3
 ">
 
@@ -244,7 +247,7 @@ message="Performance insights will be generated from team results."
 
 <div className="
 grid
-gap-6
+gap-5
 lg:grid-cols-2
 ">
 

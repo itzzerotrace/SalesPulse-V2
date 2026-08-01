@@ -22,6 +22,7 @@ sale_date
 
 
 
+
 if(error){
 
 throw error;
@@ -37,8 +38,7 @@ const totals:any = {};
 (sales || []).forEach((sale:any)=>{
 
 
-const date =
-sale.sale_date || "Unknown";
+const date = sale.sale_date || "Unknown";
 
 
 if(!totals[date]){
@@ -68,6 +68,8 @@ new Date(b[0]).getTime()
 
 
 
+
+
 return (
 
 <div className="
@@ -75,14 +77,17 @@ rounded-3xl
 border
 border-slate-200
 bg-white
-p-8
+p-5
+sm:p-8
 shadow-sm
 ">
+
 
 
 <h2 className="
 text-xl
 font-black
+text-slate-900
 ">
 
 Sales Performance Trend
@@ -90,9 +95,12 @@ Sales Performance Trend
 </h2>
 
 
+
 <p className="
+mt-1
 text-sm
-text-slate-500
+font-semibold
+text-slate-600
 ">
 
 Your performance over time
@@ -102,19 +110,23 @@ Your performance over time
 
 
 
+
+
 <div className="
-mt-8
+mt-5
 space-y-3
 ">
+
 
 
 {days.length===0 && (
 
 <div className="
 rounded-2xl
-bg-slate-50
+bg-slate-100
 p-5
-text-slate-500
+font-bold
+text-slate-700
 ">
 
 No sales data yet.
@@ -122,6 +134,9 @@ No sales data yet.
 </div>
 
 )}
+
+
+
 
 
 
@@ -134,33 +149,60 @@ key={date}
 
 className="
 flex
+items-center
 justify-between
 rounded-2xl
-bg-slate-50
+bg-slate-100
 p-4
 "
 
 >
 
 
-<span className="
-font-bold
+<div>
+
+
+<p className="
+font-black
+text-slate-900
 ">
 
 {date}
 
-</span>
+</p>
+
+
+<p className="
+text-xs
+font-semibold
+text-slate-600
+">
+
+Gross Profit
+
+</p>
+
+
+</div>
 
 
 
-<span className="
+
+
+<div className="
+rounded-xl
+bg-purple-100
+px-3
+py-2
 font-black
-text-purple-600
+text-purple-700
 ">
 
 ${Number(gp).toFixed(0)}
 
-</span>
+</div>
+
+
 
 
 </div>
@@ -170,11 +212,14 @@ ${Number(gp).toFixed(0)}
 
 
 
-</div>
 
 
 </div>
 
-);
+
+
+</div>
+
+)
 
 }

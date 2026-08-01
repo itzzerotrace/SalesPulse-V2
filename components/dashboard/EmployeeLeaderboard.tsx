@@ -14,17 +14,11 @@ const ranked = employees.map((item:any)=>{
 const scores = [
 
 item.goals.gp,
-
 item.goals.voice,
-
 item.goals.mim,
-
 item.goals.upgrade,
-
 item.goals.hsi,
-
 item.goals.bts,
-
 item.goals.accessories
 
 ];
@@ -59,20 +53,26 @@ gp:item.goals.gp
 
 
 
+
+
 return (
 
 <div className="
 rounded-3xl
 border
+border-slate-200
 bg-white
-p-8
+p-5
+sm:p-8
 shadow-sm
 ">
+
 
 
 <h2 className="
 text-xl
 font-black
+text-slate-900
 ">
 
 Team Leaderboard
@@ -81,19 +81,23 @@ Team Leaderboard
 
 
 
+
+
 <div className="
-mt-6
+mt-5
 space-y-3
 ">
+
 
 
 {ranked.length === 0 && (
 
 <div className="
 rounded-2xl
-bg-slate-50
+bg-slate-100
 p-4
-text-slate-500
+font-bold
+text-slate-700
 ">
 
 No team data available
@@ -117,28 +121,31 @@ flex
 items-center
 justify-between
 rounded-2xl
-bg-slate-50
+bg-slate-100
 p-4
 "
 
 >
 
 
+
+
 <div className="
 flex
 items-center
-gap-4
+gap-3
 ">
 
 
 <div className="
+flex
 h-10
 w-10
-rounded-full
-bg-purple-100
-flex
+shrink-0
 items-center
 justify-center
+rounded-full
+bg-purple-100
 font-black
 text-purple-700
 ">
@@ -149,11 +156,13 @@ text-purple-700
 
 
 
+
 <div>
 
 
 <p className="
-font-bold
+font-black
+text-slate-900
 ">
 
 {employee.name}
@@ -161,9 +170,11 @@ font-bold
 </p>
 
 
+
 <p className="
-text-xs
-text-slate-500
+text-sm
+font-semibold
+text-slate-700
 ">
 
 GP Goal: {employee.gp}%
@@ -179,14 +190,19 @@ GP Goal: {employee.gp}%
 
 
 
-<p className="
+
+<div className="
+rounded-xl
+bg-purple-100
+px-3
+py-2
 font-black
-text-purple-600
+text-purple-700
 ">
 
 {Math.round(employee.percent)}%
 
-</p>
+</div>
 
 
 
@@ -197,11 +213,12 @@ text-purple-600
 
 
 
-</div>
-
 
 </div>
 
-);
+
+</div>
+
+)
 
 }

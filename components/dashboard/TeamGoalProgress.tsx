@@ -13,8 +13,10 @@ return (
 <div className="
 rounded-3xl
 border
+border-slate-200
 bg-white
-p-8
+p-5
+sm:p-8
 shadow-sm
 ">
 
@@ -22,6 +24,7 @@ shadow-sm
 <h2 className="
 text-xl
 font-black
+text-slate-900
 ">
 
 Team Goal Progress
@@ -30,9 +33,10 @@ Team Goal Progress
 
 
 
+
 <div className="
-mt-6
-space-y-4
+mt-5
+space-y-5
 ">
 
 
@@ -45,7 +49,7 @@ key={item.employee.id}
 
 className="
 rounded-2xl
-bg-slate-50
+bg-slate-100
 p-5
 "
 
@@ -53,8 +57,9 @@ p-5
 
 
 <h3 className="
-font-black
 text-lg
+font-black
+text-slate-900
 ">
 
 {item.employee.full_name}
@@ -63,42 +68,73 @@ text-lg
 
 
 
+
+
 <div className="
 mt-4
 grid
 grid-cols-2
 gap-3
-md:grid-cols-4
+lg:grid-cols-4
 ">
 
 
-<p>
-GP {item.goals.gp}%
-</p>
 
-<p>
-Voice {item.goals.voice}%
-</p>
+<div className="font-bold text-slate-900">
+GP
+<span className="block text-purple-700">
+{item.goals.gp}%
+</span>
+</div>
 
-<p>
-MiM {item.goals.mim}%
-</p>
 
-<p>
-Upgrade {item.goals.upgrade}%
-</p>
+<div className="font-bold text-slate-900">
+Voice
+<span className="block text-purple-700">
+{item.goals.voice}%
+</span>
+</div>
 
-<p>
-HSI {item.goals.hsi}%
-</p>
 
-<p>
-BTS {item.goals.bts}%
-</p>
+<div className="font-bold text-slate-900">
+MiM
+<span className="block text-purple-700">
+{item.goals.mim}%
+</span>
+</div>
 
-<p>
-ACC {item.goals.accessories}%
-</p>
+
+<div className="font-bold text-slate-900">
+Upgrade
+<span className="block text-purple-700">
+{item.goals.upgrade}%
+</span>
+</div>
+
+
+<div className="font-bold text-slate-900">
+HSI
+<span className="block text-purple-700">
+{item.goals.hsi}%
+</span>
+</div>
+
+
+<div className="font-bold text-slate-900">
+BTS
+<span className="block text-purple-700">
+{item.goals.bts}%
+</span>
+</div>
+
+
+<div className="font-bold text-slate-900">
+ACC
+<span className="block text-purple-700">
+{item.goals.accessories}%
+</span>
+</div>
+
 
 
 </div>
