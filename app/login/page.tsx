@@ -10,42 +10,36 @@ import {getProfile} from "@/lib/auth/profile";
 
 export default function LoginPage(){
 
-const router=useRouter();
+const router = useRouter();
 
-
-const [email,setEmail]=useState("");
-
-const [password,setPassword]=useState("");
-
-const [error,setError]=useState("");
-
-const [loading,setLoading]=useState(false);
+const [email,setEmail] = useState("");
+const [password,setPassword] = useState("");
+const [error,setError] = useState("");
+const [loading,setLoading] = useState(false);
 
 
 
 async function handleLogin(){
 
-
 try{
 
 setLoading(true);
-
 setError("");
 
 
-const user=await login(
+const user = await login(
 email,
 password
 );
 
 
-const profile=await getProfile(
+const profile = await getProfile(
 user.id
 );
 
 
 
-if(profile.status!=="approved"){
+if(profile.status !== "approved"){
 
 throw new Error(
 "Account pending approval"
@@ -56,7 +50,6 @@ throw new Error(
 
 
 switch(profile.role){
-
 
 case "admin":
 
@@ -72,7 +65,7 @@ router.push("/dashboard/manager");
 break;
 
 
-case "regional":
+case "regional_manager":
 
 router.push("/dashboard/regional");
 
@@ -82,7 +75,6 @@ break;
 default:
 
 router.push("/dashboard/employee");
-
 
 }
 
@@ -101,7 +93,6 @@ setLoading(false);
 
 }
 
-
 }
 
 
@@ -110,11 +101,12 @@ return (
 
 <main className="
 min-h-screen
-bg-slate-50
+bg-slate-100
 flex
 items-center
 justify-center
-px-6
+px-4
+py-8
 ">
 
 
@@ -129,16 +121,17 @@ text-center
 mb-8
 ">
 
+
 <div className="
 mx-auto
 flex
-h-14
-w-14
+h-16
+w-16
 items-center
 justify-center
 rounded-2xl
 bg-purple-600
-text-2xl
+text-3xl
 font-black
 text-white
 ">
@@ -149,9 +142,10 @@ S
 
 
 <h1 className="
-mt-4
-text-3xl
+mt-5
+text-4xl
 font-black
+text-gray-900
 ">
 
 SalesPulse
@@ -161,7 +155,9 @@ SalesPulse
 
 <p className="
 mt-2
-text-slate-500
+text-base
+font-semibold
+text-gray-700
 ">
 
 Wireless Retail Performance Platform
@@ -174,18 +170,22 @@ Wireless Retail Performance Platform
 
 
 
+
 <div className="
 rounded-3xl
 border
+border-gray-200
 bg-white
-p-8
+p-6
+sm:p-8
 shadow-xl
 ">
 
 
 <h2 className="
 text-2xl
-font-bold
+font-black
+text-gray-900
 ">
 
 Sign In
@@ -193,10 +193,42 @@ Sign In
 </h2>
 
 
+
+<p className="
+mt-2
+text-sm
+font-medium
+text-gray-600
+">
+
+Access your sales dashboard
+
+</p>
+
+
+
+
+
 <div className="
 mt-6
-space-y-4
+space-y-5
 ">
+
+
+
+<div>
+
+<label className="
+mb-2
+block
+text-sm
+font-bold
+text-gray-900
+">
+
+Email
+
+</label>
 
 
 <input
@@ -209,13 +241,40 @@ className="
 w-full
 rounded-xl
 border
+border-gray-300
+bg-white
 px-4
 py-3
+text-gray-900
+placeholder:text-gray-500
+focus:border-purple-600
+focus:outline-none
+focus:ring-2
+focus:ring-purple-200
 "
 
-placeholder="Email"
+placeholder="Enter email"
 
 />
+
+</div>
+
+
+
+
+<div>
+
+<label className="
+mb-2
+block
+text-sm
+font-bold
+text-gray-900
+">
+
+Password
+
+</label>
 
 
 <input
@@ -230,28 +289,47 @@ className="
 w-full
 rounded-xl
 border
+border-gray-300
+bg-white
 px-4
 py-3
+text-gray-900
+placeholder:text-gray-500
+focus:border-purple-600
+focus:outline-none
+focus:ring-2
+focus:ring-purple-200
 "
 
-placeholder="Password"
+placeholder="Enter password"
 
 />
+
+</div>
+
+
+
 
 
 {error &&
 
-<p className="
-text-red-500
-font-bold
+<div className="
+rounded-xl
+bg-red-50
+p-3
 text-sm
+font-bold
+text-red-700
 ">
 
 {error}
 
-</p>
+</div>
 
 }
+
+
+
 
 
 
@@ -265,22 +343,38 @@ className="
 w-full
 rounded-xl
 bg-purple-600
-py-3
-font-bold
+py-4
+font-black
 text-white
+transition
+hover:bg-purple-700
+disabled:opacity-50
 "
 
 >
 
-{loading
-?"Signing in..."
-:"Sign In"
+{
+
+loading
+
+?
+
+"Signing in..."
+
+:
+
+"Sign In"
+
 }
 
 </button>
 
 
+
+
 </div>
+
+
 
 
 
@@ -288,14 +382,22 @@ text-white
 mt-6
 text-center
 text-sm
-text-slate-500
+font-semibold
+text-gray-700
 ">
 
 Need an account?{" "}
 
+
 <Link
+
 href="/register"
-className="font-bold text-purple-600"
+
+className="
+font-black
+text-purple-600
+"
+
 >
 
 Register
@@ -304,6 +406,7 @@ Register
 
 
 </div>
+
 
 
 </div>

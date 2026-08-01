@@ -1,5 +1,6 @@
 import Sidebar from "./Sidebar";
 import Topbar from "./Topbar";
+import MobileMenu from "./MobileMenu";
 
 
 export default function DashboardShell({
@@ -39,6 +40,40 @@ flex-1
 ">
 
 
+<header className="
+flex
+items-center
+border-b
+bg-white
+px-4
+lg:hidden
+">
+
+
+<MobileMenu
+
+profile={profile}
+
+/>
+
+
+<div className="
+ml-3
+text-xl
+font-black
+text-slate-900
+">
+
+SalesPulse
+
+</div>
+
+
+</header>
+
+
+
+
 <Topbar
 
 profile={profile}
@@ -48,7 +83,9 @@ profile={profile}
 
 
 <main className="
-p-8
+p-4
+sm:p-6
+lg:p-8
 max-w-[1600px]
 mx-auto
 ">
