@@ -1,4 +1,22 @@
-export default function CoachingCenter(){
+interface CoachingCenterProps{
+
+metric:string;
+
+message:string;
+
+}
+
+
+
+export default function CoachingCenter({
+
+metric,
+
+message
+
+}:CoachingCenterProps){
+
+
 
 return (
 
@@ -21,6 +39,7 @@ Coaching Center
 </h2>
 
 
+
 <p className="
 mt-3
 text-slate-600
@@ -32,6 +51,7 @@ Areas requiring attention
 
 
 
+
 <div className="
 mt-6
 rounded-2xl
@@ -40,11 +60,14 @@ p-5
 ">
 
 
-<p className="font-bold">
+<p className="
+font-bold
+">
 
-HSI Opportunity
+{metric || "No issues detected"}
 
 </p>
+
 
 
 <p className="
@@ -52,9 +75,10 @@ text-sm
 text-slate-500
 ">
 
-Team conversion below goal.
+{message || "Team is currently meeting goals."}
 
 </p>
+
 
 
 </div>

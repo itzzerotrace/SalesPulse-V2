@@ -1,12 +1,22 @@
 import Sidebar from "./Sidebar";
 import Topbar from "./Topbar";
 
+import {getUserProfile} from "@/lib/auth/userProfile";
 
-export default function DashboardShell({
+
+export default async function DashboardShell({
+
 children
+
 }:{
+
 children:React.ReactNode
+
 }){
+
+
+const profile = await getUserProfile();
+
 
 
 return (
@@ -18,7 +28,12 @@ bg-[#F8FAFC]
 ">
 
 
-<Sidebar/>
+<Sidebar
+
+profile={profile}
+
+/>
+
 
 
 <div className="
@@ -26,7 +41,12 @@ flex-1
 ">
 
 
-<Topbar/>
+<Topbar
+
+profile={profile}
+
+/>
+
 
 
 <main className="

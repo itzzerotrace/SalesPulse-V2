@@ -1,20 +1,62 @@
-const employees=[
-{
-name:"Bryce",
-score:"86%"
-},
-{
-name:"Sarah",
-score:"74%"
-},
-{
-name:"Mike",
-score:"68%"
-}
+import {getTeamGoalProgress} from "@/lib/services/teamGoalProgress";
+
+
+export default async function EmployeeLeaderboard(){
+
+
+const employees = await getTeamGoalProgress();
+
+
+
+const ranked = employees.map((item:any)=>{
+
+
+const scores = [
+
+item.goals.gp,
+
+item.goals.voice,
+
+item.goals.mim,
+
+item.goals.upgrade,
+
+item.goals.hsi,
+
+item.goals.bts,
+
+item.goals.accessories
+
 ];
 
 
-export default function EmployeeLeaderboard(){
+const average =
+
+scores.reduce(
+(sum:number,value:number)=>sum + value,
+0
+) / scores.length;
+
+
+
+return {
+
+id:item.employee.id,
+
+name:item.employee.full_name,
+
+percent:average,
+
+gp:item.goals.gp
+
+};
+
+
+})
+.sort(
+(a:any,b:any)=>b.percent-a.percent
+);
+
 
 
 return (
@@ -38,17 +80,38 @@ Team Leaderboard
 </h2>
 
 
+
 <div className="
 mt-6
 space-y-3
 ">
 
 
-{employees.map((employee,index)=>(
+{ranked.length === 0 && (
+
+<div className="
+rounded-2xl
+bg-slate-50
+p-4
+text-slate-500
+">
+
+No team data available
+
+</div>
+
+)}
+
+
+
+
+{ranked.map((employee:any,index:number)=>(
 
 
 <div
-key={employee.name}
+
+key={employee.id}
+
 className="
 flex
 items-center
@@ -57,6 +120,7 @@ rounded-2xl
 bg-slate-50
 p-4
 "
+
 >
 
 
@@ -84,14 +148,34 @@ text-purple-700
 </div>
 
 
-<p className="font-bold">
+
+<div>
+
+
+<p className="
+font-bold
+">
 
 {employee.name}
 
 </p>
 
 
+<p className="
+text-xs
+text-slate-500
+">
+
+GP Goal: {employee.gp}%
+
+</p>
+
+
 </div>
+
+
+</div>
+
 
 
 
@@ -100,15 +184,17 @@ font-black
 text-purple-600
 ">
 
-{employee.score}
+{Math.round(employee.percent)}%
 
 </p>
+
 
 
 </div>
 
 
 ))}
+
 
 
 </div>

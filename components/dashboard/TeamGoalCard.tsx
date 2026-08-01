@@ -1,4 +1,48 @@
-export default function TeamGoalCard(){
+interface TeamGoalCardProps{
+
+percent:number;
+
+}
+
+
+
+export default function TeamGoalCard({
+
+percent
+
+}:TeamGoalCardProps){
+
+
+
+const status =
+
+percent >= 90
+
+?
+
+"Excellent"
+
+:
+
+percent >= 70
+
+?
+
+"On Track"
+
+:
+
+percent >= 50
+
+?
+
+"Needs Focus"
+
+:
+
+"Behind";
+
+
 
 return (
 
@@ -11,6 +55,7 @@ shadow-sm
 ">
 
 
+
 <h2 className="
 text-xl
 font-black
@@ -21,6 +66,8 @@ Team Monthly Goal
 </h2>
 
 
+
+
 <div className="
 mt-6
 h-4
@@ -29,19 +76,28 @@ bg-slate-100
 ">
 
 
-<div className="
+<div
+
+className="
 h-4
-w-[72%]
 rounded-full
 bg-gradient-to-r
 from-purple-600
 to-indigo-600
-">
+"
+
+style={{
+
+width:`${Math.min(percent,100)}%`
+
+}}
+
+/>
+
 
 </div>
 
 
-</div>
 
 
 
@@ -55,17 +111,21 @@ font-bold
 
 
 <span>
-72% Complete
+
+{Math.round(percent)}% Complete
+
 </span>
+
 
 
 <span className="
 text-purple-600
 ">
 
-On Track
+{status}
 
 </span>
+
 
 
 </div>

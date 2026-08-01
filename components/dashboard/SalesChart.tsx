@@ -1,4 +1,71 @@
-export default function SalesChart(){
+import {createClient} from "@/lib/supabase/server";
+
+
+export default async function SalesChart(){
+
+
+const supabase = await createClient();
+
+
+
+const {
+data:sales,
+error
+}=await supabase
+
+.from("sales")
+
+.select(`
+gp,
+sale_date
+`);
+
+
+
+if(error){
+
+throw error;
+
+}
+
+
+
+const totals:any = {};
+
+
+
+(sales || []).forEach((sale:any)=>{
+
+
+const date =
+sale.sale_date || "Unknown";
+
+
+if(!totals[date]){
+
+totals[date]=0;
+
+}
+
+
+totals[date]+=Number(
+sale.gp || 0
+);
+
+
+});
+
+
+
+const days = Object.entries(totals)
+
+.sort(
+(a,b)=>
+new Date(a[0]).getTime()
+-
+new Date(b[0]).getTime()
+);
+
 
 
 return (
@@ -34,21 +101,74 @@ Your performance over time
 
 
 
+
 <div className="
 mt-8
-h-56
+space-y-3
+">
+
+
+{days.length===0 && (
+
+<div className="
 rounded-2xl
-bg-gradient-to-br
-from-purple-50
-to-indigo-50
+bg-slate-50
+p-5
+text-slate-500
+">
+
+No sales data yet.
+
+</div>
+
+)}
+
+
+
+{days.map(([date,gp])=>(
+
+
+<div
+
+key={date}
+
+className="
 flex
-items-center
-justify-center
-text-purple-600
+justify-between
+rounded-2xl
+bg-slate-50
+p-4
+"
+
+>
+
+
+<span className="
 font-bold
 ">
 
-Chart Area
+{date}
+
+</span>
+
+
+
+<span className="
+font-black
+text-purple-600
+">
+
+${Number(gp).toFixed(0)}
+
+</span>
+
+
+</div>
+
+
+))}
+
+
 
 </div>
 

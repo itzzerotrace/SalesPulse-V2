@@ -2,8 +2,115 @@ import DashboardShell from "@/components/layout/DashboardShell";
 import TeamHeader from "@/components/team/TeamHeader";
 import TeamMemberCard from "@/components/team/TeamMemberCard";
 
+import {getUserContext} from "@/lib/auth/userContext";
+import {createClient} from "@/lib/supabase/server";
 
-export default function TeamPage(){
+
+export default async function TeamPage(){
+
+
+const supabase = await createClient();
+
+const context = await getUserContext();
+
+
+const storeId = context?.profile?.store?.id;
+
+
+
+let employees:any[] = [];
+
+
+
+
+if(storeId){
+
+
+const {
+data
+}=await supabase
+
+.from("profiles")
+
+.select(`
+id,
+full_name,
+role
+`)
+
+.eq(
+"store_id",
+storeId
+)
+
+.eq(
+"status",
+"approved"
+);
+
+
+
+employees=data || [];
+
+}
+
+
+
+
+const employeesWithGoals = await Promise.all(
+
+employees.map(async(employee)=>{
+
+
+const {
+data:goal
+}=await supabase
+
+.from("employee_goals")
+
+.select("*")
+
+.eq(
+"employee_id",
+employee.id
+)
+
+.eq(
+"month",
+new Date().toLocaleString(
+"en-US",
+{
+month:"long"
+}
+)
+
+)
+
+.eq(
+"year",
+new Date().getFullYear()
+)
+
+.maybeSingle();
+
+
+
+return {
+
+...employee,
+
+goals:goal
+
+};
+
+
+})
+
+);
+
+
+
+
 
 return (
 
@@ -16,6 +123,8 @@ space-y-8
 
 
 <TeamHeader/>
+
+
 
 
 <div className="
@@ -31,9 +140,10 @@ text-3xl
 font-black
 ">
 
-El Dorado
+{context?.profile?.store?.name || "Store"}
 
 </h2>
+
 
 
 <p className="
@@ -41,12 +151,14 @@ mt-2
 opacity-80
 ">
 
-3 Employees
+{employees.length} Employees
 
 </p>
 
 
 </div>
+
+
 
 
 
@@ -57,25 +169,50 @@ md:grid-cols-3
 ">
 
 
-<TeamMemberCard
-name="Bryce"
-role="Manager"
-/>
+
+{employeesWithGoals.map((employee)=>(
 
 
 <TeamMemberCard
-name="Sarah"
-role="Sales Associate"
+
+key={employee.id}
+
+id={employee.id}
+
+name={employee.full_name}
+
+role={employee.role}
+
+viewerRole={context?.profile?.role}
+
+goals={employee.goals}
+
 />
 
 
-<TeamMemberCard
-name="Mike"
-role="Sales Associate"
-/>
+))}
+
+
+
+{employeesWithGoals.length===0 && (
+
+<div className="
+rounded-3xl
+border
+bg-white
+p-8
+">
+
+No employees found.
+
+</div>
+
+)}
+
 
 
 </div>
+
 
 
 </div>

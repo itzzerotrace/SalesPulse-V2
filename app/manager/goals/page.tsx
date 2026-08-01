@@ -1,14 +1,18 @@
 import DashboardShell from "@/components/layout/DashboardShell";
-import AssignGoalCard from "@/components/goals/AssignGoalCard";
+import ManagerGoalsClient from "@/components/goals/ManagerGoalsClient";
 
 
 export default function ManagerGoals(){
+
 
 return (
 
 <DashboardShell>
 
-<div className="space-y-8">
+
+<div className="
+space-y-8
+">
 
 
 <h1 className="
@@ -21,10 +25,12 @@ Team Goals
 </h1>
 
 
-<AssignGoalCard/>
+
+<ManagerGoalsClient/>
 
 
 </div>
+
 
 </DashboardShell>
 

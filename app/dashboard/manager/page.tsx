@@ -1,15 +1,17 @@
-import DashboardShell from "@/components/layout/DashboardShell";
+import DashboardLayout from "@/components/layout/DashboardLayout";
 import PageHeader from "@/components/ui/PageHeader";
 
-import ManagerKpis from "@/components/dashboard/ManagerKpis";
 import StoreScore from "@/components/dashboard/StoreScore";
 import EmployeeLeaderboard from "@/components/dashboard/EmployeeLeaderboard";
 import TeamGoalCard from "@/components/dashboard/TeamGoalCard";
 import CoachingCenter from "@/components/dashboard/CoachingCenter";
 import SalesChart from "@/components/dashboard/SalesChart";
 import KpiCard from "@/components/dashboard/KpiCard";
+import TeamGoalProgress from "@/components/dashboard/TeamGoalProgress";
 
 import {getDashboardStats} from "@/lib/dashboard/getDashboardStats";
+import {getUserProfile} from "@/lib/auth/userProfile";
+import {getTeamGoalSummary} from "@/lib/services/teamGoalSummary";
 
 
 
@@ -17,6 +19,10 @@ export default async function ManagerDashboard(){
 
 
 const stats = await getDashboardStats();
+
+const profile = await getUserProfile();
+
+const teamPercent = await getTeamGoalSummary();
 
 
 
@@ -37,19 +43,24 @@ commission:0
 
 return (
 
-<DashboardShell>
+<DashboardLayout>
 
 
-<div className="space-y-8">
+<div className="
+space-y-8
+">
+
 
 
 <PageHeader
 
-title="El Dorado Store"
+title={`${profile?.store?.name || "Store"} Store`}
 
-subtitle="Manager performance overview"
+subtitle={`${profile?.store?.name || "Store"} manager performance overview`}
 
 />
+
+
 
 
 
@@ -58,6 +69,7 @@ grid
 gap-6
 md:grid-cols-4
 ">
+
 
 
 <KpiCard
@@ -73,6 +85,7 @@ icon="💰"
 />
 
 
+
 <KpiCard
 
 title="Voice"
@@ -84,6 +97,7 @@ change="Store MTD"
 icon="📱"
 
 />
+
 
 
 <KpiCard
@@ -99,6 +113,7 @@ icon="🔄"
 />
 
 
+
 <KpiCard
 
 title="Upgrade"
@@ -110,6 +125,7 @@ change="Store MTD"
 icon="⬆️"
 
 />
+
 
 
 <KpiCard
@@ -125,6 +141,7 @@ icon="🌐"
 />
 
 
+
 <KpiCard
 
 title="BTS"
@@ -136,6 +153,7 @@ change="Store MTD"
 icon="📡"
 
 />
+
 
 
 <KpiCard
@@ -151,6 +169,7 @@ icon="🎧"
 />
 
 
+
 <KpiCard
 
 title="Commission"
@@ -164,12 +183,11 @@ icon="💵"
 />
 
 
+
 </div>
 
 
 
-
-<ManagerKpis/>
 
 
 
@@ -181,14 +199,44 @@ lg:grid-cols-3
 ">
 
 
-<StoreScore/>
 
-<TeamGoalCard/>
+<StoreScore
 
-<CoachingCenter/>
+score={teamPercent}
+
+/>
+
+
+
+<TeamGoalCard
+
+percent={teamPercent}
+
+/>
+
+
+
+<CoachingCenter
+
+metric="Live coaching"
+
+message="Performance insights will be generated from team results."
+
+/>
+
 
 
 </div>
+
+
+
+
+
+
+
+<TeamGoalProgress/>
+
+
 
 
 
@@ -201,18 +249,23 @@ lg:grid-cols-2
 ">
 
 
+
 <EmployeeLeaderboard/>
 
 <SalesChart/>
 
 
-</div>
-
 
 </div>
 
 
-</DashboardShell>
+
+
+
+</div>
+
+
+</DashboardLayout>
 
 );
 

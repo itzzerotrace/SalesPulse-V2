@@ -1,53 +1,92 @@
 "use client";
 
-
-import {
-Bell,
-ChevronDown
-} from "lucide-react";
+import {createClient} from "@/lib/supabase/client";
+import {useRouter} from "next/navigation";
 
 
-export default function Topbar(){
+export default function Topbar({
+
+profile
+
+}:{
+
+profile?:any;
+
+}){
+
+
+const router = useRouter();
+
+
+
+async function logout(){
+
+
+const supabase=createClient();
+
+
+await supabase.auth.signOut();
+
+
+router.push("/login");
+
+router.refresh();
+
+
+}
+
+
+
+
+const name =
+
+profile?.full_name ||
+
+profile?.name ||
+
+profile?.email?.split("@")[0] ||
+
+"User";
+
+
+
+const role =
+
+profile?.role ||
+
+"";
+
+
 
 
 return (
 
 <header className="
-h-24
-bg-white
+h-20
 border-b
-border-slate-200
+bg-white
+px-8
 flex
 items-center
 justify-between
-px-8
 ">
 
 
 <div>
 
-<h2 className="
-text-xl
+<h1 className="
+text-2xl
 font-black
 text-slate-900
 ">
 
-El Dorado • Stockton
+SalesPulse
 
-</h2>
-
-
-<p className="
-text-sm
-text-slate-500
-">
-
-May 2026 Performance
-
-</p>
+</h1>
 
 
 </div>
+
 
 
 
@@ -58,68 +97,77 @@ gap-4
 ">
 
 
-<button className="
-rounded-xl
-border
-p-3
-hover:bg-slate-50
-">
-
-<Bell size={20}/>
-
-</button>
-
-
-
-<button className="
-flex
-items-center
-gap-3
-rounded-xl
-border
-px-4
-py-2
-">
-
-
 <div className="
-h-10
-w-10
-rounded-full
-bg-purple-600
-flex
-items-center
-justify-center
-text-white
-font-bold
+text-right
+hidden
+md:block
 ">
 
-B
 
-</div>
+<p className="
+font-bold
+text-slate-900
+">
 
-
-<div>
-
-<p className="font-bold">
-Bryce
+{name}
 
 </p>
+
 
 <p className="
 text-xs
 text-slate-500
+capitalize
 ">
 
-Sales Associate
+{role}
 
 </p>
+
 
 </div>
 
 
-<ChevronDown size={16}/>
 
+
+<div className="
+h-12
+w-12
+rounded-full
+bg-purple-100
+flex
+items-center
+justify-center
+font-black
+text-purple-700
+text-lg
+">
+
+{name.charAt(0).toUpperCase()}
+
+</div>
+
+
+
+
+<button
+
+onClick={logout}
+
+className="
+rounded-xl
+bg-slate-900
+px-5
+py-2
+text-sm
+font-bold
+text-white
+hover:bg-slate-700
+"
+
+>
+
+Logout
 
 </button>
 
@@ -129,6 +177,6 @@ Sales Associate
 
 </header>
 
-);
+)
 
 }

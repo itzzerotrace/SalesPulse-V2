@@ -11,6 +11,8 @@ month:string;
 
 year:number;
 
+gp_goal:number;
+
 voice_goal:number;
 
 upgrade_goal:number;
@@ -28,21 +30,15 @@ accessory_goal:number;
 
 
 export async function createGoal(
-
 goal:EmployeeGoalInput
-
 ){
-
 
 const supabase=createClient();
 
 
 const {
-
 data,
-
 error
-
 }=await supabase
 
 .from("employee_goals")
@@ -69,25 +65,29 @@ return data;
 
 
 
+
 export async function getGoals(){
 
 
 const supabase=createClient();
 
 
+
 const {
-
 data,
-
 error
-
 }=await supabase
 
 .from("employee_goals")
 
 .select("*")
 
-.order("created_at",{ascending:false});
+.order(
+"created_at",
+{
+ascending:false
+}
+);
 
 
 
@@ -120,23 +120,30 @@ year:number
 const supabase=createClient();
 
 
+
 const {
-
 data,
-
 error
-
 }=await supabase
 
 .from("employee_goals")
 
 .select("*")
 
-.eq("employee_name",employeeName)
+.eq(
+"employee_name",
+employeeName
+)
 
-.eq("month",month)
+.eq(
+"month",
+month
+)
 
-.eq("year",year)
+.eq(
+"year",
+year
+)
 
 .single();
 

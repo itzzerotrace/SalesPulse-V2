@@ -1,4 +1,47 @@
-export default function GoalScore(){
+interface GoalScoreProps{
+
+score:number;
+
+}
+
+
+
+export default function GoalScore({
+
+score
+
+}:GoalScoreProps){
+
+
+const status =
+
+score >= 90
+
+?
+
+"Elite"
+
+:
+
+score >= 75
+
+?
+
+"On Track"
+
+:
+
+score >= 50
+
+?
+
+"Needs Focus"
+
+:
+
+"Behind";
+
+
 
 return (
 
@@ -9,18 +52,18 @@ from-purple-600
 to-indigo-600
 p-8
 text-white
-shadow-lg
 ">
+
 
 
 <p className="
 font-bold
-opacity-80
 ">
 
 Overall Goal Progress
 
 </p>
+
 
 
 <h2 className="
@@ -29,19 +72,21 @@ text-6xl
 font-black
 ">
 
-76%
+{score}%
 
 </h2>
 
 
+
 <p className="
-mt-3
+mt-2
 font-bold
 ">
 
-On Track
+{status}
 
 </p>
+
 
 
 </div>

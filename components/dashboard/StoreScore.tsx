@@ -1,4 +1,47 @@
-export default function StoreScore(){
+interface StoreScoreProps{
+
+score:number;
+
+}
+
+
+
+export default function StoreScore({
+
+score
+
+}:StoreScoreProps){
+
+
+const status =
+
+score >= 90
+
+?
+
+"Elite Performance"
+
+:
+
+score >= 75
+
+?
+
+"Excellent Performance"
+
+:
+
+score >= 50
+
+?
+
+"On Track"
+
+:
+
+"Needs Improvement";
+
+
 
 return (
 
@@ -31,7 +74,7 @@ text-6xl
 font-black
 ">
 
-84
+{Math.round(score)}
 
 </h2>
 
@@ -42,9 +85,10 @@ mt-3
 font-bold
 ">
 
-Excellent Performance
+{status}
 
 </p>
+
 
 
 <div className="
@@ -57,7 +101,7 @@ text-sm
 font-bold
 ">
 
-↑ 8% vs last month
+Based on current goal completion
 
 </div>
 

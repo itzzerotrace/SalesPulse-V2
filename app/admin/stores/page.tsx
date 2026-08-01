@@ -1,169 +1,82 @@
-"use client";
+import DashboardLayout from "@/components/layout/DashboardLayout";
 
-import { useEffect, useState } from "react";
-import { getStores, createStore } from "@/lib/admin/stores";
+import AdminStoresTable from "@/components/admin/AdminStoresTable";
 
-export default function StoresPage() {
+import {
+getAdminStores,
+getAdminRegions
+} from "@/lib/services/adminStores";
 
-  const [stores, setStores] = useState<any[]>([]);
-  const [name, setName] = useState("");
-  const [city, setCity] = useState("");
-  const [error, setError] = useState("");
 
-  async function loadStores() {
 
-    try {
+export default async function AdminStoresPage(){
 
-      const data = await getStores();
 
-      setStores(data || []);
+const stores = await getAdminStores();
 
-    } catch (err: any) {
+const regions = await getAdminRegions();
 
-      console.error(err);
 
-      setError(
-        JSON.stringify(err)
-      );
 
-    }
+return (
 
-  }
+<DashboardLayout>
 
 
-  useEffect(() => {
+<div className="
+space-y-8
+">
 
-    loadStores();
 
-  }, []);
+<div>
 
+<p className="
+text-purple-600
+font-bold
+">
 
+ADMIN MANAGEMENT
 
-  async function addStore() {
+</p>
 
-    try {
 
-      setError("");
+<h1 className="
+text-4xl
+font-black
+">
 
-      await createStore(
-        name,
-        city
-      );
+Stores
 
-      setName("");
-      setCity("");
+</h1>
 
-      await loadStores();
 
+<p className="
+text-slate-500
+">
 
-    } catch (err: any) {
+Create stores and assign regions.
 
-      console.error(err);
+</p>
 
-      setError(
-        JSON.stringify(err)
-      );
 
-    }
+</div>
 
-  }
 
 
+<AdminStoresTable
 
-  return (
+stores={stores}
 
-    <main className="min-h-screen bg-slate-50 p-8">
+regions={regions}
 
-      <h1 className="text-4xl font-black">
-        Store Management
-      </h1>
+/>
 
 
-      {error && (
+</div>
 
-        <div className="mt-5 rounded-xl bg-red-100 p-4 text-red-700">
 
-          {error}
+</DashboardLayout>
 
-        </div>
-
-      )}
-
-
-
-      <div className="mt-8 rounded-3xl border bg-white p-6">
-
-        <h2 className="text-xl font-bold">
-          Add Store
-        </h2>
-
-
-        <div className="mt-5 flex gap-3">
-
-
-          <input
-            className="rounded-xl border p-3"
-            placeholder="Store Name"
-            value={name}
-            onChange={(e)=>setName(e.target.value)}
-          />
-
-
-          <input
-            className="rounded-xl border p-3"
-            placeholder="City"
-            value={city}
-            onChange={(e)=>setCity(e.target.value)}
-          />
-
-
-          <button
-            onClick={addStore}
-            className="rounded-xl bg-purple-600 px-6 font-bold text-white"
-          >
-            Add Store
-          </button>
-
-
-        </div>
-
-
-      </div>
-
-
-
-      <div className="mt-8 space-y-4">
-
-
-        {stores.map((store)=>(
-
-
-          <div
-            key={store.id}
-            className="rounded-2xl border bg-white p-6"
-          >
-
-            <h3 className="text-xl font-bold">
-              {store.name}
-            </h3>
-
-
-            <p className="text-slate-500">
-              {store.city}
-            </p>
-
-
-          </div>
-
-
-        ))}
-
-
-      </div>
-
-
-    </main>
-
-  );
+)
 
 }

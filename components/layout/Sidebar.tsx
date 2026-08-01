@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import {useEffect,useState} from "react";
 
 import {
 Home,
@@ -15,14 +14,52 @@ Settings,
 Radio
 } from "lucide-react";
 
-import {createClient} from "@/lib/supabase/client";
+
+export default function Sidebar({
+
+profile
+
+}:{
+
+profile:any;
+
+}){
 
 
-const baseNavigation=[
+const role = profile?.role;
+
+
+
+const dashboardHref =
+
+role === "admin"
+
+? "/admin/dashboard"
+
+:
+
+role === "manager"
+
+? "/dashboard/manager"
+
+:
+
+role === "regional_manager"
+
+? "/dashboard/regional"
+
+:
+
+"/dashboard/employee";
+
+
+
+
+const navigation=[
 
 {
 title:"Dashboard",
-href:"/dashboard/employee",
+href:dashboardHref,
 icon:Home
 },
 
@@ -71,105 +108,24 @@ icon:Settings
 ];
 
 
-const liveSalesItem={
 
+if(
+role === "manager" ||
+role === "regional_manager" ||
+role === "admin"
+){
+
+navigation.splice(
+2,
+0,
+{
 title:"Live Sales",
-
 href:"/live-sales",
-
 icon:Radio
-
-};
-
-
-
-export default function Sidebar(){
-
-
-const [role,setRole]=useState<string|null>(null);
-
-
-
-useEffect(()=>{
-
-
-async function loadRole(){
-
-
-const supabase=createClient();
-
-
-
-const {
-
-data:{
-user
+}
+);
 
 }
-
-}=await supabase.auth.getUser();
-
-
-
-if(!user)
-
-return;
-
-
-
-const {
-
-data:profile
-
-}=await supabase
-
-.from("profiles")
-
-.select("role")
-
-.eq("id",user.id)
-
-.single();
-
-
-
-setRole(profile?.role || null);
-
-
-}
-
-
-
-loadRole();
-
-
-},[]);
-
-
-
-const navigation =
-
-role==="manager" ||
-
-role==="regional_manager" ||
-
-role==="admin"
-
-?
-
-[
-
-...baseNavigation.slice(0,2),
-
-liveSalesItem,
-
-...baseNavigation.slice(2)
-
-]
-
-:
-
-baseNavigation;
 
 
 
@@ -193,7 +149,6 @@ items-center
 gap-3
 mb-10
 ">
-
 
 <div className="
 h-12
@@ -224,7 +179,6 @@ font-black
 SalesPulse
 
 </h1>
-
 
 <p className="
 text-xs
@@ -259,9 +213,9 @@ return (
 
 <Link
 
-href={item.href}
-
 key={item.title}
+
+href={item.href}
 
 className="
 flex
@@ -277,7 +231,6 @@ hover:text-white
 "
 
 >
-
 
 <Icon size={20}/>
 
@@ -297,8 +250,8 @@ hover:text-white
 })}
 
 
-</nav>
 
+</nav>
 
 
 <div className="
@@ -308,34 +261,9 @@ p-4
 ">
 
 
-<div className="
-flex
-items-center
-gap-3
-">
-
-
-<div className="
-h-10
-w-10
-rounded-xl
-bg-purple-600
-flex
-items-center
-justify-center
-font-bold
-">
-
-E
-
-</div>
-
-
-<div>
-
 <p className="font-bold">
 
-El Dorado
+{profile?.store?.name || "No Store"}
 
 </p>
 
@@ -345,28 +273,9 @@ text-xs
 text-slate-400
 ">
 
-Stockton, CA
+{profile?.store?.city || ""}
 
 </p>
-
-
-</div>
-
-
-</div>
-
-
-
-<div className="
-mt-4
-text-xs
-text-green-400
-font-bold
-">
-
-● Store Active
-
-</div>
 
 
 </div>

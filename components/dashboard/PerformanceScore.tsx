@@ -1,11 +1,46 @@
 interface PerformanceScoreProps{
+
 score:number;
+
 }
 
 
+
 export default function PerformanceScore({
+
 score
+
 }:PerformanceScoreProps){
+
+
+const rating =
+
+score >= 90
+
+?
+
+"Elite"
+
+:
+
+score >= 75
+
+?
+
+"Excellent"
+
+:
+
+score >= 50
+
+?
+
+"On Track"
+
+:
+
+"Needs Focus";
+
 
 
 return (
@@ -32,6 +67,7 @@ Performance Score
 
 
 
+
 <div className="
 mx-auto
 mt-6
@@ -45,14 +81,16 @@ items-center
 justify-center
 ">
 
+
 <div>
+
 
 <p className="
 text-4xl
 font-black
 ">
 
-{score}
+{Math.round(score)}
 
 </p>
 
@@ -63,14 +101,17 @@ font-bold
 text-purple-600
 ">
 
-Excellent
+{rating}
 
 </p>
 
 
 </div>
 
+
 </div>
+
+
 
 
 <p className="
@@ -79,9 +120,10 @@ text-sm
 text-slate-500
 ">
 
-Based on your sales performance
+Based on goal completion and sales performance
 
 </p>
+
 
 
 </div>

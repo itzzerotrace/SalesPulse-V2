@@ -1,5 +1,6 @@
 import DashboardShell from "@/components/layout/DashboardShell";
 import MetricCard from "@/components/dashboard/MetricCard";
+import AdminGoalAnalytics from "@/components/admin/AdminGoalAnalytics";
 
 
 export default function AdminDashboard(){
@@ -10,6 +11,7 @@ return (
 
 
 <div className="space-y-8">
+
 
 
 <section>
@@ -72,6 +74,13 @@ subtitle="Company coverage"
 
 
 
+<AdminGoalAnalytics/>
+
+
+
+
+
+
 <section className="grid gap-6 lg:grid-cols-2">
 
 
@@ -103,6 +112,7 @@ Review and approve new users.
 </div>
 
 
+
 <a
 href="/admin/users"
 className="
@@ -119,6 +129,7 @@ Manage Users
 
 
 </div>
+
 
 
 <div className="
@@ -195,6 +206,7 @@ Manage Stores
 
 
 
+
 <div className="
 mt-6
 rounded-2xl
@@ -225,6 +237,7 @@ Stockton location
 
 
 
+
 <section className="
 rounded-3xl
 border
@@ -246,6 +259,7 @@ System changes and important events.
 
 
 
+
 <div className="
 mt-6
 space-y-3
@@ -263,6 +277,7 @@ User approval activity will appear here.
 </div>
 
 
+
 <div className="
 rounded-2xl
 bg-slate-50
@@ -272,6 +287,7 @@ p-5
 Store updates will appear here.
 
 </div>
+
 
 
 </div>
