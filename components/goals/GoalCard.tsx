@@ -3,7 +3,7 @@ interface Props {
   current: string;
   target: string;
   percent: number;
-  icon: string;
+  icon: React.ReactNode;
 }
 
 export default function GoalCard({
@@ -13,36 +13,89 @@ export default function GoalCard({
   percent,
   icon,
 }: Props) {
-  const displayPercent = Math.max(0, Math.round(percent));
-  const progressWidth = Math.min(100, Math.max(0, percent));
+  const safePercent =
+    Number.isFinite(
+      Number(percent)
+    )
+      ? Math.max(
+          0,
+          Number(percent)
+        )
+      : 0;
+
+  const displayPercent =
+    Math.round(
+      safePercent
+    );
+
+  const progressWidth =
+    Math.min(
+      100,
+      safePercent
+    );
+
+  const status =
+    safePercent >= 100
+      ? "Goal Reached"
+      : safePercent >= 75
+        ? "Almost There"
+        : safePercent >= 50
+          ? "On The Way"
+          : safePercent > 0
+            ? "Keep Pushing"
+            : "Not Started";
 
   return (
-    <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:rounded-3xl sm:p-6">
-      <div className="flex items-start justify-between gap-3">
-        <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-purple-100 text-xl sm:h-12 sm:w-12 sm:rounded-2xl sm:text-2xl">
-          {icon}
+    <div className="group relative overflow-hidden rounded-[28px] border border-slate-200/80 bg-white p-5 shadow-[0_14px_40px_rgba(31,21,60,0.06)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_18px_50px_rgba(109,40,217,0.12)] sm:p-6">
+      <div className="pointer-events-none absolute -right-10 -top-10 h-28 w-28 rounded-full bg-purple-100/60 blur-2xl transition group-hover:bg-pink-100/70" />
+
+      <div className="relative">
+        <div className="flex items-start justify-between gap-4">
+          <div className="salespulse-gradient flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl text-white shadow-lg shadow-purple-500/20">
+            {icon}
+          </div>
+
+          <div className="text-right">
+            <p className="text-2xl font-black tracking-tight text-[#17102F]">
+              {displayPercent}%
+            </p>
+
+            <p className="text-[9px] font-black uppercase tracking-[0.16em] text-purple-600">
+              To Goal
+            </p>
+          </div>
         </div>
 
-        <span className="text-base font-black text-purple-600 sm:text-lg">
-          {displayPercent}%
-        </span>
-      </div>
+        <h3 className="mt-5 text-lg font-black text-[#17102F]">
+          {title}
+        </h3>
 
-      <h3 className="mt-4 text-lg font-black text-slate-900 sm:mt-5 sm:text-xl">
-        {title}
-      </h3>
+        <div className="mt-2 flex flex-wrap items-baseline gap-1.5">
+          <span className="text-sm font-black text-slate-700">
+            {current}
+          </span>
 
-      <p className="mt-1.5 text-sm font-medium text-slate-600 sm:mt-2">
-        {current} / {target}
-      </p>
+          <span className="text-xs font-bold text-slate-400">
+            of
+          </span>
 
-      <div className="mt-4 h-2.5 w-full overflow-hidden rounded-full bg-slate-100 sm:mt-5 sm:h-3">
-        <div
-          className="h-full rounded-full bg-gradient-to-r from-purple-600 to-indigo-600"
-          style={{
-            width: `${progressWidth}%`,
-          }}
-        />
+          <span className="text-sm font-bold text-slate-500">
+            {target}
+          </span>
+        </div>
+
+        <div className="mt-5 h-3 overflow-hidden rounded-full bg-[#ECEAF3]">
+          <div
+            className="salespulse-gradient h-full rounded-full shadow-[0_0_14px_rgba(247,37,133,0.2)] transition-all duration-700"
+            style={{
+              width: `${progressWidth}%`,
+            }}
+          />
+        </div>
+
+        <p className="mt-3 text-[11px] font-black uppercase tracking-wide text-slate-400">
+          {status}
+        </p>
       </div>
     </div>
   );

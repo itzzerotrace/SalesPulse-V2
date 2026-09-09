@@ -217,6 +217,10 @@ export async function POST(request: Request) {
           "status",
           "approved"
         )
+        .eq(
+          "role",
+          "employee"
+        )
         .in(
           "id",
           employeeIds
