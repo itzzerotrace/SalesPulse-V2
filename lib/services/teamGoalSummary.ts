@@ -1,18 +1,9 @@
 import { createClient } from "@/lib/supabase/server";
 import { getActiveStore } from "@/lib/stores/activeStore";
-
-function percent(
-  current: number,
-  goal: number
-) {
-  if (!goal) {
-    return 0;
-  }
-
-  return (
-    current / goal
-  ) * 100;
-}
+import {
+  getCaliforniaDate,
+  getMonthInfo,
+} from "@/lib/progress/date";
 
 export async function getTeamGoalSummary() {
   const supabase =
@@ -21,105 +12,116 @@ export async function getTeamGoalSummary() {
   const activeStore =
     await getActiveStore();
 
-  const storeId =
-    activeStore?.id;
-
-  if (!storeId) {
+  if (!activeStore?.id) {
     return 0;
   }
 
-  const { data: employees } =
-    await supabase
-      .from("profiles")
-      .select("id")
-      .eq(
-        "store_id",
-        storeId
-      )
-      .eq(
-        "status",
-        "approved"
-      );
+  const date =
+    getCaliforniaDate();
+
+  const {
+    monthName,
+    year,
+    monthStart,
+  } = getMonthInfo(date);
+
+  const {
+    data: employees,
+  } = await supabase
+    .from("profiles")
+    .select("id")
+    .eq(
+      "store_id",
+      activeStore.id
+    )
+    .eq(
+      "status",
+      "approved"
+    );
 
   let totalCurrent = 0;
   let totalGoal = 0;
-
-  const now = new Date();
-
-  const month =
-    now.toLocaleString(
-      "en-US",
-      {
-        month: "long",
-      }
-    );
-
-  const year =
-    now.getFullYear();
 
   for (
     const employee
     of employees || []
   ) {
-    const { data: goal } =
-      await supabase
-        .from("employee_goals")
-        .select("*")
+    const [
+      goalResult,
+      statsResult,
+    ] = await Promise.all([
+      supabase
+        .from(
+          "employee_goals"
+        )
+        .select(
+          "gp_goal"
+        )
         .eq(
           "employee_id",
           employee.id
         )
-        .eq("month", month)
-        .eq("year", year)
-        .maybeSingle();
+        .eq(
+          "month",
+          monthName
+        )
+        .eq(
+          "year",
+          year
+        )
+        .maybeSingle(),
 
-    const { data: sales } =
-      await supabase
-        .from("sales")
-        .select("gp,created_at")
+      supabase
+        .from(
+          "employee_daily_stats"
+        )
+        .select(
+          "gp,stat_date"
+        )
         .eq(
           "employee_id",
           employee.id
-        );
+        )
+        .gte(
+          "stat_date",
+          monthStart
+        )
+        .lte(
+          "stat_date",
+          date
+        )
+        .order(
+          "stat_date",
+          {
+            ascending: false,
+          }
+        )
+        .limit(1)
+        .maybeSingle(),
+    ]);
 
-    const monthStart =
-      new Date(
-        year,
-        now.getMonth(),
-        1
+    totalCurrent +=
+      Number(
+        statsResult.data
+          ?.gp || 0
       );
-
-    const gp = (
-      sales || []
-    )
-      .filter(
-        (sale: any) =>
-          new Date(
-            sale.created_at
-          ) >= monthStart
-      )
-      .reduce(
-        (
-          sum: number,
-          sale: any
-        ) =>
-          sum +
-          Number(
-            sale.gp || 0
-          ),
-        0
-      );
-
-    totalCurrent += gp;
 
     totalGoal +=
       Number(
-        goal?.gp_goal || 0
+        goalResult.data
+          ?.gp_goal || 0
       );
   }
 
-  return percent(
-    totalCurrent,
-    totalGoal
+  if (!totalGoal) {
+    return 0;
+  }
+
+  return Number(
+    (
+      (totalCurrent /
+        totalGoal) *
+      100
+    ).toFixed(1)
   );
 }

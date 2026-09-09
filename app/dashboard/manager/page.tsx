@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 import DashboardLayout from "@/components/layout/DashboardLayout";
 import PageHeader from "@/components/ui/PageHeader";
 
@@ -5,7 +7,6 @@ import StoreScore from "@/components/dashboard/StoreScore";
 import EmployeeLeaderboard from "@/components/dashboard/EmployeeLeaderboard";
 import TeamGoalCard from "@/components/dashboard/TeamGoalCard";
 import CoachingCenter from "@/components/dashboard/CoachingCenter";
-import SalesChart from "@/components/dashboard/SalesChart";
 import KpiCard from "@/components/dashboard/KpiCard";
 import TeamGoalProgress from "@/components/dashboard/TeamGoalProgress";
 
@@ -32,7 +33,7 @@ export default async function ManagerDashboard() {
       hsi: 0,
       bts: 0,
       accessories: 0,
-      commission: 0,
+      features: 0,
     };
 
   const storeName =
@@ -42,90 +43,122 @@ export default async function ManagerDashboard() {
   return (
     <DashboardLayout>
       <div className="space-y-5 sm:space-y-8">
-        <PageHeader
-          title={storeName}
-          subtitle={`${storeName} manager performance overview`}
-        />
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+          <PageHeader
+            title={storeName}
+            subtitle={`${storeName} progress overview`}
+          />
+
+          <Link
+            href="/daily-update"
+            className="inline-flex items-center justify-center rounded-xl bg-purple-600 px-5 py-3 text-sm font-black text-white transition hover:bg-purple-700"
+          >
+            Update Progress
+          </Link>
+        </div>
 
         <div className="grid grid-cols-2 gap-3 sm:gap-5 lg:grid-cols-4">
           <KpiCard
             title="Gross Profit"
-            value={`$${month.gp.toFixed(0)}`}
-            change="Store MTD"
+            value={`$${Number(
+              month.gp || 0
+            ).toLocaleString()}`}
+            change="MTD"
             icon="💰"
           />
 
           <KpiCard
             title="Voice"
-            value={String(month.voice)}
-            change="Store MTD"
+            value={String(
+              month.voice || 0
+            )}
+            change="MTD"
             icon="📱"
           />
 
           <KpiCard
             title="MiM"
-            value={String(month.mim)}
-            change="Store MTD"
+            value={String(
+              month.mim || 0
+            )}
+            change="MTD"
             icon="🔄"
           />
 
           <KpiCard
             title="Upgrade"
-            value={String(month.upgrade)}
-            change="Store MTD"
+            value={String(
+              month.upgrade || 0
+            )}
+            change="MTD"
             icon="⬆️"
           />
 
           <KpiCard
             title="HSI"
-            value={String(month.hsi)}
-            change="Store MTD"
+            value={String(
+              month.hsi || 0
+            )}
+            change="MTD"
             icon="🌐"
           />
 
           <KpiCard
             title="BTS"
-            value={String(month.bts)}
-            change="Store MTD"
+            value={String(
+              month.bts || 0
+            )}
+            change="MTD"
             icon="📡"
           />
 
           <KpiCard
             title="Accessories"
-            value={`$${month.accessories.toFixed(0)}`}
-            change="Store MTD"
+            value={`$${Number(
+              month.accessories ||
+                0
+            ).toLocaleString()}`}
+            change="MTD"
             icon="🎧"
           />
 
           <KpiCard
-            title="Commission"
-            value={`$${month.commission.toFixed(2)}`}
-            change="Store MTD"
-            icon="💵"
+            title="Features"
+            value={`$${Number(
+              month.features || 0
+            ).toLocaleString(
+              undefined,
+              {
+                maximumFractionDigits: 2,
+              }
+            )}`}
+            change="MTD"
+            icon="⭐"
           />
         </div>
 
         <div className="grid gap-5 lg:grid-cols-3">
           <StoreScore
-            score={teamPercent}
+            score={
+              teamPercent
+            }
           />
 
           <TeamGoalCard
-            percent={teamPercent}
+            percent={
+              teamPercent
+            }
           />
 
           <CoachingCenter
-            metric="Live coaching"
-            message="Performance insights will be generated from team results."
+            metric="Progress Tracker"
+            message="Performance is based on the latest MTD numbers entered for the selected store."
           />
         </div>
 
         <TeamGoalProgress />
 
-        <div className="grid gap-5 lg:grid-cols-2">
-          <EmployeeLeaderboard />
-          <SalesChart />
-        </div>
+        <EmployeeLeaderboard />
       </div>
     </DashboardLayout>
   );

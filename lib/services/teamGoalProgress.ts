@@ -1,5 +1,9 @@
 import { createClient } from "@/lib/supabase/server";
 import { getActiveStore } from "@/lib/stores/activeStore";
+import {
+  getCaliforniaDate,
+  getMonthInfo,
+} from "@/lib/progress/date";
 
 function percent(
   current: number,
@@ -24,30 +28,36 @@ export async function getTeamGoalProgress() {
   const activeStore =
     await getActiveStore();
 
-  const storeId =
-    activeStore?.id;
-
-  if (!storeId) {
+  if (!activeStore?.id) {
     return [];
   }
+
+  const date =
+    getCaliforniaDate();
+
+  const {
+    monthName,
+    year,
+    monthStart,
+  } = getMonthInfo(date);
 
   const {
     data: employees,
     error: employeeError,
   } = await supabase
     .from("profiles")
-    .select(`
-      id,
-      full_name
-    `)
+    .select(
+      "id,full_name"
+    )
     .eq(
       "store_id",
-      storeId
+      activeStore.id
     )
     .eq(
       "status",
       "approved"
-    );
+    )
+    .order("full_name");
 
   if (employeeError) {
     throw employeeError;
@@ -55,149 +65,147 @@ export async function getTeamGoalProgress() {
 
   const results = [];
 
-  const now = new Date();
-
-  const month =
-    now.toLocaleString(
-      "en-US",
-      {
-        month: "long",
-      }
-    );
-
-  const year =
-    now.getFullYear();
-
-  const monthStart =
-    new Date(
-      year,
-      now.getMonth(),
-      1
-    );
-
   for (
     const employee
     of employees || []
   ) {
-    const { data: goal } =
-      await supabase
-        .from("employee_goals")
+    const [
+      goalResult,
+      statsResult,
+    ] = await Promise.all([
+      supabase
+        .from(
+          "employee_goals"
+        )
         .select("*")
         .eq(
           "employee_id",
           employee.id
         )
-        .eq("month", month)
-        .eq("year", year)
-        .maybeSingle();
+        .eq(
+          "month",
+          monthName
+        )
+        .eq(
+          "year",
+          year
+        )
+        .maybeSingle(),
 
-    const { data: sales } =
-      await supabase
-        .from("sales")
+      supabase
+        .from(
+          "employee_daily_stats"
+        )
         .select("*")
         .eq(
           "employee_id",
           employee.id
-        );
+        )
+        .gte(
+          "stat_date",
+          monthStart
+        )
+        .lte(
+          "stat_date",
+          date
+        )
+        .order(
+          "stat_date",
+          {
+            ascending: false,
+          }
+        )
+        .limit(1)
+        .maybeSingle(),
+    ]);
 
-    const totals = {
-      gp: 0,
-      voice: 0,
-      mim: 0,
-      upgrade: 0,
-      hsi: 0,
-      bts: 0,
-      accessories: 0,
-    };
+    const goal =
+      goalResult.data;
 
-    (
-      sales || []
-    )
-      .filter(
-        (sale: any) =>
-          new Date(
-            sale.created_at
-          ) >= monthStart
-      )
-      .forEach(
-        (sale: any) => {
-          totals.gp +=
-            Number(
-              sale.gp || 0
-            );
-
-          totals.voice +=
-            Number(
-              sale.voice || 0
-            );
-
-          totals.mim +=
-            Number(
-              sale.mim || 0
-            );
-
-          totals.upgrade +=
-            Number(
-              sale.upgrade || 0
-            );
-
-          totals.hsi +=
-            Number(
-              sale.hsi || 0
-            );
-
-          totals.bts +=
-            Number(
-              sale.bts || 0
-            );
-
-          totals.accessories +=
-            Number(
-              sale.accessories ||
-                0
-            );
-        }
-      );
+    const stats =
+      statsResult.data || {};
 
     results.push({
       employee,
 
-      gp: totals.gp,
+      gp:
+        Number(
+          stats.gp || 0
+        ),
 
       goals: {
         gp: percent(
-          totals.gp,
-          goal?.gp_goal || 0
+          Number(
+            stats.gp || 0
+          ),
+          Number(
+            goal?.gp_goal || 0
+          )
         ),
 
         voice: percent(
-          totals.voice,
-          goal?.voice_goal || 0
+          Number(
+            stats.voice || 0
+          ),
+          Number(
+            goal?.voice_goal || 0
+          )
         ),
 
         mim: percent(
-          totals.mim,
-          goal?.mim_goal || 0
+          Number(
+            stats.mim || 0
+          ),
+          Number(
+            goal?.mim_goal || 0
+          )
         ),
 
         upgrade: percent(
-          totals.upgrade,
-          goal?.upgrade_goal || 0
+          Number(
+            stats.upgrade || 0
+          ),
+          Number(
+            goal?.upgrade_goal || 0
+          )
         ),
 
         hsi: percent(
-          totals.hsi,
-          goal?.hsi_goal || 0
+          Number(
+            stats.hsi || 0
+          ),
+          Number(
+            goal?.hsi_goal || 0
+          )
         ),
 
         bts: percent(
-          totals.bts,
-          goal?.bts_goal || 0
+          Number(
+            stats.bts || 0
+          ),
+          Number(
+            goal?.bts_goal || 0
+          )
         ),
 
         accessories: percent(
-          totals.accessories,
-          goal?.accessory_goal || 0
+          Number(
+            stats.accessories || 0
+          ),
+          Number(
+            goal?.accessory_goal ||
+              0
+          )
+        ),
+
+        features: percent(
+          Number(
+            stats.features || 0
+          ),
+          Number(
+            goal?.features_goal ||
+              0
+          )
         ),
       },
     });
