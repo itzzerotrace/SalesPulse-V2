@@ -1,4 +1,4 @@
-import DashboardShell from "@/components/layout/DashboardShell";
+import DashboardLayout from "@/components/layout/DashboardLayout";
 
 import GoalsHeader from "@/components/goals/GoalsHeader";
 import GoalScore from "@/components/goals/GoalScore";
@@ -7,47 +7,88 @@ import GoalCard from "@/components/goals/GoalCard";
 import { getDashboardStats } from "@/lib/dashboard/getDashboardStats";
 
 export default async function GoalsPage() {
-  const stats = await getDashboardStats();
+  const stats =
+    await getDashboardStats();
 
   if (!stats) {
     return null;
   }
 
-  const goals = stats.goals;
+  const goals =
+    stats.goals;
 
-  const score = Math.round(
-    (
-      goals.gp.percent +
-      goals.voice.percent +
-      goals.mim.percent +
-      goals.upgrade.percent +
-      goals.hsi.percent +
-      goals.bts.percent +
-      goals.accessories.percent
-    ) / 7
-  );
+  const goalMetrics = [
+    goals.gp,
+    goals.voice,
+    goals.mim,
+    goals.upgrade,
+    goals.hsi,
+    goals.bts,
+    goals.accessories,
+    goals.features,
+  ];
+
+  const goalsWithTargets =
+    goalMetrics.filter(
+      (goal) =>
+        Number(goal.goal) > 0
+    );
+
+  const score =
+    goalsWithTargets.length > 0
+      ? Math.round(
+          goalsWithTargets.reduce(
+            (sum, goal) =>
+              sum +
+              Number(
+                goal.percent ||
+                  0
+              ),
+            0
+          ) /
+            goalsWithTargets.length
+        )
+      : 0;
 
   return (
-    <DashboardShell>
+    <DashboardLayout>
       <div className="space-y-6 sm:space-y-8">
         <GoalsHeader />
 
         <section className="grid grid-cols-1 gap-4 sm:gap-6 lg:grid-cols-3">
-          <GoalScore score={score} />
+          <GoalScore
+            score={score}
+          />
 
           <GoalCard
             title="Gross Profit"
-            current={`$${goals.gp.current.toLocaleString()}`}
-            target={`$${goals.gp.goal.toLocaleString()}`}
-            percent={goals.gp.percent}
+            current={`$${Number(
+              goals.gp.current ||
+                0
+            ).toLocaleString()}`}
+            target={`$${Number(
+              goals.gp.goal ||
+                0
+            ).toLocaleString()}`}
+            percent={
+              goals.gp.percent
+            }
             icon="💰"
           />
 
           <GoalCard
             title="Voice"
-            current={String(goals.voice.current)}
-            target={String(goals.voice.goal)}
-            percent={goals.voice.percent}
+            current={String(
+              goals.voice
+                .current || 0
+            )}
+            target={String(
+              goals.voice.goal ||
+                0
+            )}
+            percent={
+              goals.voice.percent
+            }
             icon="📱"
           />
         </section>
@@ -55,45 +96,114 @@ export default async function GoalsPage() {
         <section className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3">
           <GoalCard
             title="MiM"
-            current={String(goals.mim.current)}
-            target={String(goals.mim.goal)}
-            percent={goals.mim.percent}
+            current={String(
+              goals.mim.current ||
+                0
+            )}
+            target={String(
+              goals.mim.goal ||
+                0
+            )}
+            percent={
+              goals.mim.percent
+            }
             icon="🔄"
           />
 
           <GoalCard
             title="Upgrade"
-            current={String(goals.upgrade.current)}
-            target={String(goals.upgrade.goal)}
-            percent={goals.upgrade.percent}
+            current={String(
+              goals.upgrade
+                .current || 0
+            )}
+            target={String(
+              goals.upgrade.goal ||
+                0
+            )}
+            percent={
+              goals.upgrade
+                .percent
+            }
             icon="⬆️"
           />
 
           <GoalCard
             title="HSI"
-            current={String(goals.hsi.current)}
-            target={String(goals.hsi.goal)}
-            percent={goals.hsi.percent}
+            current={String(
+              goals.hsi.current ||
+                0
+            )}
+            target={String(
+              goals.hsi.goal ||
+                0
+            )}
+            percent={
+              goals.hsi.percent
+            }
             icon="🌐"
           />
 
           <GoalCard
             title="BTS"
-            current={String(goals.bts.current)}
-            target={String(goals.bts.goal)}
-            percent={goals.bts.percent}
-            icon="🏢"
+            current={String(
+              goals.bts.current ||
+                0
+            )}
+            target={String(
+              goals.bts.goal ||
+                0
+            )}
+            percent={
+              goals.bts.percent
+            }
+            icon="📡"
           />
 
           <GoalCard
             title="Accessories"
-            current={`$${goals.accessories.current.toLocaleString()}`}
-            target={`$${goals.accessories.goal.toLocaleString()}`}
-            percent={goals.accessories.percent}
+            current={`$${Number(
+              goals.accessories
+                .current || 0
+            ).toLocaleString()}`}
+            target={`$${Number(
+              goals.accessories
+                .goal || 0
+            ).toLocaleString()}`}
+            percent={
+              goals.accessories
+                .percent
+            }
             icon="🎧"
+          />
+
+          <GoalCard
+            title="Features"
+            current={`$${Number(
+              goals.features
+                .current || 0
+            ).toLocaleString(
+              undefined,
+              {
+                maximumFractionDigits: 2,
+              }
+            )}`}
+            target={`$${Number(
+              goals.features.goal ||
+                0
+            ).toLocaleString(
+              undefined,
+              {
+                maximumFractionDigits: 2,
+              }
+            )}`}
+            percent={
+              goals.features
+                .percent
+            }
+            icon="⭐"
           />
         </section>
       </div>
-    </DashboardShell>
+    </DashboardLayout>
   );
 }

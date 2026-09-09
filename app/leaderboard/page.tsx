@@ -1,10 +1,11 @@
-import DashboardShell from "@/components/layout/DashboardShell";
+import DashboardLayout from "@/components/layout/DashboardLayout";
+
 import LeaderboardHeader from "@/components/leaderboard/LeaderboardHeader";
 import EmployeeRankingCard from "@/components/leaderboard/EmployeeRankingCard";
 
 export default function Leaderboard() {
   return (
-    <DashboardShell>
+    <DashboardLayout>
       <div className="space-y-6 sm:space-y-8">
         <LeaderboardHeader />
 
@@ -28,6 +29,6 @@ export default function Leaderboard() {
           />
         </section>
       </div>
-    </DashboardShell>
+    </DashboardLayout>
   );
 }
