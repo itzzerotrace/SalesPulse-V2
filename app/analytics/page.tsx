@@ -1,33 +1,6 @@
-import DashboardShell from "@/components/layout/DashboardShell";
-import AnalyticsSection from "@/components/dashboard/AnalyticsSection";
+import { redirect } from "next/navigation";
+import { getDashboardRoute } from "@/lib/auth/dashboardRoute";
 
-
-export default function Analytics(){
-
-return (
-
-<DashboardShell>
-
-<div className="space-y-8">
-
-
-<h1 className="
-text-4xl
-font-black
-">
-
-Analytics
-
-</h1>
-
-
-<AnalyticsSection/>
-
-
-</div>
-
-</DashboardShell>
-
-)
-
+export default async function AnalyticsPage() {
+  redirect(await getDashboardRoute());
 }

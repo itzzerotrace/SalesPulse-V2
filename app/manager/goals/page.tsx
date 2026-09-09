@@ -1,39 +1,5 @@
-import DashboardShell from "@/components/layout/DashboardShell";
-import ManagerGoalsClient from "@/components/goals/ManagerGoalsClient";
+import { redirect } from "next/navigation";
 
-
-export default function ManagerGoals(){
-
-
-return (
-
-<DashboardShell>
-
-
-<div className="
-space-y-8
-">
-
-
-<h1 className="
-text-4xl
-font-black
-">
-
-Team Goals
-
-</h1>
-
-
-
-<ManagerGoalsClient/>
-
-
-</div>
-
-
-</DashboardShell>
-
-)
-
+export default function ManagerGoalsPage() {
+  redirect("/team");
 }

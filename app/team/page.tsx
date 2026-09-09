@@ -7,6 +7,7 @@ import AddEmployeeForm from "@/components/team/AddEmployeeForm";
 import { getUserContext } from "@/lib/auth/userContext";
 import { createClient } from "@/lib/supabase/server";
 import { getActiveStore } from "@/lib/stores/activeStore";
+import { getMonthInfo } from "@/lib/progress/date";
 
 export default async function TeamPage() {
   const supabase =
@@ -51,6 +52,10 @@ export default async function TeamPage() {
       .eq(
         "status",
         "approved"
+      )
+      .eq(
+        "role",
+        "employee"
       );
 
     employees =
@@ -91,19 +96,14 @@ export default async function TeamPage() {
     }
   }
 
-  const currentDate =
-    new Date();
+  const monthInfo =
+    getMonthInfo();
 
   const currentMonth =
-    currentDate.toLocaleString(
-      "en-US",
-      {
-        month: "long",
-      }
-    );
+    monthInfo.monthName;
 
   const currentYear =
-    currentDate.getFullYear();
+    monthInfo.year;
 
   const employeesWithGoals =
     await Promise.all(
