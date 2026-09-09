@@ -12,43 +12,64 @@ export default function DashboardShell({
   profile?: any;
 }) {
   const role =
-    profile?.role ||
-    "";
+    profile?.role || "";
 
   const stores =
-    profile?.stores ||
-    [];
+    profile?.stores || [];
 
   const activeStoreId =
     profile?.store?.id;
 
   return (
-    <div className="flex min-h-screen bg-[#F8FAFC]">
-      <Sidebar profile={profile} />
+    <div className="min-h-screen bg-[#F6F7FB] lg:flex">
+      <Sidebar
+        profile={profile}
+      />
 
       <div className="min-w-0 flex-1">
-        <header className="border-b bg-white px-4 py-3 lg:hidden">
-          <div className="flex items-center">
-            <MobileMenu profile={profile} />
+        <header className="sticky top-0 z-30 border-b border-white/10 bg-[#120C28]/95 px-4 py-3 text-white shadow-lg shadow-purple-950/10 backdrop-blur-xl lg:hidden">
+          <div className="flex min-h-12 items-center justify-between gap-3">
+            <div className="flex min-w-0 items-center gap-3">
+              <MobileMenu
+                profile={profile}
+              />
 
-            <div className="ml-3 text-xl font-black text-slate-900">
-              SalesPulse
+              <div className="min-w-0">
+                <div className="flex items-center gap-2">
+                  <div className="salespulse-gradient flex h-8 w-8 shrink-0 items-center justify-center rounded-xl text-sm font-black text-white shadow-lg shadow-pink-500/20">
+                    S
+                  </div>
+
+                  <span className="truncate text-xl font-black tracking-tight">
+                    SalesPulse
+                  </span>
+                </div>
+              </div>
             </div>
+
+            <div className="h-2.5 w-2.5 shrink-0 rounded-full bg-pink-500 shadow-[0_0_14px_rgba(247,37,133,0.9)]" />
           </div>
 
-          {role === "manager" && stores.length > 1 && (
-            <div className="mt-3">
-              <StoreSwitcher
-                stores={stores}
-                activeStoreId={activeStoreId}
-              />
-            </div>
-          )}
+          {role === "manager" &&
+            stores.length > 1 && (
+              <div className="mt-3 border-t border-white/10 pt-3">
+                <StoreSwitcher
+                  stores={
+                    stores
+                  }
+                  activeStoreId={
+                    activeStoreId
+                  }
+                />
+              </div>
+            )}
         </header>
 
-        <Topbar profile={profile} />
+        <Topbar
+          profile={profile}
+        />
 
-        <main className="mx-auto max-w-[1600px] p-4 sm:p-6 lg:p-8">
+        <main className="mx-auto w-full max-w-[1600px] px-4 pb-10 pt-5 sm:px-6 sm:pb-12 sm:pt-7 lg:px-8 lg:py-8 xl:px-10">
           {children}
         </main>
       </div>

@@ -1,6 +1,9 @@
 "use client";
 
 import Link from "next/link";
+import {
+  usePathname,
+} from "next/navigation";
 
 import {
   Home,
@@ -9,6 +12,7 @@ import {
   Trophy,
   Users,
   Settings,
+  Zap,
 } from "lucide-react";
 
 export default function Sidebar({
@@ -16,6 +20,9 @@ export default function Sidebar({
 }: {
   profile: any;
 }) {
+  const pathname =
+    usePathname();
+
   const role =
     profile?.role;
 
@@ -39,13 +46,15 @@ export default function Sidebar({
 
   if (
     role === "manager" ||
-    role === "regional_manager" ||
+    role ===
+      "regional_manager" ||
     role === "admin"
   ) {
     navigation.push({
       title: "Daily Update",
       href: "/daily-update",
-      icon: ClipboardPenLine,
+      icon:
+        ClipboardPenLine,
     });
   }
 
@@ -72,29 +81,78 @@ export default function Sidebar({
     }
   );
 
+  function isActive(
+    href: string
+  ) {
+    if (
+      href.includes(
+        "/dashboard"
+      )
+    ) {
+      return (
+        pathname ===
+        href
+      );
+    }
+
+    return (
+      pathname === href ||
+      pathname.startsWith(
+        `${href}/`
+      )
+    );
+  }
+
+  const roleLabel =
+    String(role || "")
+      .replaceAll("_", " ")
+      .replace(
+        /\b\w/g,
+        (letter) =>
+          letter.toUpperCase()
+      );
+
   return (
-    <aside className="hidden min-h-screen w-72 flex-col bg-[#0B0924] p-6 text-white lg:flex">
-      <div className="mb-10 flex items-center gap-3">
-        <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-purple-500 to-indigo-600 text-xl font-black">
+    <aside className="salespulse-dark-gradient sticky top-0 hidden h-screen w-[286px] shrink-0 flex-col overflow-hidden border-r border-white/5 px-5 py-6 text-white lg:flex">
+      <div className="pointer-events-none absolute -left-24 top-40 h-52 w-52 rounded-full bg-purple-600/10 blur-3xl" />
+
+      <div className="relative mb-8 flex items-center gap-3 px-2">
+        <div className="salespulse-gradient flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl text-xl font-black shadow-xl shadow-pink-500/20">
           S
         </div>
 
-        <div>
-          <h1 className="text-xl font-black">
-            SalesPulse
-          </h1>
+        <div className="min-w-0">
+          <div className="flex items-center gap-2">
+            <h1 className="truncate text-xl font-black tracking-tight">
+              SalesPulse
+            </h1>
 
-          <p className="text-xs text-slate-400">
-            Performance Tracker
+            <Zap
+              size={15}
+              className="fill-pink-500 text-pink-500"
+            />
+          </div>
+
+          <p className="mt-0.5 text-[11px] font-bold uppercase tracking-[0.18em] text-purple-300">
+            Performance
           </p>
         </div>
       </div>
 
-      <nav className="flex-1 space-y-2">
+      <div className="mb-3 px-3 text-[10px] font-black uppercase tracking-[0.2em] text-white/35">
+        Workspace
+      </div>
+
+      <nav className="relative flex-1 space-y-1.5">
         {navigation.map(
           (item) => {
             const Icon =
               item.icon;
+
+            const active =
+              isActive(
+                item.href
+              );
 
             return (
               <Link
@@ -104,34 +162,75 @@ export default function Sidebar({
                 href={
                   item.href
                 }
-                className="flex items-center gap-4 rounded-xl px-4 py-3 text-slate-300 transition hover:bg-purple-600 hover:text-white"
+                className={`group relative flex min-h-12 items-center gap-3.5 overflow-hidden rounded-2xl px-4 py-3 transition-all ${
+                  active
+                    ? "bg-white text-[#17102F] shadow-xl shadow-black/15"
+                    : "text-white/65 hover:bg-white/8 hover:text-white"
+                }`}
               >
+                {active && (
+                  <span className="salespulse-gradient absolute bottom-2 left-0 top-2 w-1 rounded-r-full" />
+                )}
+
                 <Icon
                   size={20}
+                  strokeWidth={
+                    active
+                      ? 2.7
+                      : 2
+                  }
+                  className={
+                    active
+                      ? "text-purple-700"
+                      : "transition group-hover:text-pink-300"
+                  }
                 />
 
-                <span className="font-semibold">
+                <span className="text-sm font-bold">
                   {
                     item.title
                   }
                 </span>
+
+                {active && (
+                  <span className="ml-auto h-2 w-2 rounded-full bg-pink-500" />
+                )}
               </Link>
             );
           }
         )}
       </nav>
 
-      <div className="rounded-2xl bg-white/10 p-4">
-        <p className="font-bold">
-          {profile?.store
-            ?.name ||
-            "No Store"}
-        </p>
+      <div className="relative mt-6 overflow-hidden rounded-3xl border border-white/10 bg-white/[0.06] p-4 backdrop-blur">
+        <div className="absolute -right-7 -top-8 h-20 w-20 rounded-full bg-pink-500/15 blur-2xl" />
 
-        <p className="text-xs text-slate-400">
+        <div className="relative">
+          <p className="text-[10px] font-black uppercase tracking-[0.18em] text-purple-300">
+            Active Store
+          </p>
+
+          <p className="mt-2 truncate text-base font-black">
+            {profile?.store
+              ?.name ||
+              "No Store"}
+          </p>
+
           {profile?.store
-            ?.city || ""}
-        </p>
+            ?.city && (
+            <p className="mt-1 truncate text-xs font-medium text-white/45">
+              {
+                profile
+                  .store.city
+              }
+            </p>
+          )}
+
+          {roleLabel && (
+            <div className="mt-4 inline-flex rounded-full border border-pink-400/20 bg-pink-500/10 px-3 py-1 text-[10px] font-black uppercase tracking-wider text-pink-300">
+              {roleLabel}
+            </div>
+          )}
+        </div>
       </div>
     </aside>
   );

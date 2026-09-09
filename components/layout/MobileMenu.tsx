@@ -3,26 +3,46 @@
 import {
   useState,
 } from "react";
+
 import Link from "next/link";
+
+import {
+  usePathname,
+  useRouter,
+} from "next/navigation";
+
 import {
   Menu,
   X,
   LogOut,
+  Home,
+  ClipboardPenLine,
+  Target,
+  Trophy,
+  Users,
+  Settings,
+  Zap,
 } from "lucide-react";
 
-import { createClient } from "@/lib/supabase/client";
-import { useRouter } from "next/navigation";
+import {
+  createClient,
+} from "@/lib/supabase/client";
 
 export default function MobileMenu({
   profile,
 }: {
   profile?: any;
 }) {
-  const [open, setOpen] =
-    useState(false);
+  const [
+    open,
+    setOpen,
+  ] = useState(false);
 
   const router =
     useRouter();
+
+  const pathname =
+    usePathname();
 
   const role =
     profile?.role;
@@ -41,19 +61,21 @@ export default function MobileMenu({
     {
       title: "Dashboard",
       href: dashboardHref,
+      icon: Home,
     },
   ];
 
   if (
     role === "manager" ||
-    role === "regional_manager" ||
+    role ===
+      "regional_manager" ||
     role === "admin"
   ) {
     links.push({
-      title:
-        "Daily Update",
-      href:
-        "/daily-update",
+      title: "Daily Update",
+      href: "/daily-update",
+      icon:
+        ClipboardPenLine,
     });
   }
 
@@ -61,25 +83,46 @@ export default function MobileMenu({
     {
       title: "Goals",
       href: "/goals",
+      icon: Target,
     },
     {
       title: "Rankings",
-      href:
-        "/leaderboard",
+      href: "/leaderboard",
+      icon: Trophy,
     },
     {
       title: "Team",
       href: "/team",
-    },
-    {
-      title: "Reports",
-      href: "/reports",
+      icon: Users,
     },
     {
       title: "Settings",
       href: "/settings",
+      icon: Settings,
     }
   );
+
+  function isActive(
+    href: string
+  ) {
+    if (
+      href.includes(
+        "/dashboard"
+      )
+    ) {
+      return (
+        pathname ===
+        href
+      );
+    }
+
+    return (
+      pathname === href ||
+      pathname.startsWith(
+        `${href}/`
+      )
+    );
+  }
 
   async function logout() {
     const supabase =
@@ -87,9 +130,17 @@ export default function MobileMenu({
 
     await supabase.auth.signOut();
 
-    router.push("/login");
+    router.push(
+      "/login"
+    );
+
     router.refresh();
   }
+
+  const name =
+    profile?.full_name ||
+    profile?.name ||
+    "User";
 
   return (
     <>
@@ -97,23 +148,51 @@ export default function MobileMenu({
         onClick={() =>
           setOpen(true)
         }
-        className="rounded-xl p-3 text-slate-900 hover:bg-slate-100 lg:hidden"
+        aria-label="Open navigation"
+        className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl border border-white/10 bg-white/10 text-white transition active:scale-95"
       >
-        <Menu size={26} />
+        <Menu
+          size={23}
+        />
       </button>
 
       {open && (
-        <div className="fixed inset-0 z-50 bg-black/40 lg:hidden">
-          <div className="absolute left-0 top-0 h-full w-72 overflow-y-auto bg-white p-6 shadow-xl">
-            <div className="mb-8 flex items-center justify-between">
-              <div>
-                <h2 className="text-2xl font-black text-slate-900">
-                  SalesPulse
-                </h2>
+        <div
+          className="fixed inset-0 z-50 bg-[#080512]/70 backdrop-blur-sm lg:hidden"
+          onClick={() =>
+            setOpen(false)
+          }
+        >
+          <div
+            className="salespulse-dark-gradient absolute bottom-0 left-0 top-0 flex w-[86%] max-w-[330px] flex-col overflow-y-auto border-r border-white/10 p-5 text-white shadow-2xl"
+            onClick={(
+              event
+            ) =>
+              event.stopPropagation()
+            }
+          >
+            <div className="mb-7 flex items-center justify-between gap-3">
+              <div className="flex min-w-0 items-center gap-3">
+                <div className="salespulse-gradient flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl text-lg font-black shadow-lg shadow-pink-500/20">
+                  S
+                </div>
 
-                <p className="text-xs font-semibold text-slate-500">
-                  Performance Tracker
-                </p>
+                <div className="min-w-0">
+                  <div className="flex items-center gap-1.5">
+                    <h2 className="truncate text-xl font-black">
+                      SalesPulse
+                    </h2>
+
+                    <Zap
+                      size={14}
+                      className="fill-pink-500 text-pink-500"
+                    />
+                  </div>
+
+                  <p className="text-[10px] font-black uppercase tracking-[0.18em] text-purple-300">
+                    Performance
+                  </p>
+                </div>
               </div>
 
               <button
@@ -122,48 +201,96 @@ export default function MobileMenu({
                     false
                   )
                 }
-                className="rounded-xl p-2 text-slate-900"
+                aria-label="Close navigation"
+                className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white/10 text-white"
               >
-                <X />
-              </button>
-            </div>
-
-            <div className="space-y-2">
-              {links.map(
-                (link) => (
-                  <Link
-                    key={
-                      link.title
-                    }
-                    href={
-                      link.href
-                    }
-                    onClick={() =>
-                      setOpen(
-                        false
-                      )
-                    }
-                    className="block rounded-xl px-4 py-3 font-bold text-slate-900 hover:bg-purple-100"
-                  >
-                    {
-                      link.title
-                    }
-                  </Link>
-                )
-              )}
-
-              <button
-                onClick={
-                  logout
-                }
-                className="mt-6 flex w-full items-center gap-3 rounded-xl bg-slate-900 px-4 py-3 font-bold text-white"
-              >
-                <LogOut
-                  size={18}
+                <X
+                  size={20}
                 />
-                Logout
               </button>
             </div>
+
+            <div className="mb-5 rounded-2xl border border-white/10 bg-white/[0.06] p-4">
+              <p className="truncate font-black">
+                {name}
+              </p>
+
+              <p className="mt-1 truncate text-xs font-medium text-white/45">
+                {profile?.store
+                  ?.name ||
+                  "SalesPulse"}
+              </p>
+            </div>
+
+            <p className="mb-2 px-3 text-[10px] font-black uppercase tracking-[0.2em] text-white/35">
+              Workspace
+            </p>
+
+            <nav className="flex-1 space-y-1.5">
+              {links.map(
+                (link) => {
+                  const Icon =
+                    link.icon;
+
+                  const active =
+                    isActive(
+                      link.href
+                    );
+
+                  return (
+                    <Link
+                      key={
+                        link.title
+                      }
+                      href={
+                        link.href
+                      }
+                      onClick={() =>
+                        setOpen(
+                          false
+                        )
+                      }
+                      className={`flex min-h-12 items-center gap-3 rounded-2xl px-4 py-3 text-sm font-bold transition ${
+                        active
+                          ? "bg-white text-[#17102F]"
+                          : "text-white/65 hover:bg-white/10 hover:text-white"
+                      }`}
+                    >
+                      <Icon
+                        size={
+                          19
+                        }
+                        className={
+                          active
+                            ? "text-purple-700"
+                            : ""
+                        }
+                      />
+
+                      {
+                        link.title
+                      }
+
+                      {active && (
+                        <span className="ml-auto h-2 w-2 rounded-full bg-pink-500" />
+                      )}
+                    </Link>
+                  );
+                }
+              )}
+            </nav>
+
+            <button
+              onClick={
+                logout
+              }
+              className="mt-6 flex w-full items-center justify-center gap-3 rounded-2xl border border-white/10 bg-white/10 px-4 py-3 font-bold text-white transition hover:bg-white/15"
+            >
+              <LogOut
+                size={18}
+              />
+              Logout
+            </button>
           </div>
         </div>
       )}
