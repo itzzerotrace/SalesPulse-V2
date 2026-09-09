@@ -57,6 +57,10 @@ export async function getTeamGoalProgress() {
       "status",
       "approved"
     )
+    .eq(
+      "role",
+      "employee"
+    )
     .order("full_name");
 
   if (employeeError) {

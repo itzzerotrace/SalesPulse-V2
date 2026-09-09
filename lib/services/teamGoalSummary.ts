@@ -27,6 +27,7 @@ export async function getTeamGoalSummary() {
 
   const {
     data: employees,
+    error: employeeError,
   } = await supabase
     .from("profiles")
     .select("id")
@@ -37,14 +38,26 @@ export async function getTeamGoalSummary() {
     .eq(
       "status",
       "approved"
+    )
+    .eq(
+      "role",
+      "employee"
     );
+
+  if (employeeError) {
+    console.error(
+      "TEAM SUMMARY EMPLOYEE ERROR:",
+      employeeError
+    );
+    return 0;
+  }
 
   let totalCurrent = 0;
   let totalGoal = 0;
 
   for (
-    const employee
-    of employees || []
+    const employee of employees ||
+    []
   ) {
     const [
       goalResult,
@@ -54,9 +67,7 @@ export async function getTeamGoalSummary() {
         .from(
           "employee_goals"
         )
-        .select(
-          "gp_goal"
-        )
+        .select("gp_goal")
         .eq(
           "employee_id",
           employee.id
@@ -100,10 +111,24 @@ export async function getTeamGoalSummary() {
         .maybeSingle(),
     ]);
 
+    if (goalResult.error) {
+      console.error(
+        "TEAM SUMMARY GOAL ERROR:",
+        goalResult.error
+      );
+    }
+
+    if (statsResult.error) {
+      console.error(
+        "TEAM SUMMARY STATS ERROR:",
+        statsResult.error
+      );
+    }
+
     totalCurrent +=
       Number(
-        statsResult.data
-          ?.gp || 0
+        statsResult.data?.gp ||
+          0
       );
 
     totalGoal +=
