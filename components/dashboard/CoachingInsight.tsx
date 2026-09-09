@@ -1,56 +1,17 @@
-export default function CoachingInsight(){
+export default function CoachingInsight() {
+  return (
+    <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+      <p className="text-sm font-black uppercase tracking-wide text-purple-600">
+        Progress Insight
+      </p>
 
+      <h3 className="mt-2 text-xl font-black text-slate-900">
+        Keep building momentum
+      </h3>
 
-return (
-
-<div className="
-rounded-3xl
-border
-border-purple-100
-bg-gradient-to-br
-from-purple-50
-to-indigo-50
-p-8
-">
-
-
-<h2 className="
-text-xl
-font-black
-">
-
-💡 Sales Insight
-
-</h2>
-
-
-<p className="
-mt-4
-text-slate-600
-">
-
-Keep focusing on Voice and HSI opportunities to improve your monthly performance.
-
-</p>
-
-
-
-<div className="
-mt-6
-rounded-xl
-bg-white
-p-4
-font-bold
-text-purple-700
-">
-
-Next Goal: Improve conversion
-
-</div>
-
-
-</div>
-
-);
-
+      <p className="mt-3 text-sm leading-6 text-slate-500">
+        Use your goal progress to identify the metrics that need the most attention this month.
+      </p>
+    </div>
+  );
 }

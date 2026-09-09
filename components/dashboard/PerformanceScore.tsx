@@ -1,133 +1,51 @@
-interface PerformanceScoreProps{
-
-score:number;
-
-}
-
-
-
 export default function PerformanceScore({
+  score = 0,
+}: {
+  score?: number;
+}) {
+  const safeScore =
+    Math.max(
+      0,
+      Number(score) || 0
+    );
 
-score
+  const barWidth =
+    Math.min(
+      100,
+      safeScore
+    );
 
-}:PerformanceScoreProps){
+  return (
+    <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+      <p className="text-sm font-black uppercase tracking-wide text-purple-600">
+        Performance Score
+      </p>
 
+      <div className="mt-4 flex items-end gap-2">
+        <p className="text-4xl font-black text-slate-900">
+          {Math.round(
+            safeScore
+          )}
+          %
+        </p>
 
-const rating =
+        <p className="pb-1 text-sm font-semibold text-slate-500">
+          to goal
+        </p>
+      </div>
 
-score >= 90
+      <div className="mt-5 h-3 overflow-hidden rounded-full bg-slate-100">
+        <div
+          className="h-full rounded-full bg-gradient-to-r from-purple-600 to-indigo-600"
+          style={{
+            width: `${barWidth}%`,
+          }}
+        />
+      </div>
 
-?
-
-"Elite"
-
-:
-
-score >= 75
-
-?
-
-"Excellent"
-
-:
-
-score >= 50
-
-?
-
-"On Track"
-
-:
-
-"Needs Focus";
-
-
-
-return (
-
-<div className="
-rounded-3xl
-border
-border-slate-200
-bg-white
-p-8
-shadow-sm
-text-center
-">
-
-
-<h2 className="
-font-black
-text-slate-900
-">
-
-Performance Score
-
-</h2>
-
-
-
-
-<div className="
-mx-auto
-mt-6
-h-36
-w-36
-rounded-full
-border-[14px]
-border-purple-600
-flex
-items-center
-justify-center
-">
-
-
-<div>
-
-
-<p className="
-text-4xl
-font-black
-">
-
-{Math.round(score)}
-
-</p>
-
-
-<p className="
-text-xs
-font-bold
-text-purple-600
-">
-
-{rating}
-
-</p>
-
-
-</div>
-
-
-</div>
-
-
-
-
-<p className="
-mt-5
-text-sm
-text-slate-500
-">
-
-Based on goal completion and sales performance
-
-</p>
-
-
-
-</div>
-
-);
-
+      <p className="mt-4 text-sm leading-6 text-slate-500">
+        Based on month-to-date goal completion.
+      </p>
+    </div>
+  );
 }

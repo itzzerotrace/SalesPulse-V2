@@ -1,50 +1,19 @@
-import DashboardShell from "@/components/layout/DashboardShell";
-import SalesHeader from "@/components/sales/SalesHeader";
-import SalesSummary from "@/components/sales/SalesSummary";
-import SalesFormCard from "@/components/sales/SalesFormCard";
-import RecentSales from "@/components/sales/RecentSales";
+import { redirect } from "next/navigation";
 
+import { getUserContext } from "@/lib/auth/userContext";
+import { getDashboardRoute } from "@/lib/auth/dashboardRoute";
 
-export default function SalesPage(){
+export default async function NewSalePage() {
+  const context =
+    await getUserContext();
 
-return (
+  if (!context?.profile) {
+    redirect("/login");
+  }
 
-<DashboardShell>
-
-
-<div className="
-space-y-8
-">
-
-
-<SalesHeader/>
-
-
-<SalesSummary/>
-
-
-
-<div className="
-grid
-gap-6
-lg:grid-cols-2
-">
-
-
-<SalesFormCard/>
-
-
-<RecentSales/>
-
-
-</div>
-
-
-</div>
-
-
-</DashboardShell>
-
-)
-
+  redirect(
+    getDashboardRoute(
+      context.profile.role
+    )
+  );
 }

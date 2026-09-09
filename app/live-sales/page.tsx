@@ -1,35 +1,19 @@
-import DashboardShell from "@/components/layout/DashboardShell";
-import LiveSalesBoard from "@/components/live/LiveSalesBoard";
-import {getUserRole} from "@/lib/auth/getRole";
+import { redirect } from "next/navigation";
 
+import { getUserContext } from "@/lib/auth/userContext";
+import { getDashboardRoute } from "@/lib/auth/dashboardRoute";
 
-export default async function LiveSalesPage(){
+export default async function LiveSalesPage() {
+  const context =
+    await getUserContext();
 
+  if (!context?.profile) {
+    redirect("/login");
+  }
 
-const role = await getUserRole();
-
-
-
-if(
-role !== "manager" &&
-role !== "regional_manager" &&
-role !== "admin"
-){
-
-return null;
-
-}
-
-
-
-return (
-
-<DashboardShell>
-
-<LiveSalesBoard/>
-
-</DashboardShell>
-
-)
-
+  redirect(
+    getDashboardRoute(
+      context.profile.role
+    )
+  );
 }

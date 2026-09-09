@@ -1,12 +1,7 @@
 import DashboardLayout from "@/components/layout/DashboardLayout";
 
-import KpiCard from "@/components/dashboard/KpiCard";
-import PerformanceScore from "@/components/dashboard/PerformanceScore";
-import GoalProgressCard from "@/components/dashboard/GoalProgressCard";
-import StoreRanking from "@/components/dashboard/StoreRanking";
-import SalesChart from "@/components/dashboard/SalesChart";
-import ActivityFeed from "@/components/dashboard/ActivityFeed";
-import CoachingInsight from "@/components/dashboard/CoachingInsight";
+import GoalCard from "@/components/goals/GoalCard";
+import GoalScore from "@/components/goals/GoalScore";
 
 import { getDashboardStats } from "@/lib/dashboard/getDashboardStats";
 import { getUserProfile } from "@/lib/auth/userProfile";
@@ -23,9 +18,6 @@ export default async function EmployeeDashboard() {
   if (!stats) {
     return null;
   }
-
-  const month =
-    stats.month;
 
   const goals =
     stats.goals;
@@ -74,90 +66,155 @@ export default async function EmployeeDashboard() {
 
   return (
     <DashboardLayout>
-      <div className="space-y-8">
+      <div className="space-y-6 sm:space-y-8">
         <div>
           <p className="text-sm font-black uppercase tracking-wide text-purple-600">
             {storeName}
           </p>
 
           <h1 className="mt-2 text-3xl font-black text-slate-900 sm:text-4xl">
-            Good morning, {employeeName}
+            {employeeName}
           </h1>
 
           <p className="mt-2 text-slate-500">
-            Here is your performance overview.
+            Your month-to-date goal progress.
           </p>
         </div>
 
-        <div className="grid grid-cols-2 gap-3 sm:gap-6 lg:grid-cols-4">
-          <KpiCard
+        <section className="grid grid-cols-1 gap-4 sm:gap-6 lg:grid-cols-3">
+          <GoalScore
+            score={score}
+          />
+
+          <GoalCard
             title="Gross Profit"
-            value={`$${Number(
-              month.gp || 0
+            current={`$${Number(
+              goals.gp.current ||
+                0
             ).toLocaleString()}`}
-            change="MTD"
+            target={`$${Number(
+              goals.gp.goal ||
+                0
+            ).toLocaleString()}`}
+            percent={
+              goals.gp.percent
+            }
             icon="💰"
           />
 
-          <KpiCard
+          <GoalCard
             title="Voice"
-            value={String(
-              month.voice || 0
+            current={String(
+              goals.voice
+                .current || 0
             )}
-            change="MTD"
+            target={String(
+              goals.voice.goal ||
+                0
+            )}
+            percent={
+              goals.voice.percent
+            }
             icon="📱"
           />
+        </section>
 
-          <KpiCard
+        <section className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3">
+          <GoalCard
             title="MiM"
-            value={String(
-              month.mim || 0
+            current={String(
+              goals.mim.current ||
+                0
             )}
-            change="MTD"
+            target={String(
+              goals.mim.goal ||
+                0
+            )}
+            percent={
+              goals.mim.percent
+            }
             icon="🔄"
           />
 
-          <KpiCard
+          <GoalCard
             title="Upgrade"
-            value={String(
-              month.upgrade || 0
+            current={String(
+              goals.upgrade
+                .current || 0
             )}
-            change="MTD"
+            target={String(
+              goals.upgrade.goal ||
+                0
+            )}
+            percent={
+              goals.upgrade
+                .percent
+            }
             icon="⬆️"
           />
 
-          <KpiCard
+          <GoalCard
             title="HSI"
-            value={String(
-              month.hsi || 0
+            current={String(
+              goals.hsi.current ||
+                0
             )}
-            change="MTD"
+            target={String(
+              goals.hsi.goal ||
+                0
+            )}
+            percent={
+              goals.hsi.percent
+            }
             icon="🌐"
           />
 
-          <KpiCard
+          <GoalCard
             title="BTS"
-            value={String(
-              month.bts || 0
+            current={String(
+              goals.bts.current ||
+                0
             )}
-            change="MTD"
+            target={String(
+              goals.bts.goal ||
+                0
+            )}
+            percent={
+              goals.bts.percent
+            }
             icon="📡"
           />
 
-          <KpiCard
+          <GoalCard
             title="Accessories"
-            value={`$${Number(
-              month.accessories ||
-                0
+            current={`$${Number(
+              goals.accessories
+                .current || 0
             ).toLocaleString()}`}
-            change="MTD"
+            target={`$${Number(
+              goals.accessories
+                .goal || 0
+            ).toLocaleString()}`}
+            percent={
+              goals.accessories
+                .percent
+            }
             icon="🎧"
           />
 
-          <KpiCard
+          <GoalCard
             title="Features"
-            value={`$${Number(
-              month.features ||
+            current={`$${Number(
+              goals.features
+                .current || 0
+            ).toLocaleString(
+              undefined,
+              {
+                maximumFractionDigits: 2,
+              }
+            )}`}
+            target={`$${Number(
+              goals.features.goal ||
                 0
             ).toLocaleString(
               undefined,
@@ -165,39 +222,26 @@ export default async function EmployeeDashboard() {
                 maximumFractionDigits: 2,
               }
             )}`}
-            change="MTD"
+            percent={
+              goals.features
+                .percent
+            }
             icon="⭐"
           />
-        </div>
+        </section>
 
-        <div className="grid gap-6 lg:grid-cols-3">
-          <PerformanceScore
-            score={score}
-          />
+        <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:rounded-3xl sm:p-7">
+          <p className="text-sm font-black uppercase tracking-wide text-purple-600">
+            Performance Tracking
+          </p>
 
-          <GoalProgressCard
-            title="Gross Profit"
-            current={`$${Number(
-              goals.gp.current ||
-                0
-            ).toLocaleString()}`}
-            goal={`$${Number(
-              goals.gp.goal ||
-                0
-            ).toLocaleString()}`}
-            percent={
-              goals.gp.percent
-            }
-          />
+          <h2 className="mt-2 text-xl font-black text-slate-900 sm:text-2xl">
+            Stay focused on your goals
+          </h2>
 
-          <StoreRanking />
-        </div>
-
-        <SalesChart />
-
-        <div className="grid gap-6 lg:grid-cols-2">
-          <ActivityFeed />
-          <CoachingInsight />
+          <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-500 sm:text-base">
+            Your dashboard is based on your latest month-to-date performance update and assigned goals.
+          </p>
         </div>
       </div>
     </DashboardLayout>
