@@ -1,34 +1,47 @@
-import {getUserContext} from "@/lib/auth/userContext";
+import { getUserContext } from "@/lib/auth/userContext";
+import {
+  getActiveStore,
+  getManagerStores,
+} from "@/lib/stores/activeStore";
 
+export async function getUserProfile() {
+  const context = await getUserContext();
 
-export async function getUserProfile(){
+  if (!context?.profile) {
+    return null;
+  }
 
+  const activeStore =
+    context.profile.role === "manager"
+      ? await getActiveStore()
+      : context.profile.store;
 
-const context = await getUserContext();
+  const managedStores =
+    context.profile.role === "manager"
+      ? await getManagerStores()
+      : [];
 
+  return {
+    ...context.profile,
 
-if(!context?.profile){
+    name:
+      context.profile.full_name ||
+      "User",
 
-return null;
+    role:
+      context.profile.role ||
+      "",
 
-}
+    store: activeStore,
 
+    stores: managedStores,
 
+    region:
+      context.profile.region?.name ||
+      "",
 
-return {
-
-name: context.profile.full_name || "User",
-
-role: context.profile.role || "",
-
-store: context.profile.store?.name || "",
-
-region: context.profile.region?.name || "",
-
-city: context.profile.store?.city || ""
-
-
-};
-
-
+    city:
+      activeStore?.city ||
+      "",
+  };
 }

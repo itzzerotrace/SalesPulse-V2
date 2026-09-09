@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 
 import { getUserContext } from "@/lib/auth/userContext";
 import { createClient } from "@/lib/supabase/server";
+import { getActiveStore } from "@/lib/stores/activeStore";
 
 const allowedRoles = [
   "manager",
@@ -9,59 +10,100 @@ const allowedRoles = [
   "admin",
 ];
 
-export async function POST(request: Request) {
+export async function POST(
+  request: Request
+) {
   try {
-    const context = await getUserContext();
+    const context =
+      await getUserContext();
 
-    if (!context?.user || !context?.profile) {
+    if (
+      !context?.user ||
+      !context?.profile
+    ) {
       return NextResponse.json(
-        { error: "You must be logged in." },
+        {
+          error:
+            "You must be logged in.",
+        },
         { status: 401 }
       );
     }
 
-    if (!allowedRoles.includes(context.profile.role)) {
+    if (
+      !allowedRoles.includes(
+        context.profile.role
+      )
+    ) {
       return NextResponse.json(
-        { error: "You do not have permission to add employees." },
+        {
+          error:
+            "You do not have permission to add employees.",
+        },
         { status: 403 }
       );
     }
 
-    const storeId = context.profile.store?.id || context.profile.store_id;
+    const activeStore =
+      await getActiveStore();
+
+    const storeId =
+      activeStore?.id;
 
     if (!storeId) {
       return NextResponse.json(
-        { error: "Your account is not assigned to a store." },
+        {
+          error:
+            "No active store is selected.",
+        },
         { status: 400 }
       );
     }
 
-    const body = await request.json();
+    const body =
+      await request.json();
 
     const fullName =
-      typeof body.fullName === "string"
+      typeof body.fullName ===
+      "string"
         ? body.fullName.trim()
         : "";
 
     const email =
-      typeof body.email === "string" && body.email.trim()
-        ? body.email.trim().toLowerCase()
+      typeof body.email ===
+        "string" &&
+      body.email.trim()
+        ? body.email
+            .trim()
+            .toLowerCase()
         : null;
 
     if (!fullName) {
       return NextResponse.json(
-        { error: "Employee name is required." },
+        {
+          error:
+            "Employee name is required.",
+        },
         { status: 400 }
       );
     }
 
-    if (email) {
-      const supabase = await createClient();
+    const supabase =
+      await createClient();
 
-      const { data: existingProfile } = await supabase
+    if (email) {
+      const {
+        data:
+          existingProfile,
+      } = await supabase
         .from("profiles")
-        .select("id, full_name, store_id")
-        .ilike("email", email)
+        .select(
+          "id,full_name,store_id"
+        )
+        .ilike(
+          "email",
+          email
+        )
         .maybeSingle();
 
       if (existingProfile) {
@@ -74,10 +116,18 @@ export async function POST(request: Request) {
         );
       }
 
-      const { data: existingPending } = await supabase
-        .from("pending_employees")
+      const {
+        data:
+          existingPending,
+      } = await supabase
+        .from(
+          "pending_employees"
+        )
         .select("id")
-        .ilike("email", email)
+        .ilike(
+          "email",
+          email
+        )
         .maybeSingle();
 
       if (existingPending) {
@@ -91,17 +141,22 @@ export async function POST(request: Request) {
       }
     }
 
-    const supabase = await createClient();
-
-    const { data, error } = await supabase
-      .from("pending_employees")
+    const {
+      data,
+      error,
+    } = await supabase
+      .from(
+        "pending_employees"
+      )
       .insert({
         full_name: fullName,
         email,
         store_id: storeId,
-        manager_id: context.user.id,
+        manager_id:
+          context.user.id,
         role: "employee",
-        status: "not_registered",
+        status:
+          "not_registered",
       })
       .select(`
         id,
@@ -115,9 +170,14 @@ export async function POST(request: Request) {
       .single();
 
     if (error) {
-      console.error("ADD PENDING EMPLOYEE ERROR:", error);
+      console.error(
+        "ADD PENDING EMPLOYEE ERROR:",
+        error
+      );
 
-      if (error.code === "23505") {
+      if (
+        error.code === "23505"
+      ) {
         return NextResponse.json(
           {
             error:
@@ -128,7 +188,10 @@ export async function POST(request: Request) {
       }
 
       return NextResponse.json(
-        { error: error.message },
+        {
+          error:
+            error.message,
+        },
         { status: 500 }
       );
     }
@@ -136,11 +199,15 @@ export async function POST(request: Request) {
     return NextResponse.json(
       {
         employee: data,
+        store: activeStore,
       },
       { status: 201 }
     );
   } catch (error: any) {
-    console.error("ADD EMPLOYEE ERROR:", error);
+    console.error(
+      "ADD EMPLOYEE ERROR:",
+      error
+    );
 
     return NextResponse.json(
       {
