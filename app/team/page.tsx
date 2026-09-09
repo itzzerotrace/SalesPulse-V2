@@ -1,13 +1,21 @@
-import DashboardLayout from "@/components/layout/DashboardLayout";
+import {
+  Clock3,
+  Sparkles,
+  UserCheck,
+  Users,
+} from "lucide-react";
 
-import TeamHeader from "@/components/team/TeamHeader";
+import DashboardLayout from "@/components/layout/DashboardLayout";
 import TeamMemberCard from "@/components/team/TeamMemberCard";
 import AddEmployeeForm from "@/components/team/AddEmployeeForm";
 
 import { getUserContext } from "@/lib/auth/userContext";
 import { createClient } from "@/lib/supabase/server";
 import { getActiveStore } from "@/lib/stores/activeStore";
-import { getMonthInfo } from "@/lib/progress/date";
+import {
+  getCaliforniaDate,
+  getMonthInfo,
+} from "@/lib/progress/date";
 
 export default async function TeamPage() {
   const supabase =
@@ -26,25 +34,30 @@ export default async function TeamPage() {
     context?.profile?.role;
 
   const canAddEmployees =
-    viewerRole === "manager" ||
-    viewerRole === "admin" ||
+    viewerRole ===
+      "manager" ||
+    viewerRole ===
+      "admin" ||
     viewerRole ===
       "regional_manager";
 
-  let employees: any[] = [];
+  let employees: any[] =
+    [];
+
   let pendingEmployees: any[] =
     [];
 
   if (storeId) {
     const {
-      data: employeeData,
+      data:
+        employeeData,
+      error:
+        employeeError,
     } = await supabase
       .from("profiles")
-      .select(`
-        id,
-        full_name,
-        role
-      `)
+      .select(
+        "id,full_name,role"
+      )
       .eq(
         "store_id",
         storeId
@@ -56,26 +69,36 @@ export default async function TeamPage() {
       .eq(
         "role",
         "employee"
+      )
+      .order(
+        "full_name"
       );
+
+    if (employeeError) {
+      console.error(
+        "TEAM EMPLOYEE ERROR:",
+        employeeError
+      );
+    }
 
     employees =
       employeeData || [];
 
-    if (canAddEmployees) {
+    if (
+      canAddEmployees
+    ) {
       const {
-        data: pendingData,
+        data:
+          pendingData,
+        error:
+          pendingError,
       } = await supabase
         .from(
           "pending_employees"
         )
-        .select(`
-          id,
-          full_name,
-          email,
-          role,
-          status,
-          created_at
-        `)
+        .select(
+          "id,full_name,email,role,status,created_at"
+        )
         .eq(
           "store_id",
           storeId
@@ -91,156 +114,260 @@ export default async function TeamPage() {
           }
         );
 
+      if (
+        pendingError
+      ) {
+        console.error(
+          "PENDING EMPLOYEE ERROR:",
+          pendingError
+        );
+      }
+
       pendingEmployees =
         pendingData || [];
     }
   }
 
   const monthInfo =
-    getMonthInfo();
-
-  const currentMonth =
-    monthInfo.monthName;
-
-  const currentYear =
-    monthInfo.year;
+    getMonthInfo(
+      getCaliforniaDate()
+    );
 
   const employeesWithGoals =
     await Promise.all(
       employees.map(
-        async (employee) => {
+        async (
+          employee
+        ) => {
           const {
             data: goal,
-          } = await supabase
-            .from(
-              "employee_goals"
-            )
-            .select("*")
-            .eq(
-              "employee_id",
-              employee.id
-            )
-            .eq(
-              "month",
-              currentMonth
-            )
-            .eq(
-              "year",
-              currentYear
-            )
-            .maybeSingle();
+          } =
+            await supabase
+              .from(
+                "employee_goals"
+              )
+              .select("*")
+              .eq(
+                "employee_id",
+                employee.id
+              )
+              .eq(
+                "month",
+                monthInfo.monthName
+              )
+              .eq(
+                "year",
+                monthInfo.year
+              )
+              .maybeSingle();
 
           return {
             ...employee,
             goals: goal,
-            registered: true,
+            registered:
+              true,
           };
         }
       )
     );
 
-  const totalEmployees =
-    employeesWithGoals.length +
+  const activeCount =
+    employeesWithGoals.length;
+
+  const pendingCount =
     pendingEmployees.length;
+
+  const totalEmployees =
+    activeCount +
+    pendingCount;
 
   return (
     <DashboardLayout>
       <div className="space-y-6 sm:space-y-8">
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-          <TeamHeader />
+        <section className="salespulse-dark-gradient relative overflow-hidden rounded-[30px] px-5 py-6 text-white shadow-[0_24px_70px_rgba(23,16,47,0.18)] sm:px-8 sm:py-8 lg:px-10">
+          <div className="pointer-events-none absolute -right-20 -top-20 h-64 w-64 rounded-full bg-pink-500/15 blur-3xl" />
 
-          {canAddEmployees && (
-            <div className="sm:shrink-0">
-              <AddEmployeeForm />
-            </div>
-          )}
-        </div>
+          <div className="relative flex flex-col gap-7 lg:flex-row lg:items-end lg:justify-between">
+            <div>
+              <span className="inline-flex items-center gap-2 rounded-full border border-pink-400/20 bg-pink-500/10 px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.18em] text-pink-300">
+                <Sparkles
+                  size={13}
+                />
+                Team Center
+              </span>
 
-        <section className="rounded-2xl bg-purple-600 p-5 text-white sm:rounded-3xl sm:p-8">
-          <h2 className="break-words text-2xl font-black sm:text-3xl">
-            {activeStore?.name ||
-              "Store"}
-          </h2>
+              <h1 className="mt-5 text-3xl font-black tracking-[-0.035em] sm:text-4xl lg:text-5xl">
+                Build a team that
+                <span className="text-pink-400">
+                  {" "}
+                  performs.
+                </span>
+              </h1>
 
-          <p className="mt-1.5 text-sm text-white/80 sm:mt-2 sm:text-base">
-            {totalEmployees}{" "}
-            {totalEmployees === 1
-              ? "Employee"
-              : "Employees"}
-          </p>
-
-          {pendingEmployees.length >
-            0 && (
-            <p className="mt-1 text-xs font-semibold text-white/70 sm:text-sm">
-              {
-                pendingEmployees.length
-              }{" "}
-              waiting to register
-            </p>
-          )}
-        </section>
-
-        <section className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3">
-          {employeesWithGoals.map(
-            (employee) => (
-              <TeamMemberCard
-                key={`registered-${employee.id}`}
-                id={employee.id}
-                name={
-                  employee.full_name
-                }
-                role={
-                  employee.role
-                }
-                viewerRole={
-                  viewerRole
-                }
-                goals={
-                  employee.goals
-                }
-                registered
-              />
-            )
-          )}
-
-          {pendingEmployees.map(
-            (employee) => (
-              <TeamMemberCard
-                key={`pending-${employee.id}`}
-                id={employee.id}
-                name={
-                  employee.full_name
-                }
-                role={
-                  employee.role
-                }
-                viewerRole={
-                  viewerRole
-                }
-                goals={null}
-                registered={false}
-              />
-            )
-          )}
-
-          {totalEmployees === 0 && (
-            <div className="rounded-2xl border border-slate-200 bg-white p-6 text-slate-900 sm:rounded-3xl sm:p-8">
-              <p className="font-semibold">
-                No employees found.
+              <p className="mt-3 max-w-2xl text-sm font-medium leading-6 text-white/55 sm:text-base">
+                Manage your
+                SalesPulse team,
+                monthly targets,
+                and employee
+                registration from
+                one place.
               </p>
 
-              {canAddEmployees && (
-                <p className="mt-1 text-sm text-slate-600">
-                  Add your first
-                  employee to{" "}
-                  {activeStore?.name ||
-                    "this store"}{" "}
-                  using the button
-                  above.
-                </p>
-              )}
+              <p className="mt-4 text-sm font-black text-purple-200">
+                {activeStore?.name ||
+                  "Store"}{" "}
+                •{" "}
+                {
+                  monthInfo.monthName
+                }{" "}
+                {
+                  monthInfo.year
+                }
+              </p>
             </div>
-          )}
+
+            <div className="grid grid-cols-3 gap-3 lg:min-w-[360px]">
+              <div className="rounded-2xl border border-white/10 bg-white/[0.07] p-3 backdrop-blur sm:p-4">
+                <Users
+                  size={18}
+                  className="text-purple-300"
+                />
+
+                <p className="mt-3 text-2xl font-black">
+                  {
+                    totalEmployees
+                  }
+                </p>
+
+                <p className="mt-1 text-[8px] font-black uppercase tracking-[0.14em] text-white/40 sm:text-[9px]">
+                  Total
+                </p>
+              </div>
+
+              <div className="rounded-2xl border border-white/10 bg-white/[0.07] p-3 backdrop-blur sm:p-4">
+                <UserCheck
+                  size={18}
+                  className="text-emerald-300"
+                />
+
+                <p className="mt-3 text-2xl font-black">
+                  {
+                    activeCount
+                  }
+                </p>
+
+                <p className="mt-1 text-[8px] font-black uppercase tracking-[0.14em] text-white/40 sm:text-[9px]">
+                  Active
+                </p>
+              </div>
+
+              <div className="rounded-2xl border border-white/10 bg-white/[0.07] p-3 backdrop-blur sm:p-4">
+                <Clock3
+                  size={18}
+                  className="text-pink-300"
+                />
+
+                <p className="mt-3 text-2xl font-black">
+                  {
+                    pendingCount
+                  }
+                </p>
+
+                <p className="mt-1 text-[8px] font-black uppercase tracking-[0.14em] text-white/40 sm:text-[9px]">
+                  Pending
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {canAddEmployees && (
+          <div className="flex justify-end">
+            <AddEmployeeForm />
+          </div>
+        )}
+
+        <section>
+          <div className="mb-5">
+            <p className="text-[10px] font-black uppercase tracking-[0.2em] text-purple-600">
+              Team Roster
+            </p>
+
+            <h2 className="mt-1 text-2xl font-black tracking-tight text-[#17102F] sm:text-3xl">
+              Store Employees
+            </h2>
+          </div>
+
+          <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
+            {employeesWithGoals.map(
+              (employee) => (
+                <TeamMemberCard
+                  key={`registered-${employee.id}`}
+                  id={
+                    employee.id
+                  }
+                  name={
+                    employee.full_name
+                  }
+                  role={
+                    employee.role
+                  }
+                  viewerRole={
+                    viewerRole
+                  }
+                  goals={
+                    employee.goals
+                  }
+                  registered
+                />
+              )
+            )}
+
+            {pendingEmployees.map(
+              (employee) => (
+                <TeamMemberCard
+                  key={`pending-${employee.id}`}
+                  id={
+                    employee.id
+                  }
+                  name={
+                    employee.full_name
+                  }
+                  role={
+                    employee.role
+                  }
+                  viewerRole={
+                    viewerRole
+                  }
+                  goals={null}
+                  registered={
+                    false
+                  }
+                />
+              )
+            )}
+
+            {totalEmployees ===
+              0 && (
+              <div className="rounded-[28px] border border-dashed border-slate-300 bg-white px-6 py-12 text-center xl:col-span-2">
+                <Users
+                  size={32}
+                  className="mx-auto text-slate-300"
+                />
+
+                <h3 className="mt-3 text-lg font-black text-[#17102F]">
+                  No employees
+                  yet
+                </h3>
+
+                <p className="mx-auto mt-2 max-w-md text-sm text-slate-500">
+                  {canAddEmployees
+                    ? `Add your first employee to ${activeStore?.name || "this store"} to begin building the team.`
+                    : "No employees are currently assigned to this store."}
+                </p>
+              </div>
+            )}
+          </div>
         </section>
       </div>
     </DashboardLayout>
