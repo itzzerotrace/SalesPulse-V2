@@ -1,85 +1,33 @@
-import DashboardShell from "@/components/layout/DashboardShell";
-import PageHeader from "@/components/ui/PageHeader";
-
-import RegionalScore from "@/components/dashboard/RegionalScore";
-import RegionalKpis from "@/components/dashboard/RegionalKpis";
-import StoreRankingList from "@/components/dashboard/StoreRankingList";
-import RegionalChart from "@/components/dashboard/RegionalChart";
-import AlertPanel from "@/components/dashboard/AlertPanel";
+import DashboardLayout from "@/components/layout/DashboardLayout";
 import RegionalGoalProgress from "@/components/dashboard/RegionalGoalProgress";
+import { getUserProfile } from "@/lib/auth/userProfile";
 
+export default async function RegionalDashboard() {
+  const profile =
+    await getUserProfile();
 
-export default function RegionalDashboard(){
+  return (
+    <DashboardLayout>
+      <div className="space-y-6 sm:space-y-8">
+        <section>
+          <p className="text-sm font-bold text-purple-600">
+            REGIONAL DASHBOARD
+          </p>
 
+          <h1 className="mt-2 text-3xl font-black text-slate-900 sm:text-4xl">
+            {profile?.region
+              ? `${profile.region} Overview`
+              : "Regional Overview"}
+          </h1>
 
-return (
+          <p className="mt-2 text-slate-500">
+            Track store performance
+            against monthly goals.
+          </p>
+        </section>
 
-<DashboardShell>
-
-
-<div className="
-space-y-8
-">
-
-
-
-<PageHeader
-
-title="West Region Overview"
-
-subtitle="Performance across all stores"
-
-/>
-
-
-
-
-<RegionalKpis/>
-
-
-
-
-
-
-<div className="
-grid
-gap-6
-lg:grid-cols-3
-">
-
-
-<RegionalScore/>
-
-
-<StoreRankingList/>
-
-
-<AlertPanel/>
-
-
-</div>
-
-
-
-
-
-<RegionalGoalProgress/>
-
-
-
-
-
-
-<RegionalChart/>
-
-
-
-
-</div>
-
-
-</DashboardShell>
-
-)
-
+        <RegionalGoalProgress />
+      </div>
+    </DashboardLayout>
+  );
 }

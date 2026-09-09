@@ -8,7 +8,6 @@ import {
   Target,
   Trophy,
   Users,
-  BarChart3,
   Settings,
 } from "lucide-react";
 
@@ -65,11 +64,6 @@ export default function Sidebar({
       title: "Team",
       href: "/team",
       icon: Users,
-    },
-    {
-      title: "Reports",
-      href: "/reports",
-      icon: BarChart3,
     },
     {
       title: "Settings",
