@@ -1,294 +1,95 @@
-interface Props{
-
-id:string;
-
-name:string;
-
-role:string;
-
-viewerRole?:string;
-
-goals?:any;
-
+interface Props {
+  id: string;
+  name: string;
+  role: string;
+  viewerRole?: string;
+  goals?: any;
 }
 
-
-
 export default function TeamMemberCard({
-
-id,
-
-name,
-
-role,
-
-viewerRole,
-
-goals
-
-}:Props){
-
-
-
-const canEditGoals =
-
-viewerRole === "manager" ||
-
-viewerRole === "admin" ||
-
-viewerRole === "regional_manager";
-
-
-
-return (
-
-<div className="
-rounded-3xl
-border
-bg-white
-p-6
-shadow-sm
-">
-
-
-
-<div className="
-flex
-items-center
-justify-between
-">
-
-
-<div className="
-flex
-items-center
-gap-4
-">
-
-
-<div className="
-h-14
-w-14
-rounded-full
-bg-purple-100
-flex
-items-center
-justify-center
-text-xl
-font-black
-text-purple-700
-">
-
-{name.charAt(0)}
-
-</div>
-
-
-
-<div>
-
-<h2 className="
-text-xl
-font-black
-">
-
-{name}
-
-</h2>
-
-
-<p className="
-text-slate-500
-font-semibold
-">
-
-{role}
-
-</p>
-
-
-</div>
-
-
-</div>
-
-
-
-
-
-{canEditGoals && (
-
-<a
-
-href={`/goals/${id}`}
-
-className="
-rounded-xl
-bg-purple-600
-px-4
-py-2
-text-sm
-font-bold
-text-white
-"
-
->
-
-Goals
-
-</a>
-
-)}
-
-
-
-</div>
-
-
-
-
-
-<div className="
-mt-6
-grid
-grid-cols-3
-gap-3
-">
-
-
-
-<div>
-
-<p className="
-text-xs
-text-slate-500
-">
-
-GP Goal
-
-</p>
-
-<p className="font-black">
-
-{goals?.gp_goal || 0}
-
-</p>
-
-</div>
-
-
-
-<div>
-
-<p className="
-text-xs
-text-slate-500
-">
-
-Voice Goal
-
-</p>
-
-<p className="font-black">
-
-{goals?.voice_goal || 0}
-
-</p>
-
-</div>
-
-
-
-<div>
-
-<p className="
-text-xs
-text-slate-500
-">
-
-HSI Goal
-
-</p>
-
-<p className="font-black">
-
-{goals?.hsi_goal || 0}
-
-</p>
-
-</div>
-
-
-
-<div>
-
-<p className="
-text-xs
-text-slate-500
-">
-
-MiM Goal
-
-</p>
-
-<p className="font-black">
-
-{goals?.mim_goal || 0}
-
-</p>
-
-</div>
-
-
-
-<div>
-
-<p className="
-text-xs
-text-slate-500
-">
-
-Upgrade Goal
-
-</p>
-
-<p className="font-black">
-
-{goals?.upgrade_goal || 0}
-
-</p>
-
-</div>
-
-
-
-<div>
-
-<p className="
-text-xs
-text-slate-500
-">
-
-BTS Goal
-
-</p>
-
-<p className="font-black">
-
-{goals?.bts_goal || 0}
-
-</p>
-
-</div>
-
-
-
-</div>
-
-
-
-</div>
-
-)
-
+  id,
+  name,
+  role,
+  viewerRole,
+  goals,
+}: Props) {
+  const canEditGoals =
+    viewerRole === "manager" ||
+    viewerRole === "admin" ||
+    viewerRole === "regional_manager";
+
+  return (
+    <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:rounded-3xl sm:p-6">
+      <div className="flex items-start justify-between gap-3">
+        <div className="flex min-w-0 items-center gap-3 sm:gap-4">
+          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-purple-100 text-lg font-black text-purple-700 sm:h-14 sm:w-14 sm:text-xl">
+            {name?.charAt(0)?.toUpperCase() || "?"}
+          </div>
+
+          <div className="min-w-0">
+            <h2 className="truncate text-lg font-black text-slate-900 sm:text-xl">
+              {name}
+            </h2>
+
+            <p className="truncate text-sm font-semibold capitalize text-slate-600">
+              {role}
+            </p>
+          </div>
+        </div>
+
+        {canEditGoals && (
+          <a
+            href={`/goals/${id}`}
+            className="shrink-0 rounded-xl bg-purple-600 px-3 py-2 text-sm font-bold text-white transition hover:bg-purple-700 sm:px-4"
+          >
+            Goals
+          </a>
+        )}
+      </div>
+
+      <div className="mt-5 grid grid-cols-2 gap-x-4 gap-y-4 sm:mt-6 sm:grid-cols-3 sm:gap-3">
+        <div>
+          <p className="text-xs font-medium text-slate-600">GP Goal</p>
+          <p className="mt-0.5 text-lg font-black text-slate-900">
+            {goals?.gp_goal || 0}
+          </p>
+        </div>
+
+        <div>
+          <p className="text-xs font-medium text-slate-600">Voice Goal</p>
+          <p className="mt-0.5 text-lg font-black text-slate-900">
+            {goals?.voice_goal || 0}
+          </p>
+        </div>
+
+        <div>
+          <p className="text-xs font-medium text-slate-600">HSI Goal</p>
+          <p className="mt-0.5 text-lg font-black text-slate-900">
+            {goals?.hsi_goal || 0}
+          </p>
+        </div>
+
+        <div>
+          <p className="text-xs font-medium text-slate-600">MiM Goal</p>
+          <p className="mt-0.5 text-lg font-black text-slate-900">
+            {goals?.mim_goal || 0}
+          </p>
+        </div>
+
+        <div>
+          <p className="text-xs font-medium text-slate-600">Upgrade Goal</p>
+          <p className="mt-0.5 text-lg font-black text-slate-900">
+            {goals?.upgrade_goal || 0}
+          </p>
+        </div>
+
+        <div>
+          <p className="text-xs font-medium text-slate-600">BTS Goal</p>
+          <p className="mt-0.5 text-lg font-black text-slate-900">
+            {goals?.bts_goal || 0}
+          </p>
+        </div>
+      </div>
+    </div>
+  );
 }
