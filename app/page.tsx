@@ -32,7 +32,7 @@ const roles = [
 
 const features = [
   {
-    title: "Sales Performance",
+    title: "Performance Tracking",
     description:
       "Track GP, Voice, HSI, BTS, accessories, and key metrics.",
     icon: BarChart3,
