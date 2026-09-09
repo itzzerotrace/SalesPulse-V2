@@ -4,12 +4,31 @@ import {
   useMemo,
   useState,
 } from "react";
-import { useRouter } from "next/navigation";
+
 import {
+  useRouter,
+} from "next/navigation";
+
+import {
+  CalendarDays,
   CheckCircle2,
+  CircleDollarSign,
+  Clock3,
+  Gauge,
+  Headphones,
+  RadioTower,
+  RefreshCcw,
   Save,
+  Smartphone,
+  Sparkles,
+  Star,
   Store,
+  Target,
+  TrendingUp,
   UserRound,
+  Users,
+  Wifi,
+  Zap,
 } from "lucide-react";
 
 import {
@@ -40,7 +59,9 @@ function numericValue(
   const number =
     Number(value);
 
-  return Number.isFinite(number)
+  return Number.isFinite(
+    number
+  )
     ? number
     : 0;
 }
@@ -55,7 +76,8 @@ function formatValue(
     ).toLocaleString(
       undefined,
       {
-        maximumFractionDigits: 2,
+        maximumFractionDigits:
+          2,
       }
     )}`;
   }
@@ -63,6 +85,80 @@ function formatValue(
   return String(
     Number(value || 0)
   );
+}
+
+function metricIcon(
+  key: string,
+  size = 19
+) {
+  const props = {
+    size,
+  };
+
+  switch (key) {
+    case "gp":
+      return (
+        <CircleDollarSign
+          {...props}
+        />
+      );
+
+    case "voice":
+      return (
+        <Smartphone
+          {...props}
+        />
+      );
+
+    case "mim":
+      return (
+        <RefreshCcw
+          {...props}
+        />
+      );
+
+    case "upgrade":
+      return (
+        <TrendingUp
+          {...props}
+        />
+      );
+
+    case "hsi":
+      return (
+        <Wifi
+          {...props}
+        />
+      );
+
+    case "bts":
+      return (
+        <RadioTower
+          {...props}
+        />
+      );
+
+    case "accessories":
+      return (
+        <Headphones
+          {...props}
+        />
+      );
+
+    case "features":
+      return (
+        <Star
+          {...props}
+        />
+      );
+
+    default:
+      return (
+        <Target
+          {...props}
+        />
+      );
+  }
 }
 
 export default function DailyUpdateForm({
@@ -76,8 +172,12 @@ export default function DailyUpdateForm({
   const router =
     useRouter();
 
-  const [date, setDate] =
-    useState(statDate);
+  const [
+    date,
+    setDate,
+  ] = useState(
+    statDate
+  );
 
   const [
     storeStats,
@@ -97,58 +197,75 @@ export default function DailyUpdateForm({
   const [
     employeeStats,
     setEmployeeStats,
-  ] = useState<any>(() => {
-    const result: any = {};
+  ] = useState<any>(
+    () => {
+      const result: any =
+        {};
 
-    for (const employee of employees) {
-      result[employee.id] = {
-        ...emptyProgressStats(),
-        ...employee.stats,
-      };
+      for (
+        const employee
+        of employees
+      ) {
+        result[
+          employee.id
+        ] = {
+          ...emptyProgressStats(),
+          ...employee.stats,
+        };
+      }
+
+      return result;
     }
+  );
 
-    return result;
-  });
+  const [
+    saving,
+    setSaving,
+  ] = useState(false);
 
-  const [saving, setSaving] =
-    useState(false);
+  const [
+    message,
+    setMessage,
+  ] = useState("");
 
-  const [message, setMessage] =
-    useState("");
-
-  const [error, setError] =
-    useState("");
+  const [
+    error,
+    setError,
+  ] = useState("");
 
   const storeAverage =
     useMemo(() => {
       const percentages =
         progressMetrics
-          .map((metric) => {
-            const current =
-              numericValue(
-                storeStats[
-                  metric.key
-                ]
-              );
+          .map(
+            (metric) => {
+              const current =
+                numericValue(
+                  storeStats[
+                    metric.key
+                  ]
+                );
 
-            const goal =
-              numericValue(
-                storeGoals[
-                  metric.goalKey
-                ]
-              );
+              const goal =
+                numericValue(
+                  storeGoals[
+                    metric
+                      .goalKey
+                  ]
+                );
 
-            if (!goal) {
-              return null;
+              if (!goal) {
+                return null;
+              }
+
+              return getProgress(
+                current,
+                goal,
+                daysRemaining,
+                metric.key
+              ).percent;
             }
-
-            return getProgress(
-              current,
-              goal,
-              daysRemaining,
-              metric.key
-            ).percent;
-          })
+          )
           .filter(
             (
               value
@@ -157,14 +274,18 @@ export default function DailyUpdateForm({
           );
 
       if (
-        percentages.length === 0
+        percentages.length ===
+        0
       ) {
         return 0;
       }
 
       return (
         percentages.reduce(
-          (sum, value) =>
+          (
+            sum,
+            value
+          ) =>
             sum + value,
           0
         ) /
@@ -176,6 +297,21 @@ export default function DailyUpdateForm({
       daysRemaining,
     ]);
 
+  const activeGoals =
+    useMemo(
+      () =>
+        progressMetrics.filter(
+          (metric) =>
+            numericValue(
+              storeGoals[
+                metric
+                  .goalKey
+              ]
+            ) > 0
+        ).length,
+      [storeGoals]
+    );
+
   function updateStoreStat(
     key: string,
     value: string
@@ -184,7 +320,9 @@ export default function DailyUpdateForm({
       (current: any) => ({
         ...current,
         [key]:
-          numericValue(value),
+          numericValue(
+            value
+          ),
       })
     );
   }
@@ -197,7 +335,9 @@ export default function DailyUpdateForm({
       (current: any) => ({
         ...current,
         [key]:
-          numericValue(value),
+          numericValue(
+            value
+          ),
       })
     );
   }
@@ -215,7 +355,9 @@ export default function DailyUpdateForm({
             employeeId
           ],
           [key]:
-            numericValue(value),
+            numericValue(
+              value
+            ),
         },
       })
     );
@@ -231,35 +373,45 @@ export default function DailyUpdateForm({
         await fetch(
           "/api/daily-update",
           {
-            method: "POST",
+            method:
+              "POST",
             headers: {
               "Content-Type":
                 "application/json",
             },
-            body: JSON.stringify({
-              statDate: date,
-              storeStats,
-              storeGoals,
-              employees:
-                employees.map(
-                  (employee) => ({
-                    employeeId:
-                      employee.id,
-                    stats:
-                      employeeStats[
-                        employee.id
-                      ] ||
-                      emptyProgressStats(),
-                  })
-                ),
-            }),
+            body:
+              JSON.stringify(
+                {
+                  statDate:
+                    date,
+                  storeStats,
+                  storeGoals,
+                  employees:
+                    employees.map(
+                      (
+                        employee
+                      ) => ({
+                        employeeId:
+                          employee.id,
+                        stats:
+                          employeeStats[
+                            employee
+                              .id
+                          ] ||
+                          emptyProgressStats(),
+                      })
+                    ),
+                }
+              ),
           }
         );
 
       const result =
         await response.json();
 
-      if (!response.ok) {
+      if (
+        !response.ok
+      ) {
         throw new Error(
           result.error ||
             "Unable to save update."
@@ -271,9 +423,12 @@ export default function DailyUpdateForm({
       );
 
       router.refresh();
-    } catch (saveError: any) {
+    } catch (
+      saveError: any
+    ) {
       setError(
-        saveError?.message ||
+        saveError
+          ?.message ||
           "Unable to save update."
       );
     } finally {
@@ -281,85 +436,170 @@ export default function DailyUpdateForm({
     }
   }
 
+  const overallWidth =
+    Math.min(
+      100,
+      Math.max(
+        0,
+        storeAverage
+      )
+    );
+
   return (
     <div className="space-y-6 sm:space-y-8">
-      <section className="overflow-hidden rounded-3xl bg-gradient-to-br from-purple-700 to-indigo-700 text-white shadow-sm">
-        <div className="p-5 sm:p-8">
-          <div className="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
-            <div>
-              <div className="flex items-center gap-2 text-sm font-black uppercase tracking-wider text-purple-100">
-                <Store size={18} />
-                Daily Progress Update
-              </div>
+      <section className="salespulse-dark-gradient relative overflow-hidden rounded-[30px] px-5 py-6 text-white shadow-[0_24px_70px_rgba(23,16,47,0.18)] sm:px-8 sm:py-8 lg:px-10">
+        <div className="pointer-events-none absolute -right-16 -top-20 h-64 w-64 rounded-full bg-pink-500/15 blur-3xl" />
 
-              <h1 className="mt-2 text-3xl font-black sm:text-4xl">
-                {storeName}
-              </h1>
+        <div className="pointer-events-none absolute -bottom-24 left-[25%] h-56 w-56 rounded-full bg-purple-500/20 blur-3xl" />
 
-              <p className="mt-2 max-w-2xl text-sm text-purple-100 sm:text-base">
-                Enter the current month-to-date totals. SalesPulse will track progress against goal and calculate the pace needed for the rest of the month.
-              </p>
+        <div className="relative grid gap-7 lg:grid-cols-[1.3fr_0.7fr] lg:items-end">
+          <div>
+            <span className="inline-flex items-center gap-2 rounded-full border border-pink-400/20 bg-pink-500/10 px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.18em] text-pink-300">
+              <Zap
+                size={13}
+                className="fill-pink-400"
+              />
+              Daily Update
+            </span>
+
+            <h1 className="mt-5 text-3xl font-black tracking-[-0.035em] sm:text-4xl lg:text-5xl">
+              Update the
+              <span className="text-pink-400">
+                {" "}
+                pulse.
+              </span>
+            </h1>
+
+            <div className="mt-3 flex items-center gap-2 text-sm font-black text-white/80 sm:text-base">
+              <Store
+                size={17}
+                className="text-purple-300"
+              />
+              {storeName}
             </div>
 
-            <div className="grid grid-cols-2 gap-3 sm:flex">
-              <div className="rounded-2xl bg-white/10 px-4 py-3 backdrop-blur">
-                <p className="text-xs font-bold uppercase tracking-wide text-purple-100">
-                  Days Remaining
-                </p>
-                <p className="mt-1 text-2xl font-black">
-                  {daysRemaining}
+            <p className="mt-3 max-w-2xl text-sm font-medium leading-6 text-white/55 sm:text-base">
+              Enter the current
+              month-to-date totals.
+              SalesPulse will calculate
+              progress, remaining goals,
+              and the pace needed for
+              the rest of the month.
+            </p>
+
+            <div className="mt-6 max-w-xl">
+              <div className="flex items-end justify-between gap-4">
+                <div>
+                  <p className="text-[10px] font-black uppercase tracking-[0.18em] text-purple-300">
+                    Store Progress
+                  </p>
+
+                  <p className="mt-1 text-3xl font-black">
+                    {Math.round(
+                      storeAverage
+                    )}
+                    %
+                  </p>
+                </div>
+
+                <p className="text-xs font-bold text-white/40">
+                  {activeGoals}
+                  /8 active goals
                 </p>
               </div>
 
-              <div className="rounded-2xl bg-white/10 px-4 py-3 backdrop-blur">
-                <p className="text-xs font-bold uppercase tracking-wide text-purple-100">
-                  Overall
-                </p>
-                <p className="mt-1 text-2xl font-black">
-                  {Math.round(
-                    storeAverage
-                  )}
-                  %
-                </p>
+              <div className="mt-3 h-3 overflow-hidden rounded-full bg-white/10">
+                <div
+                  className="salespulse-gradient h-full rounded-full shadow-[0_0_20px_rgba(247,37,133,0.45)]"
+                  style={{
+                    width: `${overallWidth}%`,
+                  }}
+                />
               </div>
             </div>
           </div>
 
-          <div className="mt-6 max-w-xs">
-            <label className="mb-2 block text-xs font-black uppercase tracking-wide text-purple-100">
-              Snapshot Date
-            </label>
+          <div className="grid grid-cols-2 gap-3">
+            <div className="rounded-3xl border border-white/10 bg-white/[0.07] p-4 backdrop-blur">
+              <Clock3
+                size={20}
+                className="text-pink-300"
+              />
 
-            <input
-              type="date"
-              value={date}
-              onChange={(event) =>
-                setDate(
-                  event.target.value
-                )
-              }
-              className="w-full rounded-xl border border-white/20 bg-white px-4 py-3 font-bold text-slate-900 outline-none"
-            />
+              <p className="mt-4 text-3xl font-black">
+                {daysRemaining}
+              </p>
+
+              <p className="mt-1 text-[9px] font-black uppercase tracking-[0.16em] text-white/40">
+                Days Remaining
+              </p>
+            </div>
+
+            <div className="rounded-3xl border border-white/10 bg-white/[0.07] p-4 backdrop-blur">
+              <Users
+                size={20}
+                className="text-purple-300"
+              />
+
+              <p className="mt-4 text-3xl font-black">
+                {
+                  employees.length
+                }
+              </p>
+
+              <p className="mt-1 text-[9px] font-black uppercase tracking-[0.16em] text-white/40">
+                Employees
+              </p>
+            </div>
+
+            <label className="col-span-2 rounded-2xl border border-white/10 bg-white/[0.07] p-4">
+              <span className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.17em] text-purple-200">
+                <CalendarDays
+                  size={14}
+                />
+                Snapshot Date
+              </span>
+
+              <input
+                type="date"
+                value={date}
+                onChange={(
+                  event
+                ) =>
+                  setDate(
+                    event
+                      .target
+                      .value
+                  )
+                }
+                className="mt-2 w-full rounded-xl border border-white/10 bg-white px-3 py-2.5 font-black text-[#17102F] outline-none focus:ring-2 focus:ring-pink-300"
+              />
+            </label>
           </div>
         </div>
       </section>
 
-      <section className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm sm:p-7">
-        <div>
-          <p className="text-sm font-black uppercase tracking-wide text-purple-600">
-            Store Performance
-          </p>
+      <section>
+        <div className="mb-5 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+          <div>
+            <p className="text-[10px] font-black uppercase tracking-[0.2em] text-purple-600">
+              Store Performance
+            </p>
 
-          <h2 className="mt-1 text-2xl font-black text-slate-900">
-            {storeName} MTD
-          </h2>
+            <h2 className="mt-1 text-2xl font-black tracking-tight text-[#17102F] sm:text-3xl">
+              {storeName} MTD
+            </h2>
+          </div>
 
-          <p className="mt-1 text-sm text-slate-500">
-            The goal normally stays the same all month. Update the MTD number each morning.
+          <p className="max-w-lg text-sm font-medium text-slate-500">
+            Update the MTD snapshot
+            each morning. Store goals
+            can be adjusted here when
+            needed.
           </p>
         </div>
 
-        <div className="mt-6 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
           {progressMetrics.map(
             (metric) => {
               const current =
@@ -372,7 +612,8 @@ export default function DailyUpdateForm({
               const goal =
                 numericValue(
                   storeGoals[
-                    metric.goalKey
+                    metric
+                      .goalKey
                   ]
                 );
 
@@ -398,224 +639,42 @@ export default function DailyUpdateForm({
                   key={
                     metric.key
                   }
-                  className="rounded-2xl border border-slate-200 bg-slate-50 p-4"
+                  className="group relative overflow-hidden rounded-[28px] border border-slate-200/80 bg-white p-5 shadow-[0_14px_40px_rgba(31,21,60,0.06)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_18px_50px_rgba(109,40,217,0.11)]"
                 >
-                  <div className="flex items-center justify-between gap-3">
-                    <h3 className="font-black text-slate-900">
+                  <div className="pointer-events-none absolute -right-10 -top-10 h-28 w-28 rounded-full bg-purple-100/60 blur-2xl transition group-hover:bg-pink-100/70" />
+
+                  <div className="relative">
+                    <div className="flex items-start justify-between gap-3">
+                      <div className="salespulse-gradient flex h-11 w-11 items-center justify-center rounded-2xl text-white shadow-lg shadow-purple-500/20">
+                        {metricIcon(
+                          metric.key
+                        )}
+                      </div>
+
+                      <div className="text-right">
+                        <p className="text-2xl font-black tracking-tight text-[#17102F]">
+                          {goal
+                            ? `${Math.round(
+                                progress.percent
+                              )}%`
+                            : "—"}
+                        </p>
+
+                        <p className="text-[9px] font-black uppercase tracking-[0.16em] text-purple-600">
+                          To Goal
+                        </p>
+                      </div>
+                    </div>
+
+                    <h3 className="mt-5 text-lg font-black text-[#17102F]">
                       {
                         metric.label
                       }
                     </h3>
 
-                    <span className="rounded-full bg-purple-100 px-2.5 py-1 text-xs font-black text-purple-700">
-                      {Math.round(
-                        progress.percent
-                      )}
-                      %
-                    </span>
-                  </div>
-
-                  <div className="mt-4 grid grid-cols-2 gap-2">
-                    <label className="text-xs font-bold text-slate-500">
-                      MTD
-                      <input
-                        type="number"
-                        min="0"
-                        step={
-                          metric.type ===
-                          "money"
-                            ? "0.01"
-                            : "1"
-                        }
-                        value={
-                          storeStats[
-                            metric.key
-                          ] ?? 0
-                        }
-                        onChange={(
-                          event
-                        ) =>
-                          updateStoreStat(
-                            metric.key,
-                            event.target
-                              .value
-                          )
-                        }
-                        className="mt-1.5 w-full rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-base font-black text-slate-900 outline-none focus:border-purple-500"
-                      />
-                    </label>
-
-                    <label className="text-xs font-bold text-slate-500">
-                      Goal
-                      <input
-                        type="number"
-                        min="0"
-                        step={
-                          metric.type ===
-                          "money"
-                            ? "0.01"
-                            : "1"
-                        }
-                        value={
-                          storeGoals[
-                            metric.goalKey
-                          ] ?? 0
-                        }
-                        onChange={(
-                          event
-                        ) =>
-                          updateStoreGoal(
-                            metric.goalKey,
-                            event.target
-                              .value
-                          )
-                        }
-                        className="mt-1.5 w-full rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-base font-black text-slate-900 outline-none focus:border-purple-500"
-                      />
-                    </label>
-                  </div>
-
-                  <div className="mt-4 h-2 overflow-hidden rounded-full bg-slate-200">
-                    <div
-                      className="h-full rounded-full bg-gradient-to-r from-purple-600 to-indigo-600"
-                      style={{
-                        width: `${width}%`,
-                      }}
-                    />
-                  </div>
-
-                  <div className="mt-3 grid grid-cols-2 gap-2 text-xs">
-                    <div>
-                      <p className="text-slate-500">
-                        Remaining
-                      </p>
-                      <p className="mt-0.5 font-black text-slate-900">
-                        {formatValue(
-                          progress.remaining,
-                          metric.type
-                        )}
-                      </p>
-                    </div>
-
-                    <div>
-                      <p className="text-slate-500">
-                        Need / Day
-                      </p>
-                      <p className="mt-0.5 font-black text-slate-900">
-                        {progress.neededPerDay ===
-                        null
-                          ? "—"
-                          : formatValue(
-                              progress.neededPerDay,
-                              metric.type
-                            )}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              );
-            }
-          )}
-        </div>
-      </section>
-
-      <section className="space-y-4">
-        <div>
-          <p className="text-sm font-black uppercase tracking-wide text-purple-600">
-            Employee Performance
-          </p>
-
-          <h2 className="mt-1 text-2xl font-black text-slate-900">
-            Team MTD Updates
-          </h2>
-
-          <p className="mt-1 text-sm text-slate-500">
-            Enter each employee&apos;s current month-to-date totals.
-          </p>
-        </div>
-
-        {employees.length === 0 && (
-          <div className="rounded-3xl border border-slate-200 bg-white p-6 text-slate-600">
-            No registered employees are assigned to this store yet.
-          </div>
-        )}
-
-        {employees.map(
-          (employee) => (
-            <div
-              key={employee.id}
-              className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm sm:p-7"
-            >
-              <div className="flex items-center gap-3">
-                <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-purple-100 text-purple-700">
-                  <UserRound
-                    size={21}
-                  />
-                </div>
-
-                <div>
-                  <h3 className="text-xl font-black text-slate-900">
-                    {
-                      employee.full_name
-                    }
-                  </h3>
-
-                  <p className="text-xs font-semibold text-slate-500">
-                    Current month progress
-                  </p>
-                </div>
-              </div>
-
-              <div className="mt-5 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-                {progressMetrics.map(
-                  (metric) => {
-                    const current =
-                      numericValue(
-                        employeeStats[
-                          employee.id
-                        ]?.[
-                          metric.key
-                        ]
-                      );
-
-                    const goal =
-                      numericValue(
-                        employee.goals?.[
-                          metric.goalKey
-                        ]
-                      );
-
-                    const progress =
-                      getProgress(
-                        current,
-                        goal,
-                        daysRemaining,
-                        metric.key
-                      );
-
-                    return (
-                      <div
-                        key={
-                          metric.key
-                        }
-                        className="rounded-2xl bg-slate-50 p-4"
-                      >
-                        <div className="flex items-center justify-between gap-2">
-                          <p className="text-sm font-black text-slate-900">
-                            {
-                              metric.shortLabel
-                            }
-                          </p>
-
-                          <span className="text-xs font-black text-purple-700">
-                            {goal
-                              ? `${Math.round(
-                                  progress.percent
-                                )}%`
-                              : "No goal"}
-                          </span>
-                        </div>
-
+                    <div className="mt-4 grid grid-cols-2 gap-2">
+                      <label className="text-[10px] font-black uppercase tracking-wide text-slate-400">
+                        MTD
                         <input
                           type="number"
                           min="0"
@@ -626,57 +685,336 @@ export default function DailyUpdateForm({
                               : "1"
                           }
                           value={
-                            employeeStats[
-                              employee.id
-                            ]?.[
-                              metric.key
-                            ] ?? 0
+                            storeStats[
+                              metric
+                                .key
+                            ] ??
+                            0
                           }
                           onChange={(
                             event
                           ) =>
-                            updateEmployeeStat(
-                              employee.id,
+                            updateStoreStat(
                               metric.key,
-                              event.target
+                              event
+                                .target
                                 .value
                             )
                           }
-                          className="mt-3 w-full rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-base font-black text-slate-900 outline-none focus:border-purple-500"
+                          className="mt-1.5 w-full rounded-xl border border-slate-200 bg-[#FAFAFD] px-3 py-3 text-base font-black text-[#17102F] outline-none transition focus:border-purple-400 focus:bg-white focus:ring-2 focus:ring-purple-100"
                         />
+                      </label>
 
-                        <div className="mt-2 flex items-center justify-between text-[11px]">
-                          <span className="text-slate-500">
-                            Goal{" "}
-                            {formatValue(
-                              goal,
-                              metric.type
-                            )}
-                          </span>
+                      <label className="text-[10px] font-black uppercase tracking-wide text-slate-400">
+                        Goal
+                        <input
+                          type="number"
+                          min="0"
+                          step={
+                            metric.type ===
+                            "money"
+                              ? "0.01"
+                              : "1"
+                          }
+                          value={
+                            storeGoals[
+                              metric
+                                .goalKey
+                            ] ??
+                            0
+                          }
+                          onChange={(
+                            event
+                          ) =>
+                            updateStoreGoal(
+                              metric.goalKey,
+                              event
+                                .target
+                                .value
+                            )
+                          }
+                          className="mt-1.5 w-full rounded-xl border border-slate-200 bg-[#FAFAFD] px-3 py-3 text-base font-black text-[#17102F] outline-none transition focus:border-purple-400 focus:bg-white focus:ring-2 focus:ring-purple-100"
+                        />
+                      </label>
+                    </div>
 
-                          <span className="font-bold text-slate-700">
-                            {progress.neededPerDay ===
-                            null
-                              ? ""
-                              : `Need ${formatValue(
-                                  progress.neededPerDay,
-                                  metric.type
-                                )}/day`}
-                          </span>
-                        </div>
+                    <div className="mt-5 h-3 overflow-hidden rounded-full bg-[#ECEAF3]">
+                      <div
+                        className="salespulse-gradient h-full rounded-full shadow-[0_0_14px_rgba(247,37,133,0.2)]"
+                        style={{
+                          width: `${width}%`,
+                        }}
+                      />
+                    </div>
+
+                    <div className="mt-4 grid grid-cols-2 gap-2">
+                      <div className="rounded-xl bg-[#F7F6FB] p-2.5">
+                        <p className="text-[9px] font-black uppercase tracking-wide text-slate-400">
+                          Remaining
+                        </p>
+
+                        <p className="mt-1 text-sm font-black text-[#17102F]">
+                          {formatValue(
+                            progress.remaining,
+                            metric.type
+                          )}
+                        </p>
                       </div>
-                    );
-                  }
-                )}
-              </div>
-            </div>
-          )
-        )}
+
+                      <div className="rounded-xl bg-[#F7F6FB] p-2.5">
+                        <p className="text-[9px] font-black uppercase tracking-wide text-slate-400">
+                          Need / Day
+                        </p>
+
+                        <p className="mt-1 text-sm font-black text-[#17102F]">
+                          {progress.neededPerDay ===
+                          null
+                            ? "—"
+                            : formatValue(
+                                progress.neededPerDay,
+                                metric.type
+                              )}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              );
+            }
+          )}
+        </div>
       </section>
 
-      {(message || error) && (
+      <section>
+        <div className="mb-5 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+          <div>
+            <p className="text-[10px] font-black uppercase tracking-[0.2em] text-pink-600">
+              Team Performance
+            </p>
+
+            <h2 className="mt-1 text-2xl font-black tracking-tight text-[#17102F] sm:text-3xl">
+              Employee MTD
+            </h2>
+          </div>
+
+          <p className="max-w-lg text-sm font-medium text-slate-500">
+            Enter each
+            employee&apos;s current
+            month-to-date totals.
+          </p>
+        </div>
+
+        {employees.length ===
+          0 && (
+          <div className="rounded-[28px] border border-slate-200 bg-white px-6 py-12 text-center shadow-[0_14px_40px_rgba(31,21,60,0.05)]">
+            <Users
+              size={30}
+              className="mx-auto text-slate-300"
+            />
+
+            <p className="mt-3 font-black text-[#17102F]">
+              No employees yet
+            </p>
+
+            <p className="mt-1 text-sm text-slate-500">
+              No approved
+              employees are assigned
+              to this store.
+            </p>
+          </div>
+        )}
+
+        <div className="space-y-5">
+          {employees.map(
+            (employee) => (
+              <div
+                key={
+                  employee.id
+                }
+                className="overflow-hidden rounded-[30px] border border-slate-200/80 bg-white shadow-[0_14px_40px_rgba(31,21,60,0.06)]"
+              >
+                <div className="flex flex-col gap-4 border-b border-slate-100 bg-gradient-to-r from-white to-purple-50/40 px-5 py-5 sm:flex-row sm:items-center sm:justify-between sm:px-7">
+                  <div className="flex min-w-0 items-center gap-3">
+                    <div className="salespulse-gradient flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl text-white shadow-lg shadow-purple-500/20">
+                      <UserRound
+                        size={21}
+                      />
+                    </div>
+
+                    <div className="min-w-0">
+                      <h3 className="truncate text-xl font-black text-[#17102F]">
+                        {
+                          employee.full_name
+                        }
+                      </h3>
+
+                      <p className="mt-0.5 text-[10px] font-black uppercase tracking-[0.16em] text-slate-400">
+                        Month-To-Date
+                        Progress
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="inline-flex w-fit items-center gap-2 rounded-full bg-purple-100 px-3 py-1.5 text-[10px] font-black uppercase tracking-wide text-purple-700">
+                    <Gauge
+                      size={13}
+                    />
+                    8 Metrics
+                  </div>
+                </div>
+
+                <div className="grid gap-3 p-4 sm:grid-cols-2 sm:p-5 xl:grid-cols-4">
+                  {progressMetrics.map(
+                    (metric) => {
+                      const current =
+                        numericValue(
+                          employeeStats[
+                            employee
+                              .id
+                          ]?.[
+                            metric
+                              .key
+                          ]
+                        );
+
+                      const goal =
+                        numericValue(
+                          employee
+                            .goals?.[
+                            metric
+                              .goalKey
+                          ]
+                        );
+
+                      const progress =
+                        getProgress(
+                          current,
+                          goal,
+                          daysRemaining,
+                          metric.key
+                        );
+
+                      const width =
+                        Math.min(
+                          100,
+                          Math.max(
+                            0,
+                            progress.percent
+                          )
+                        );
+
+                      return (
+                        <div
+                          key={
+                            metric.key
+                          }
+                          className="rounded-2xl border border-slate-100 bg-[#FAFAFD] p-4 transition focus-within:border-purple-200 focus-within:bg-white"
+                        >
+                          <div className="flex items-center justify-between gap-2">
+                            <div className="flex items-center gap-2">
+                              <span className="text-purple-600">
+                                {metricIcon(
+                                  metric.key,
+                                  16
+                                )}
+                              </span>
+
+                              <p className="text-sm font-black text-[#17102F]">
+                                {
+                                  metric.shortLabel
+                                }
+                              </p>
+                            </div>
+
+                            <span className="text-[11px] font-black text-purple-700">
+                              {goal
+                                ? `${Math.round(
+                                    progress.percent
+                                  )}%`
+                                : "No Goal"}
+                            </span>
+                          </div>
+
+                          <input
+                            type="number"
+                            min="0"
+                            step={
+                              metric.type ===
+                              "money"
+                                ? "0.01"
+                                : "1"
+                            }
+                            value={
+                              employeeStats[
+                                employee
+                                  .id
+                              ]?.[
+                                metric
+                                  .key
+                              ] ??
+                              0
+                            }
+                            onChange={(
+                              event
+                            ) =>
+                              updateEmployeeStat(
+                                employee.id,
+                                metric.key,
+                                event
+                                  .target
+                                  .value
+                              )
+                            }
+                            className="mt-3 w-full rounded-xl border border-slate-200 bg-white px-3 py-3 text-base font-black text-[#17102F] outline-none transition focus:border-purple-400 focus:ring-2 focus:ring-purple-100"
+                          />
+
+                          <div className="mt-3 h-2 overflow-hidden rounded-full bg-slate-200">
+                            <div
+                              className="salespulse-gradient h-full rounded-full"
+                              style={{
+                                width: `${width}%`,
+                              }}
+                            />
+                          </div>
+
+                          <div className="mt-2 flex items-center justify-between gap-2 text-[10px] font-bold">
+                            <span className="text-slate-400">
+                              Goal{" "}
+                              {formatValue(
+                                goal,
+                                metric.type
+                              )}
+                            </span>
+
+                            {progress.neededPerDay !==
+                              null &&
+                              goal >
+                                0 && (
+                                <span className="text-slate-600">
+                                  Need{" "}
+                                  {formatValue(
+                                    progress.neededPerDay,
+                                    metric.type
+                                  )}
+                                  /day
+                                </span>
+                              )}
+                          </div>
+                        </div>
+                      );
+                    }
+                  )}
+                </div>
+              </div>
+            )
+          )}
+        </div>
+      </section>
+
+      {(message ||
+        error) && (
         <div
-          className={`flex items-center gap-3 rounded-2xl border p-4 font-bold ${
+          className={`flex items-center gap-3 rounded-2xl border p-4 font-bold shadow-sm ${
             error
               ? "border-red-200 bg-red-50 text-red-700"
               : "border-emerald-200 bg-emerald-50 text-emerald-700"
@@ -688,18 +1026,35 @@ export default function DailyUpdateForm({
             />
           )}
 
-          {error || message}
+          {error ||
+            message}
         </div>
       )}
 
-      <div className="sticky bottom-4 z-20 rounded-2xl border border-slate-200 bg-white/95 p-3 shadow-xl backdrop-blur sm:flex sm:justify-end">
+      <div className="sticky bottom-3 z-20 rounded-[22px] border border-slate-200/80 bg-white/95 p-3 shadow-[0_16px_50px_rgba(23,16,47,0.18)] backdrop-blur-xl sm:bottom-4 sm:flex sm:items-center sm:justify-between sm:px-4">
+        <div className="hidden items-center gap-2 text-xs font-bold text-slate-500 sm:flex">
+          <Sparkles
+            size={15}
+            className="text-pink-500"
+          />
+          Save the latest MTD
+          snapshot for{" "}
+          {storeName}.
+        </div>
+
         <button
           type="button"
-          onClick={saveUpdate}
-          disabled={saving}
-          className="flex w-full items-center justify-center gap-2 rounded-xl bg-purple-600 px-6 py-3.5 font-black text-white transition hover:bg-purple-700 disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto"
+          onClick={
+            saveUpdate
+          }
+          disabled={
+            saving
+          }
+          className="salespulse-gradient flex min-h-12 w-full items-center justify-center gap-2 rounded-2xl px-7 py-3.5 font-black text-white shadow-lg shadow-purple-500/20 transition hover:scale-[1.01] disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto"
         >
-          <Save size={19} />
+          <Save
+            size={19}
+          />
 
           {saving
             ? "Saving..."

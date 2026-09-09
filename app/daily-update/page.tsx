@@ -95,6 +95,10 @@ export default async function DailyUpdatePage() {
         "status",
         "approved"
       )
+      .eq(
+        "role",
+        "employee"
+      )
       .order("full_name"),
 
     supabase
