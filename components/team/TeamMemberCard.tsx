@@ -4,6 +4,7 @@ interface Props {
   role: string;
   viewerRole?: string;
   goals?: any;
+  registered?: boolean;
 }
 
 export default function TeamMemberCard({
@@ -12,6 +13,7 @@ export default function TeamMemberCard({
   role,
   viewerRole,
   goals,
+  registered = true,
 }: Props) {
   const canEditGoals =
     viewerRole === "manager" ||
@@ -37,13 +39,25 @@ export default function TeamMemberCard({
           </div>
         </div>
 
-        {canEditGoals && (
+        {canEditGoals && registered && (
           <a
             href={`/goals/${id}`}
             className="shrink-0 rounded-xl bg-purple-600 px-3 py-2 text-sm font-bold text-white transition hover:bg-purple-700 sm:px-4"
           >
             Goals
           </a>
+        )}
+      </div>
+
+      <div className="mt-4">
+        {registered ? (
+          <span className="inline-flex rounded-full bg-emerald-50 px-3 py-1 text-xs font-black text-emerald-700">
+            Active
+          </span>
+        ) : (
+          <span className="inline-flex rounded-full bg-amber-50 px-3 py-1 text-xs font-black text-amber-700">
+            Not Registered
+          </span>
         )}
       </div>
 
