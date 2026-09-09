@@ -7,8 +7,8 @@ import StoreScore from "@/components/dashboard/StoreScore";
 import EmployeeLeaderboard from "@/components/dashboard/EmployeeLeaderboard";
 import TeamGoalCard from "@/components/dashboard/TeamGoalCard";
 import CoachingCenter from "@/components/dashboard/CoachingCenter";
-import KpiCard from "@/components/dashboard/KpiCard";
 import TeamGoalProgress from "@/components/dashboard/TeamGoalProgress";
+import MetricProgressCard from "@/components/progress/MetricProgressCard";
 
 import { getDashboardStats } from "@/lib/dashboard/getDashboardStats";
 import { getActiveStore } from "@/lib/stores/activeStore";
@@ -24,21 +24,120 @@ export default async function ManagerDashboard() {
   const teamPercent =
     await getTeamGoalSummary();
 
-  const month =
-    stats?.month || {
-      gp: 0,
-      voice: 0,
-      mim: 0,
-      upgrade: 0,
-      hsi: 0,
-      bts: 0,
-      accessories: 0,
-      features: 0,
+  const goals =
+    stats?.goals || {
+      gp: {
+        current: 0,
+        goal: 0,
+        percent: 0,
+      },
+      voice: {
+        current: 0,
+        goal: 0,
+        percent: 0,
+      },
+      mim: {
+        current: 0,
+        goal: 0,
+        percent: 0,
+      },
+      upgrade: {
+        current: 0,
+        goal: 0,
+        percent: 0,
+      },
+      hsi: {
+        current: 0,
+        goal: 0,
+        percent: 0,
+      },
+      bts: {
+        current: 0,
+        goal: 0,
+        percent: 0,
+      },
+      accessories: {
+        current: 0,
+        goal: 0,
+        percent: 0,
+      },
+      features: {
+        current: 0,
+        goal: 0,
+        percent: 0,
+      },
     };
 
   const storeName =
     activeStore?.name ||
     "Store";
+
+  const metrics = [
+    {
+      title: "Gross Profit",
+      icon: "💰",
+      percent:
+        goals.gp.percent,
+      goal:
+        goals.gp.goal,
+    },
+    {
+      title: "Voice",
+      icon: "📱",
+      percent:
+        goals.voice.percent,
+      goal:
+        goals.voice.goal,
+    },
+    {
+      title: "MiM",
+      icon: "🔄",
+      percent:
+        goals.mim.percent,
+      goal:
+        goals.mim.goal,
+    },
+    {
+      title: "Upgrade",
+      icon: "⬆️",
+      percent:
+        goals.upgrade.percent,
+      goal:
+        goals.upgrade.goal,
+    },
+    {
+      title: "HSI",
+      icon: "🌐",
+      percent:
+        goals.hsi.percent,
+      goal:
+        goals.hsi.goal,
+    },
+    {
+      title: "BTS",
+      icon: "📡",
+      percent:
+        goals.bts.percent,
+      goal:
+        goals.bts.goal,
+    },
+    {
+      title: "Accessories",
+      icon: "🎧",
+      percent:
+        goals.accessories.percent,
+      goal:
+        goals.accessories.goal,
+    },
+    {
+      title: "Features",
+      icon: "⭐",
+      percent:
+        goals.features.percent,
+      goal:
+        goals.features.goal,
+    },
+  ];
 
   return (
     <DashboardLayout>
@@ -57,85 +156,43 @@ export default async function ManagerDashboard() {
           </Link>
         </div>
 
-        <div className="grid grid-cols-2 gap-3 sm:gap-5 lg:grid-cols-4">
-          <KpiCard
-            title="Gross Profit"
-            value={`$${Number(
-              month.gp || 0
-            ).toLocaleString()}`}
-            change="MTD"
-            icon="💰"
-          />
+        <section>
+          <div className="mb-4">
+            <p className="text-sm font-black uppercase tracking-wide text-purple-600">
+              Store Goal Progress
+            </p>
 
-          <KpiCard
-            title="Voice"
-            value={String(
-              month.voice || 0
+            <h2 className="mt-1 text-xl font-black text-slate-900 sm:text-2xl">
+              Month-to-Date Performance
+            </h2>
+          </div>
+
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-5 lg:grid-cols-4">
+            {metrics.map(
+              (metric) => (
+                <MetricProgressCard
+                  key={
+                    metric.title
+                  }
+                  title={
+                    metric.title
+                  }
+                  icon={
+                    metric.icon
+                  }
+                  percent={
+                    metric.percent
+                  }
+                  hasGoal={
+                    Number(
+                      metric.goal
+                    ) > 0
+                  }
+                />
+              )
             )}
-            change="MTD"
-            icon="📱"
-          />
-
-          <KpiCard
-            title="MiM"
-            value={String(
-              month.mim || 0
-            )}
-            change="MTD"
-            icon="🔄"
-          />
-
-          <KpiCard
-            title="Upgrade"
-            value={String(
-              month.upgrade || 0
-            )}
-            change="MTD"
-            icon="⬆️"
-          />
-
-          <KpiCard
-            title="HSI"
-            value={String(
-              month.hsi || 0
-            )}
-            change="MTD"
-            icon="🌐"
-          />
-
-          <KpiCard
-            title="BTS"
-            value={String(
-              month.bts || 0
-            )}
-            change="MTD"
-            icon="📡"
-          />
-
-          <KpiCard
-            title="Accessories"
-            value={`$${Number(
-              month.accessories ||
-                0
-            ).toLocaleString()}`}
-            change="MTD"
-            icon="🎧"
-          />
-
-          <KpiCard
-            title="Features"
-            value={`$${Number(
-              month.features || 0
-            ).toLocaleString(
-              undefined,
-              {
-                maximumFractionDigits: 2,
-              }
-            )}`}
-            change="MTD"
-            icon="⭐"
-          />
-        </div>
+          </div>
+        </section>
 
         <div className="grid gap-5 lg:grid-cols-3">
           <StoreScore
