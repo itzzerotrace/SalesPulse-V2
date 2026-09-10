@@ -1,5 +1,7 @@
 import Link from "next/link";
 
+import DeleteEmployeeButton from "@/components/team/DeleteEmployeeButton";
+
 import {
   ArrowRight,
   CheckCircle2,
@@ -53,6 +55,12 @@ export default function TeamMemberCard({
   registered = true,
 }: Props) {
   const canEditGoals =
+    viewerRole === "manager" ||
+    viewerRole === "admin" ||
+    viewerRole ===
+      "regional_manager";
+
+  const canDeleteEmployee =
     viewerRole === "manager" ||
     viewerRole === "admin" ||
     viewerRole ===
@@ -257,6 +265,14 @@ export default function TeamMemberCard({
                 />
               </Link>
             )}
+
+            {canDeleteEmployee && (
+              <DeleteEmployeeButton
+                employeeId={id}
+                employeeName={name}
+                registered={registered}
+              />
+            )}
           </>
         ) : (
           <div className="mt-6 rounded-2xl border border-dashed border-amber-200 bg-amber-50/60 p-4">
@@ -273,6 +289,15 @@ export default function TeamMemberCard({
             </p>
           </div>
         )}
+
+        {!registered &&
+          canDeleteEmployee && (
+            <DeleteEmployeeButton
+              employeeId={id}
+              employeeName={name}
+              registered={registered}
+            />
+          )}
       </div>
     </article>
   );
