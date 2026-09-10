@@ -16,134 +16,106 @@ import {
   getMonthInfo,
 } from "@/lib/progress/date";
 
-type MetricKey =
-  | "gp"
-  | "voice"
-  | "mim"
-  | "upgrade"
-  | "hsi"
-  | "bts"
-  | "accessories"
-  | "features";
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
-type GoalKey =
-  | "gp_goal"
-  | "voice_goal"
-  | "mim_goal"
-  | "upgrade_goal"
-  | "hsi_goal"
-  | "bts_goal"
-  | "accessory_goal"
-  | "features_goal";
+type MetricConfig = {
+  goalKey: string;
+  registeredStatKey: string;
+  pendingStatKey: string;
+};
 
-const metricMap: Array<{
-  metric: MetricKey;
-  goal: GoalKey;
-}> = [
+const metrics: MetricConfig[] = [
   {
-    metric: "gp",
-    goal: "gp_goal",
+    goalKey: "gp_goal",
+    registeredStatKey: "gp",
+    pendingStatKey: "gp_progress",
   },
   {
-    metric: "voice",
-    goal: "voice_goal",
+    goalKey: "voice_goal",
+    registeredStatKey: "voice",
+    pendingStatKey: "voice_progress",
   },
   {
-    metric: "mim",
-    goal: "mim_goal",
+    goalKey: "mim_goal",
+    registeredStatKey: "mim",
+    pendingStatKey: "mim_progress",
   },
   {
-    metric: "upgrade",
-    goal: "upgrade_goal",
+    goalKey: "upgrade_goal",
+    registeredStatKey: "upgrade",
+    pendingStatKey: "upgrade_progress",
   },
   {
-    metric: "hsi",
-    goal: "hsi_goal",
+    goalKey: "hsi_goal",
+    registeredStatKey: "hsi",
+    pendingStatKey: "hsi_progress",
   },
   {
-    metric: "bts",
-    goal: "bts_goal",
+    goalKey: "bts_goal",
+    registeredStatKey: "bts",
+    pendingStatKey: "bts_progress",
   },
   {
-    metric:
-      "accessories",
-    goal:
-      "accessory_goal",
+    goalKey: "accessory_goal",
+    registeredStatKey: "accessories",
+    pendingStatKey: "accessory_progress",
   },
   {
-    metric: "features",
-    goal:
-      "features_goal",
+    goalKey: "features_goal",
+    registeredStatKey: "features",
+    pendingStatKey: "features_progress",
   },
 ];
 
+function numberValue(value: unknown) {
+  const valueNumber = Number(value);
+
+  return Number.isFinite(valueNumber)
+    ? valueNumber
+    : 0;
+}
+
 function calculateScore(
-  stats: Record<
-    string,
-    any
-  >,
-  goals: Record<
-    string,
-    any
-  >
+  stats: Record<string, any>,
+  goals: Record<string, any>,
+  pending: boolean
 ) {
-  const percentages =
-    metricMap
-      .map(
-        ({
-          metric,
-          goal,
-        }) => {
-          const goalValue =
-            Number(
-              goals?.[
-                goal
-              ] || 0
-            );
-
-          if (
-            goalValue <= 0
-          ) {
-            return null;
-          }
-
-          const currentValue =
-            Number(
-              stats?.[
-                metric
-              ] || 0
-            );
-
-          return (
-            (currentValue /
-              goalValue) *
-            100
-          );
-        }
-      )
-      .filter(
-        (
-          value
-        ): value is number =>
-          value !== null
+  const percentages = metrics
+    .map((metric) => {
+      const goal = numberValue(
+        goals?.[metric.goalKey]
       );
 
-  if (
-    percentages.length ===
-    0
-  ) {
+      if (goal <= 0) {
+        return null;
+      }
+
+      const current = numberValue(
+        stats?.[
+          pending
+            ? metric.pendingStatKey
+            : metric.registeredStatKey
+        ]
+      );
+
+      return (current / goal) * 100;
+    })
+    .filter(
+      (value): value is number =>
+        value !== null
+    );
+
+  if (percentages.length === 0) {
     return 0;
   }
 
   return (
     percentages.reduce(
-      (
-        sum,
-        value
-      ) => sum + value,
+      (sum, value) =>
+        sum + value,
       0
-    ) /
-    percentages.length
+    ) / percentages.length
   );
 }
 
@@ -154,12 +126,13 @@ export default async function LeaderboardPage() {
   const activeStore =
     await getActiveStore();
 
-  const monthInfo =
-    getMonthInfo(
-      getCaliforniaDate()
-    );
+  const today =
+    getCaliforniaDate();
 
-  if (!activeStore) {
+  const monthInfo =
+    getMonthInfo(today);
+
+  if (!activeStore?.id) {
     return (
       <DashboardLayout>
         <div className="rounded-[30px] border border-slate-200 bg-white p-8 text-center shadow-sm">
@@ -173,217 +146,285 @@ export default async function LeaderboardPage() {
           </h1>
 
           <p className="mt-2 text-slate-500">
-            No active store is
-            available.
+            Select a store to view employee rankings.
           </p>
         </div>
       </DashboardLayout>
     );
   }
 
-  const {
-    data: employees,
-    error:
-      employeesError,
-  } = await supabase
-    .from("profiles")
-    .select(
-      "id,full_name,role"
-    )
-    .eq(
-      "store_id",
-      activeStore.id
-    )
-    .eq(
-      "status",
-      "approved"
-    )
-    .eq(
-      "role",
-      "employee"
-    )
-    .order(
-      "full_name"
-    );
-
-  if (
-    employeesError
-  ) {
-    console.error(
-      "LEADERBOARD EMPLOYEES ERROR:",
-      employeesError
-    );
-  }
-
-  const employeeIds =
-    (employees || []).map(
-      (
-        employee: any
-      ) => employee.id
-    );
-
-  let goals: any[] =
-    [];
-
-  let snapshots: any[] =
-    [];
-
-  if (
-    employeeIds.length >
-    0
-  ) {
-    const {
-      data: goalRows,
-      error: goalsError,
-    } = await supabase
-      .from(
-        "employee_goals"
-      )
+  const [
+    registeredResult,
+    pendingResult,
+  ] = await Promise.all([
+    supabase
+      .from("profiles")
       .select(
-        "employee_id,gp_goal,voice_goal,mim_goal,upgrade_goal,hsi_goal,bts_goal,accessory_goal,features_goal"
-      )
-      .in(
-        "employee_id",
-        employeeIds
-      )
-      .eq(
-        "month",
-        monthInfo.monthName
-      )
-      .eq(
-        "year",
-        monthInfo.year
-      );
-
-    if (
-      goalsError
-    ) {
-      console.error(
-        "LEADERBOARD GOALS ERROR:",
-        goalsError
-      );
-    }
-
-    goals =
-      goalRows || [];
-
-    const {
-      data: statRows,
-      error: statsError,
-    } = await supabase
-      .from(
-        "employee_daily_stats"
-      )
-      .select(
-        "employee_id,stat_date,gp,voice,mim,upgrade,hsi,bts,accessories,features"
-      )
-      .in(
-        "employee_id",
-        employeeIds
+        "id,first_name,last_name,role"
       )
       .eq(
         "store_id",
         activeStore.id
       )
-      .gte(
-        "stat_date",
-        monthInfo.monthStart
+      .eq(
+        "approved",
+        true
       )
-      .lte(
-        "stat_date",
-        getCaliforniaDate()
+      .eq(
+        "role",
+        "employee"
       )
-      .order(
-        "stat_date",
-        {
-          ascending: false,
-        }
-      );
+      .order("first_name"),
 
-    if (
-      statsError
-    ) {
+    supabase
+      .from("pending_employees")
+      .select(`
+        id,
+        full_name,
+        role,
+        status,
+
+        gp_goal,
+        voice_goal,
+        mim_goal,
+        upgrade_goal,
+        hsi_goal,
+        bts_goal,
+        accessory_goal,
+        features_goal,
+
+        gp_progress,
+        voice_progress,
+        mim_progress,
+        upgrade_progress,
+        hsi_progress,
+        bts_progress,
+        accessory_progress,
+        features_progress
+      `)
+      .eq(
+        "store_id",
+        activeStore.id
+      )
+      .eq(
+        "status",
+        "not_registered"
+      )
+      .order("full_name"),
+  ]);
+
+  if (registeredResult.error) {
+    console.error(
+      "RANKINGS REGISTERED ERROR:",
+      registeredResult.error
+    );
+  }
+
+  if (pendingResult.error) {
+    console.error(
+      "RANKINGS PENDING ERROR:",
+      pendingResult.error
+    );
+  }
+
+  const registered =
+    registeredResult.data || [];
+
+  const registeredIds =
+    registered.map(
+      (employee: any) =>
+        employee.id
+    );
+
+  let goalRows: any[] = [];
+  let statRows: any[] = [];
+
+  if (
+    registeredIds.length >
+    0
+  ) {
+    const [
+      goalsResult,
+      statsResult,
+    ] = await Promise.all([
+      supabase
+        .from("employee_goals")
+        .select(`
+          employee_id,
+          gp_goal,
+          voice_goal,
+          mim_goal,
+          upgrade_goal,
+          hsi_goal,
+          bts_goal,
+          accessory_goal,
+          features_goal
+        `)
+        .in(
+          "employee_id",
+          registeredIds
+        )
+        .eq(
+          "month",
+          monthInfo.monthName
+        )
+        .eq(
+          "year",
+          monthInfo.year
+        ),
+
+      supabase
+        .from(
+          "employee_daily_stats"
+        )
+        .select(`
+          employee_id,
+          stat_date,
+          gp,
+          voice,
+          mim,
+          upgrade,
+          hsi,
+          bts,
+          accessories,
+          features
+        `)
+        .in(
+          "employee_id",
+          registeredIds
+        )
+        .eq(
+          "store_id",
+          activeStore.id
+        )
+        .gte(
+          "stat_date",
+          monthInfo.monthStart
+        )
+        .lte(
+          "stat_date",
+          today
+        )
+        .order(
+          "stat_date",
+          {
+            ascending: false,
+          }
+        ),
+    ]);
+
+    if (goalsResult.error) {
       console.error(
-        "LEADERBOARD STATS ERROR:",
-        statsError
+        "RANKINGS GOALS ERROR:",
+        goalsResult.error
       );
     }
 
-    snapshots =
-      statRows || [];
-  }
-
-  const latestSnapshotByEmployee =
-    new Map<
-      string,
-      any
-    >();
-
-  for (
-    const row of snapshots
-  ) {
-    if (
-      !latestSnapshotByEmployee.has(
-        row.employee_id
-      )
-    ) {
-      latestSnapshotByEmployee.set(
-        row.employee_id,
-        row
+    if (statsResult.error) {
+      console.error(
+        "RANKINGS STATS ERROR:",
+        statsResult.error
       );
     }
+
+    goalRows =
+      goalsResult.data || [];
+
+    statRows =
+      statsResult.data || [];
   }
 
-  const goalsByEmployee =
-    new Map<
-      string,
-      any
-    >();
+  const goalsMap =
+    new Map<string, any>();
 
-  for (
-    const goal of goals
-  ) {
-    goalsByEmployee.set(
+  for (const goal of goalRows) {
+    goalsMap.set(
       goal.employee_id,
       goal
     );
   }
 
-  const rankings =
-    (employees || [])
-      .map(
-        (
-          employee: any
-        ) => {
-          const stats =
-            latestSnapshotByEmployee.get(
-              employee.id
-            ) || {};
+  const statsMap =
+    new Map<string, any>();
 
-          const employeeGoals =
-            goalsByEmployee.get(
-              employee.id
-            ) || {};
-
-          return {
-            id:
-              employee.id,
-            name:
-              employee.full_name ||
-              "Team Member",
-            score:
-              calculateScore(
-                stats,
-                employeeGoals
-              ),
-          };
-        }
+  for (const stats of statRows) {
+    if (
+      !statsMap.has(
+        stats.employee_id
       )
-      .sort(
-        (a, b) =>
-          b.score -
-          a.score
+    ) {
+      statsMap.set(
+        stats.employee_id,
+        stats
       );
+    }
+  }
+
+  const rankings: Array<{
+    id: string;
+    name: string;
+    score: number;
+    pending: boolean;
+  }> = [];
+
+  for (
+    const employee of registered
+  ) {
+    const name =
+      [
+        employee.first_name,
+        employee.last_name,
+      ]
+        .filter(Boolean)
+        .join(" ") ||
+      "Employee";
+
+    const goals =
+      goalsMap.get(
+        employee.id
+      ) || {};
+
+    const stats =
+      statsMap.get(
+        employee.id
+      ) || {};
+
+    rankings.push({
+      id: employee.id,
+      name,
+      score:
+        calculateScore(
+          stats,
+          goals,
+          false
+        ),
+      pending: false,
+    });
+  }
+
+  for (
+    const employee of
+    pendingResult.data || []
+  ) {
+    rankings.push({
+      id: employee.id,
+      name:
+        employee.full_name ||
+        "Employee",
+      score:
+        calculateScore(
+          employee,
+          employee,
+          true
+        ),
+      pending: true,
+    });
+  }
+
+  rankings.sort(
+    (a, b) =>
+      b.score - a.score
+  );
 
   const leader =
     rankings[0];
@@ -393,6 +434,12 @@ export default async function LeaderboardPage() {
 
   const third =
     rankings[2];
+
+  const pendingCount =
+    rankings.filter(
+      (employee) =>
+        employee.pending
+    ).length;
 
   return (
     <DashboardLayout>
@@ -419,18 +466,12 @@ export default async function LeaderboardPage() {
               </h1>
 
               <p className="mt-3 max-w-2xl text-sm font-medium leading-6 text-white/55 sm:text-base">
-                Team members are
-                ranked by average
-                progress across
-                their active monthly
-                goals.
+                All employees are ranked by average progress across their active monthly goals, including employees waiting for registration.
               </p>
 
               <p className="mt-4 text-sm font-black text-purple-200">
-                {
-                  activeStore.name
-                }{" "}
-                •{" "}
+                {activeStore.name}
+                {" • "}
                 {
                   monthInfo.monthName
                 }{" "}
@@ -440,7 +481,7 @@ export default async function LeaderboardPage() {
               </p>
             </div>
 
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-3 gap-3">
               <div className="rounded-3xl border border-white/10 bg-white/[0.07] p-4 backdrop-blur">
                 <Users
                   size={19}
@@ -455,7 +496,23 @@ export default async function LeaderboardPage() {
 
                 <p className="mt-1 text-[9px] font-black uppercase tracking-[0.15em] text-white/40">
                   Ranked
-                  Employees
+                </p>
+              </div>
+
+              <div className="rounded-3xl border border-white/10 bg-white/[0.07] p-4 backdrop-blur">
+                <Users
+                  size={19}
+                  className="text-pink-300"
+                />
+
+                <p className="mt-4 text-3xl font-black">
+                  {
+                    pendingCount
+                  }
+                </p>
+
+                <p className="mt-1 text-[9px] font-black uppercase tracking-[0.15em] text-white/40">
+                  Pending
                 </p>
               </div>
 
@@ -468,14 +525,12 @@ export default async function LeaderboardPage() {
                 <p className="mt-4 truncate text-lg font-black">
                   {leader
                     ?.name
-                    ?.split(
-                      " "
-                    )[0] ||
+                    ?.split(" ")[0] ||
                     "—"}
                 </p>
 
                 <p className="mt-1 text-[9px] font-black uppercase tracking-[0.15em] text-white/40">
-                  Current Leader
+                  Leader
                 </p>
               </div>
             </div>
@@ -507,10 +562,14 @@ export default async function LeaderboardPage() {
                 </p>
 
                 <h3 className="mt-1 truncate text-xl font-black text-[#17102F]">
-                  {
-                    leader?.name
-                  }
+                  {leader?.name}
                 </h3>
+
+                {leader?.pending && (
+                  <span className="mt-2 inline-flex rounded-full bg-amber-100 px-2.5 py-1 text-[9px] font-black uppercase tracking-wide text-amber-700">
+                    Pending
+                  </span>
+                )}
 
                 <p className="mt-4 text-4xl font-black tracking-tight text-amber-600">
                   {Math.round(
@@ -536,6 +595,12 @@ export default async function LeaderboardPage() {
                     "—"}
                 </h3>
 
+                {second?.pending && (
+                  <span className="mt-2 inline-flex rounded-full bg-amber-100 px-2.5 py-1 text-[9px] font-black uppercase tracking-wide text-amber-700">
+                    Pending
+                  </span>
+                )}
+
                 <p className="mt-4 text-4xl font-black tracking-tight text-slate-500">
                   {second
                     ? `${Math.round(
@@ -559,6 +624,12 @@ export default async function LeaderboardPage() {
                   {third?.name ||
                     "—"}
                 </h3>
+
+                {third?.pending && (
+                  <span className="mt-2 inline-flex rounded-full bg-amber-100 px-2.5 py-1 text-[9px] font-black uppercase tracking-wide text-amber-700">
+                    Pending
+                  </span>
+                )}
 
                 <p className="mt-4 text-4xl font-black tracking-tight text-orange-600">
                   {third
@@ -598,20 +669,30 @@ export default async function LeaderboardPage() {
                   employee,
                   index
                 ) => (
-                  <EmployeeRankingCard
+                  <div
                     key={
                       employee.id
                     }
-                    rank={
-                      index + 1
-                    }
-                    name={
-                      employee.name
-                    }
-                    score={
-                      employee.score
-                    }
-                  />
+                    className="relative"
+                  >
+                    {employee.pending && (
+                      <span className="absolute right-4 top-3 z-10 rounded-full bg-amber-50 px-2 py-1 text-[8px] font-black uppercase tracking-wide text-amber-700 sm:right-6">
+                        Pending
+                      </span>
+                    )}
+
+                    <EmployeeRankingCard
+                      rank={
+                        index + 1
+                      }
+                      name={
+                        employee.name
+                      }
+                      score={
+                        employee.score
+                      }
+                    />
+                  </div>
                 )
               )}
             </div>
@@ -623,16 +704,11 @@ export default async function LeaderboardPage() {
               />
 
               <h3 className="mt-3 text-lg font-black text-[#17102F]">
-                No employee
-                rankings yet
+                No employee rankings yet
               </h3>
 
               <p className="mx-auto mt-2 max-w-md text-sm text-slate-500">
-                Approved employees
-                will appear after
-                goals and daily
-                progress have been
-                entered.
+                Employees will appear once they have been added to the store. Registration is not required.
               </p>
             </div>
           )}
