@@ -1,3 +1,4 @@
+import Link from "next/link";
 import Sidebar from "./Sidebar";
 import Topbar from "./Topbar";
 import MobileMenu from "./MobileMenu";
@@ -20,6 +21,15 @@ export default function DashboardShell({
   const activeStoreId =
     profile?.store?.id;
 
+  const dashboardHref =
+    role === "admin"
+      ? "/admin/dashboard"
+      : role === "manager"
+        ? "/dashboard/manager"
+        : role === "regional_manager"
+          ? "/dashboard/regional"
+          : "/dashboard/employee";
+
   return (
     <div className="min-h-screen bg-[#F6F7FB] lg:flex">
       <Sidebar
@@ -34,7 +44,11 @@ export default function DashboardShell({
                 profile={profile}
               />
 
-              <div className="min-w-0">
+              <Link
+                href={dashboardHref}
+                aria-label="Go to dashboard"
+                className="min-w-0 rounded-xl transition active:scale-[0.98]"
+              >
                 <div className="flex items-center gap-2">
                   <div className="salespulse-gradient flex h-8 w-8 shrink-0 items-center justify-center rounded-xl text-sm font-black text-white shadow-lg shadow-pink-500/20">
                     S
@@ -44,7 +58,7 @@ export default function DashboardShell({
                     SalesPulse
                   </span>
                 </div>
-              </div>
+              </Link>
             </div>
 
             <div className="h-2.5 w-2.5 shrink-0 rounded-full bg-pink-500 shadow-[0_0_14px_rgba(247,37,133,0.9)]" />

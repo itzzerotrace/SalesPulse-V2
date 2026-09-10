@@ -116,7 +116,11 @@ export default function Sidebar({
     <aside className="salespulse-dark-gradient sticky top-0 hidden h-screen w-[286px] shrink-0 flex-col overflow-hidden border-r border-white/5 px-5 py-6 text-white lg:flex">
       <div className="pointer-events-none absolute -left-24 top-40 h-52 w-52 rounded-full bg-purple-600/10 blur-3xl" />
 
-      <div className="relative mb-8 flex items-center gap-3 px-2">
+      <Link
+        href={dashboardHref}
+        aria-label="Go to dashboard"
+        className="relative mb-8 flex items-center gap-3 rounded-2xl px-2 py-1 transition hover:bg-white/[0.05]"
+      >
         <div className="salespulse-gradient flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl text-xl font-black shadow-xl shadow-pink-500/20">
           S
         </div>
@@ -137,7 +141,7 @@ export default function Sidebar({
             Performance
           </p>
         </div>
-      </div>
+      </Link>
 
       <div className="mb-3 px-3 text-[10px] font-black uppercase tracking-[0.2em] text-white/35">
         Workspace
