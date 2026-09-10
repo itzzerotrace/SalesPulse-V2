@@ -144,6 +144,11 @@ export default async function ManagerDashboard() {
       title: "Gross Profit",
       percent:
         goals.gp.percent,
+      current:
+        goals.gp.current,
+      goal:
+        goals.gp.goal,
+      money: true,
       icon: (
         <CircleDollarSign
           size={24}
@@ -154,6 +159,10 @@ export default async function ManagerDashboard() {
       title: "Voice",
       percent:
         goals.voice.percent,
+      current:
+        goals.voice.current,
+      goal:
+        goals.voice.goal,
       icon: (
         <Smartphone
           size={24}
@@ -164,6 +173,10 @@ export default async function ManagerDashboard() {
       title: "MiM",
       percent:
         goals.mim.percent,
+      current:
+        goals.mim.current,
+      goal:
+        goals.mim.goal,
       icon: (
         <RefreshCcw
           size={23}
@@ -174,6 +187,10 @@ export default async function ManagerDashboard() {
       title: "Upgrades",
       percent:
         goals.upgrade.percent,
+      current:
+        goals.upgrade.current,
+      goal:
+        goals.upgrade.goal,
       icon: (
         <TrendingUp
           size={24}
@@ -184,6 +201,10 @@ export default async function ManagerDashboard() {
       title: "HSI",
       percent:
         goals.hsi.percent,
+      current:
+        goals.hsi.current,
+      goal:
+        goals.hsi.goal,
       icon: (
         <Wifi
           size={24}
@@ -194,6 +215,10 @@ export default async function ManagerDashboard() {
       title: "BTS",
       percent:
         goals.bts.percent,
+      current:
+        goals.bts.current,
+      goal:
+        goals.bts.goal,
       icon: (
         <RadioTower
           size={24}
@@ -205,6 +230,13 @@ export default async function ManagerDashboard() {
       percent:
         goals.accessories
           .percent,
+      current:
+        goals.accessories
+          .current,
+      goal:
+        goals.accessories
+          .goal,
+      money: true,
       icon: (
         <Headphones
           size={24}
@@ -215,6 +247,11 @@ export default async function ManagerDashboard() {
       title: "Features",
       percent:
         goals.features.percent,
+      current:
+        goals.features.current,
+      goal:
+        goals.features.goal,
+      money: true,
       icon: (
         <Star
           size={24}
@@ -400,6 +437,16 @@ export default async function ManagerDashboard() {
                   }
                   percent={
                     metric.percent
+                  }
+                  current={
+                    metric.current
+                  }
+                  goal={
+                    metric.goal
+                  }
+                  money={
+                    metric.money ||
+                    false
                   }
                   icon={
                     metric.icon

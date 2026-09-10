@@ -1,12 +1,39 @@
 interface Props {
   title: string;
   percent: number;
+  current: number;
+  goal: number;
+  money?: boolean;
   icon: React.ReactNode;
+}
+
+function formatValue(
+  value: number,
+  money = false
+) {
+  const safeValue =
+    Number.isFinite(Number(value))
+      ? Number(value)
+      : 0;
+
+  if (money) {
+    return `$${safeValue.toLocaleString(
+      undefined,
+      {
+        maximumFractionDigits: 2,
+      }
+    )}`;
+  }
+
+  return safeValue.toLocaleString();
 }
 
 export default function MetricProgressCard({
   title,
   percent,
+  current,
+  goal,
+  money = false,
   icon,
 }: Props) {
   const safePercent =
@@ -14,8 +41,13 @@ export default function MetricProgressCard({
       ? Math.max(0, Number(percent))
       : 0;
 
+  const safeGoal =
+    Number.isFinite(Number(goal))
+      ? Math.max(0, Number(goal))
+      : 0;
+
   const hasGoal =
-    safePercent > 0;
+    safeGoal > 0;
 
   const roundedPercent =
     Math.round(safePercent);
@@ -30,7 +62,7 @@ export default function MetricProgressCard({
     "Getting Started";
 
   if (!hasGoal) {
-    status = "No Progress Yet";
+    status = "No Goal Set";
   } else if (
     safePercent >= 100
   ) {
@@ -43,6 +75,10 @@ export default function MetricProgressCard({
     safePercent >= 50
   ) {
     status = "On the Way";
+  } else if (
+    safePercent <= 0
+  ) {
+    status = "Getting Started";
   }
 
   return (
@@ -71,6 +107,32 @@ export default function MetricProgressCard({
         <h3 className="text-base font-black text-[#17102F] sm:text-lg">
           {title}
         </h3>
+
+        <div className="mt-1 flex flex-wrap items-baseline gap-1.5">
+          <span className="text-lg font-black tracking-tight text-[#17102F] sm:text-xl">
+            {formatValue(
+              current,
+              money
+            )}
+          </span>
+
+          <span className="text-sm font-black text-slate-300">
+            /
+          </span>
+
+          <span className="text-sm font-black text-slate-500 sm:text-base">
+            {hasGoal
+              ? formatValue(
+                  goal,
+                  money
+                )
+              : "No goal"}
+          </span>
+        </div>
+
+        <p className="mt-0.5 text-[9px] font-black uppercase tracking-[0.16em] text-slate-400">
+          MTD / Goal
+        </p>
 
         <div className="mt-4 h-3.5 w-full overflow-hidden rounded-full bg-[#ECEAF3]">
           <div
