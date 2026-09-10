@@ -65,7 +65,7 @@ export async function POST(
 
     const fullName =
       typeof body.fullName ===
-      "string"
+        "string"
         ? body.fullName.trim()
         : "";
 
@@ -95,16 +95,35 @@ export async function POST(
       const {
         data:
           existingProfile,
+        error:
+          existingProfileError,
       } = await supabase
         .from("profiles")
         .select(
-          "id,full_name,store_id"
+          "id,first_name,last_name,email,store_id"
         )
         .ilike(
           "email",
           email
         )
         .maybeSingle();
+
+      if (
+        existingProfileError
+      ) {
+        console.error(
+          "EXISTING PROFILE CHECK ERROR:",
+          existingProfileError
+        );
+
+        return NextResponse.json(
+          {
+            error:
+              existingProfileError.message,
+          },
+          { status: 500 }
+        );
+      }
 
       if (existingProfile) {
         return NextResponse.json(
@@ -119,6 +138,8 @@ export async function POST(
       const {
         data:
           existingPending,
+        error:
+          existingPendingError,
       } = await supabase
         .from(
           "pending_employees"
@@ -129,6 +150,23 @@ export async function POST(
           email
         )
         .maybeSingle();
+
+      if (
+        existingPendingError
+      ) {
+        console.error(
+          "EXISTING PENDING CHECK ERROR:",
+          existingPendingError
+        );
+
+        return NextResponse.json(
+          {
+            error:
+              existingPendingError.message,
+          },
+          { status: 500 }
+        );
+      }
 
       if (existingPending) {
         return NextResponse.json(
@@ -149,12 +187,15 @@ export async function POST(
         "pending_employees"
       )
       .insert({
-        full_name: fullName,
+        full_name:
+          fullName,
         email,
-        store_id: storeId,
+        store_id:
+          storeId,
         manager_id:
           context.user.id,
-        role: "employee",
+        role:
+          "employee",
         status:
           "not_registered",
       })
@@ -165,6 +206,14 @@ export async function POST(
         role,
         status,
         store_id,
+        gp_goal,
+        voice_goal,
+        mim_goal,
+        upgrade_goal,
+        hsi_goal,
+        bts_goal,
+        accessory_goal,
+        features_goal,
         created_at
       `)
       .single();
@@ -176,7 +225,8 @@ export async function POST(
       );
 
       if (
-        error.code === "23505"
+        error.code ===
+        "23505"
       ) {
         return NextResponse.json(
           {
@@ -198,8 +248,10 @@ export async function POST(
 
     return NextResponse.json(
       {
-        employee: data,
-        store: activeStore,
+        employee:
+          data,
+        store:
+          activeStore,
       },
       { status: 201 }
     );
