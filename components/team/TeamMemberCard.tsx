@@ -323,16 +323,29 @@ export default function TeamMemberCard({
             </div>
 
             {canEditGoals && (
-              <Link
-                href={`/goals/${id}`}
-                className="mt-5 flex min-h-11 items-center justify-between rounded-2xl bg-purple-50 px-4 py-3 text-sm font-black text-purple-700 transition hover:bg-purple-100"
-              >
-                Manage Goals
+              <div className="mt-5 grid gap-2 sm:grid-cols-2">
+                <Link
+                  href={`/goals/${id}`}
+                  className="flex min-h-11 items-center justify-between rounded-2xl bg-purple-50 px-4 py-3 text-sm font-black text-purple-700 transition hover:bg-purple-100"
+                >
+                  Manage Goals
 
-                <ArrowRight
-                  size={17}
-                />
-              </Link>
+                  <ArrowRight
+                    size={17}
+                  />
+                </Link>
+
+                <Link
+                  href={`/progress/${id}`}
+                  className="salespulse-gradient flex min-h-11 items-center justify-between rounded-2xl px-4 py-3 text-sm font-black text-white shadow-lg shadow-purple-500/20 transition hover:scale-[1.01]"
+                >
+                  Manage Progress
+
+                  <ArrowRight
+                    size={17}
+                  />
+                </Link>
+              </div>
             )}
 
             <div className="mt-3 rounded-2xl border border-dashed border-amber-200 bg-amber-50/60 p-4">
