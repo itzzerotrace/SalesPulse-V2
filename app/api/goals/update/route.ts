@@ -17,9 +17,7 @@ function numberValue(
     Number(value || 0);
 
   if (
-    !Number.isFinite(
-      parsed
-    ) ||
+    !Number.isFinite(parsed) ||
     parsed < 0
   ) {
     return 0;
@@ -41,6 +39,13 @@ export async function POST(
           "employee_id"
         ) || ""
       );
+
+    const registered =
+      String(
+        form.get(
+          "registered"
+        ) || ""
+      ) === "true";
 
     if (!employeeId) {
       return NextResponse.json(
@@ -112,83 +117,18 @@ export async function POST(
     const supabase =
       await createClient();
 
-    const {
-      data: employee,
-      error:
-        employeeError,
-    } = await supabase
-      .from("profiles")
-      .select(
-        "id,full_name,store_id,role"
-      )
-      .eq(
-        "id",
-        employeeId
-      )
-      .eq(
-        "store_id",
-        activeStore.id
-      )
-      .eq(
-        "status",
-        "approved"
-      )
-      .eq(
-        "role",
-        "employee"
-      )
-      .maybeSingle();
-
-    if (
-      employeeError ||
-      !employee
-    ) {
-      return NextResponse.json(
-        {
-          error:
-            "Employee was not found in the active store.",
-        },
-        {
-          status: 404,
-        }
-      );
-    }
-
-    const date =
-      getCaliforniaDate();
-
-    const {
-      monthName,
-      year,
-    } = getMonthInfo(
-      date
-    );
-
-    const goalData = {
-      employee_id:
-        employeeId,
-      employee_name:
-        employee.full_name,
-      month:
-        monthName,
-      year,
+    const goalValues = {
       gp_goal:
         numberValue(
-          form.get(
-            "gp_goal"
-          )
+          form.get("gp_goal")
         ),
       voice_goal:
         numberValue(
-          form.get(
-            "voice_goal"
-          )
+          form.get("voice_goal")
         ),
       mim_goal:
         numberValue(
-          form.get(
-            "mim_goal"
-          )
+          form.get("mim_goal")
         ),
       upgrade_goal:
         numberValue(
@@ -198,15 +138,11 @@ export async function POST(
         ),
       hsi_goal:
         numberValue(
-          form.get(
-            "hsi_goal"
-          )
+          form.get("hsi_goal")
         ),
       bts_goal:
         numberValue(
-          form.get(
-            "bts_goal"
-          )
+          form.get("bts_goal")
         ),
       accessory_goal:
         numberValue(
@@ -222,12 +158,171 @@ export async function POST(
         ),
     };
 
+    if (!registered) {
+      const {
+        data: pendingEmployee,
+        error:
+          pendingEmployeeError,
+      } = await supabase
+        .from(
+          "pending_employees"
+        )
+        .select(
+          "id,full_name,store_id,status"
+        )
+        .eq(
+          "id",
+          employeeId
+        )
+        .eq(
+          "store_id",
+          activeStore.id
+        )
+        .eq(
+          "status",
+          "not_registered"
+        )
+        .maybeSingle();
+
+      if (
+        pendingEmployeeError ||
+        !pendingEmployee
+      ) {
+        console.error(
+          "PENDING EMPLOYEE GOAL LOOKUP ERROR:",
+          pendingEmployeeError
+        );
+
+        return NextResponse.json(
+          {
+            error:
+              "Pending employee was not found in the active store.",
+          },
+          {
+            status: 404,
+          }
+        );
+      }
+
+      const {
+        error: updateError,
+      } = await supabase
+        .from(
+          "pending_employees"
+        )
+        .update(goalValues)
+        .eq(
+          "id",
+          employeeId
+        )
+        .eq(
+          "store_id",
+          activeStore.id
+        );
+
+      if (updateError) {
+        console.error(
+          "PENDING EMPLOYEE GOAL SAVE ERROR:",
+          updateError
+        );
+
+        return NextResponse.json(
+          {
+            error:
+              updateError.message,
+          },
+          {
+            status: 500,
+          }
+        );
+      }
+
+      return NextResponse.redirect(
+        new URL(
+          "/team",
+          request.url
+        ),
+        303
+      );
+    }
+
+    const {
+      data: employee,
+      error:
+        employeeError,
+    } = await supabase
+      .from("profiles")
+      .select(
+        "id,first_name,last_name,store_id,role,approved"
+      )
+      .eq(
+        "id",
+        employeeId
+      )
+      .eq(
+        "store_id",
+        activeStore.id
+      )
+      .eq(
+        "approved",
+        true
+      )
+      .eq(
+        "role",
+        "employee"
+      )
+      .maybeSingle();
+
+    if (
+      employeeError ||
+      !employee
+    ) {
+      console.error(
+        "REGISTERED EMPLOYEE GOAL LOOKUP ERROR:",
+        employeeError
+      );
+
+      return NextResponse.json(
+        {
+          error:
+            "Employee was not found in the active store.",
+        },
+        {
+          status: 404,
+        }
+      );
+    }
+
+    const employeeName = [
+      employee.first_name,
+      employee.last_name,
+    ]
+      .filter(Boolean)
+      .join(" ");
+
+    const date =
+      getCaliforniaDate();
+
+    const {
+      monthName,
+      year,
+    } = getMonthInfo(date);
+
+    const goalData = {
+      employee_id:
+        employeeId,
+      employee_name:
+        employeeName,
+      month:
+        monthName,
+      year,
+      ...goalValues,
+    };
+
     const {
       error,
     } = await supabase
-      .from(
-        "employee_goals"
-      )
+      .from("employee_goals")
       .upsert(
         goalData,
         {

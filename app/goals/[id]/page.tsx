@@ -17,8 +17,8 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import DashboardLayout from "@/components/layout/DashboardLayout";
-
 import { createClient } from "@/lib/supabase/server";
+import { getActiveStore } from "@/lib/stores/activeStore";
 import {
   getCaliforniaDate,
   getMonthInfo,
@@ -28,17 +28,11 @@ export default async function EmployeeGoalsPage({
   params,
 }: {
   params:
-    | {
-        id: string;
-      }
-    | Promise<{
-        id: string;
-      }>;
+    | { id: string }
+    | Promise<{ id: string }>;
 }) {
   const resolvedParams =
-    await Promise.resolve(
-      params
-    );
+    await Promise.resolve(params);
 
   const employeeId =
     resolvedParams.id;
@@ -46,39 +40,110 @@ export default async function EmployeeGoalsPage({
   const supabase =
     await createClient();
 
+  const activeStore =
+    await getActiveStore();
+
+  if (!activeStore?.id) {
+    notFound();
+  }
+
   const date =
     getCaliforniaDate();
 
   const {
     monthName,
     year,
-  } = getMonthInfo(
-    date
-  );
+  } = getMonthInfo(date);
 
   const [
-    employeeResult,
-    goalResult,
+    registeredResult,
+    pendingResult,
   ] = await Promise.all([
     supabase
       .from("profiles")
       .select(
-        "id,full_name,role"
+        "id,first_name,last_name,role,store_id,approved"
       )
-      .eq(
-        "id",
-        employeeId
-      )
-      .eq(
-        "role",
-        "employee"
-      )
+      .eq("id", employeeId)
+      .eq("store_id", activeStore.id)
+      .eq("role", "employee")
+      .eq("approved", true)
       .maybeSingle(),
 
     supabase
-      .from(
-        "employee_goals"
-      )
+      .from("pending_employees")
+      .select(`
+        id,
+        full_name,
+        email,
+        role,
+        store_id,
+        status,
+        gp_goal,
+        voice_goal,
+        mim_goal,
+        upgrade_goal,
+        hsi_goal,
+        bts_goal,
+        accessory_goal,
+        features_goal
+      `)
+      .eq("id", employeeId)
+      .eq("store_id", activeStore.id)
+      .eq("status", "not_registered")
+      .maybeSingle(),
+  ]);
+
+  if (registeredResult.error) {
+    console.error(
+      "REGISTERED EMPLOYEE GOAL PROFILE ERROR:",
+      registeredResult.error
+    );
+  }
+
+  if (pendingResult.error) {
+    console.error(
+      "PENDING EMPLOYEE GOAL PROFILE ERROR:",
+      pendingResult.error
+    );
+  }
+
+  const registeredEmployee =
+    registeredResult.data;
+
+  const pendingEmployee =
+    pendingResult.data;
+
+  if (
+    !registeredEmployee &&
+    !pendingEmployee
+  ) {
+    notFound();
+  }
+
+  const registered =
+    Boolean(registeredEmployee);
+
+  const employeeName =
+    registeredEmployee
+      ? [
+          registeredEmployee.first_name,
+          registeredEmployee.last_name,
+        ]
+          .filter(Boolean)
+          .join(" ")
+      : pendingEmployee?.full_name ||
+        "Employee";
+
+  let goal: any =
+    pendingEmployee || {};
+
+  if (registeredEmployee) {
+    const {
+      data: goalData,
+      error: goalError,
+    } = await supabase
+      .from("employee_goals")
       .select("*")
       .eq(
         "employee_id",
@@ -92,45 +157,25 @@ export default async function EmployeeGoalsPage({
         "year",
         year
       )
-      .maybeSingle(),
-  ]);
+      .maybeSingle();
 
-  if (
-    employeeResult.error
-  ) {
-    console.error(
-      "EMPLOYEE GOAL PROFILE ERROR:",
-      employeeResult.error
-    );
-  }
+    if (goalError) {
+      console.error(
+        "EMPLOYEE GOAL LOAD ERROR:",
+        goalError
+      );
+    }
 
-  if (
-    goalResult.error
-  ) {
-    console.error(
-      "EMPLOYEE GOAL LOAD ERROR:",
-      goalResult.error
-    );
-  }
-
-  const employee =
-    employeeResult.data;
-
-  const goal =
-    goalResult.data;
-
-  if (!employee) {
-    notFound();
+    goal = goalData || {};
   }
 
   const fields = [
     {
       name: "gp_goal",
-      label:
-        "Gross Profit",
-      value:
-        goal?.gp_goal || 0,
+      label: "Gross Profit",
+      value: goal?.gp_goal || 0,
       prefix: "$",
+      step: "0.01",
       icon: (
         <CircleDollarSign
           size={20}
@@ -138,12 +183,11 @@ export default async function EmployeeGoalsPage({
       ),
     },
     {
-      name:
-        "voice_goal",
+      name: "voice_goal",
       label: "Voice",
       value:
-        goal?.voice_goal ||
-        0,
+        goal?.voice_goal || 0,
+      step: "1",
       icon: (
         <Smartphone
           size={20}
@@ -155,6 +199,7 @@ export default async function EmployeeGoalsPage({
       label: "MiM",
       value:
         goal?.mim_goal || 0,
+      step: "1",
       icon: (
         <RefreshCcw
           size={20}
@@ -162,12 +207,11 @@ export default async function EmployeeGoalsPage({
       ),
     },
     {
-      name:
-        "upgrade_goal",
+      name: "upgrade_goal",
       label: "Upgrades",
       value:
-        goal?.upgrade_goal ||
-        0,
+        goal?.upgrade_goal || 0,
+      step: "1",
       icon: (
         <TrendingUp
           size={20}
@@ -179,6 +223,7 @@ export default async function EmployeeGoalsPage({
       label: "HSI",
       value:
         goal?.hsi_goal || 0,
+      step: "1",
       icon: (
         <Wifi
           size={20}
@@ -190,6 +235,7 @@ export default async function EmployeeGoalsPage({
       label: "BTS",
       value:
         goal?.bts_goal || 0,
+      step: "1",
       icon: (
         <RadioTower
           size={20}
@@ -197,14 +243,12 @@ export default async function EmployeeGoalsPage({
       ),
     },
     {
-      name:
-        "accessory_goal",
-      label:
-        "Accessories",
+      name: "accessory_goal",
+      label: "Accessories",
       value:
-        goal?.accessory_goal ||
-        0,
+        goal?.accessory_goal || 0,
       prefix: "$",
+      step: "0.01",
       icon: (
         <Headphones
           size={20}
@@ -212,12 +256,10 @@ export default async function EmployeeGoalsPage({
       ),
     },
     {
-      name:
-        "features_goal",
+      name: "features_goal",
       label: "Features",
       value:
-        goal?.features_goal ||
-        0,
+        goal?.features_goal || 0,
       prefix: "$",
       step: "0.01",
       icon: (
@@ -245,23 +287,34 @@ export default async function EmployeeGoalsPage({
           <div className="pointer-events-none absolute -right-20 -top-20 h-60 w-60 rounded-full bg-pink-500/15 blur-3xl" />
 
           <div className="relative">
-            <span className="inline-flex items-center gap-2 rounded-full border border-pink-400/20 bg-pink-500/10 px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.18em] text-pink-300">
-              <Sparkles
-                size={13}
-              />
-              Employee Goals
-            </span>
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="inline-flex items-center gap-2 rounded-full border border-pink-400/20 bg-pink-500/10 px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.18em] text-pink-300">
+                <Sparkles
+                  size={13}
+                />
+                Employee Goals
+              </span>
+
+              {!registered && (
+                <span className="inline-flex rounded-full border border-amber-400/20 bg-amber-500/10 px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.15em] text-amber-300">
+                  Pending Registration
+                </span>
+              )}
+            </div>
 
             <h1 className="mt-5 text-3xl font-black tracking-[-0.035em] sm:text-4xl">
-              {
-                employee.full_name
-              }
+              {employeeName}
             </h1>
 
             <p className="mt-2 text-sm font-medium text-white/55">
-              {monthName}{" "}
-              {year} targets
+              {monthName} {year} targets
             </p>
+
+            {!registered && (
+              <p className="mt-3 max-w-xl text-sm font-medium leading-6 text-amber-200/80">
+                You can set this employee&apos;s goals now. They do not need to register first.
+              </p>
+            )}
           </div>
         </section>
 
@@ -273,8 +326,16 @@ export default async function EmployeeGoalsPage({
           <input
             type="hidden"
             name="employee_id"
+            value={employeeId}
+          />
+
+          <input
+            type="hidden"
+            name="registered"
             value={
-              employeeId
+              registered
+                ? "true"
+                : "false"
             }
           />
 
@@ -313,6 +374,7 @@ export default async function EmployeeGoalsPage({
                         field.icon
                       }
                     </span>
+
                     {
                       field.label
                     }
@@ -331,8 +393,7 @@ export default async function EmployeeGoalsPage({
                       type="number"
                       min="0"
                       step={
-                        field.step ||
-                        "1"
+                        field.step
                       }
                       name={
                         field.name
@@ -350,9 +411,9 @@ export default async function EmployeeGoalsPage({
 
           <div className="flex flex-col gap-3 border-t border-slate-100 bg-[#FAFAFD] px-5 py-5 sm:flex-row sm:items-center sm:justify-between sm:px-7">
             <p className="text-xs font-bold text-slate-500">
-              Saving updates the
-              employee&apos;s{" "}
-              {monthName} goals.
+              {registered
+                ? `Saving updates ${employeeName}'s ${monthName} goals.`
+                : `These goals will stay attached to ${employeeName} while registration is pending.`}
             </p>
 
             <button className="salespulse-gradient flex min-h-12 items-center justify-center gap-2 rounded-2xl px-6 py-3 text-sm font-black text-white shadow-lg shadow-purple-500/20 transition hover:scale-[1.01]">

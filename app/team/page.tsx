@@ -56,22 +56,22 @@ export default async function TeamPage() {
     } = await supabase
       .from("profiles")
       .select(
-        "id,full_name,role"
+        "id,first_name,last_name,role"
       )
       .eq(
         "store_id",
         storeId
       )
       .eq(
-        "status",
-        "approved"
+        "approved",
+        true
       )
       .eq(
         "role",
         "employee"
       )
       .order(
-        "full_name"
+        "first_name"
       );
 
     if (employeeError) {
@@ -97,7 +97,7 @@ export default async function TeamPage() {
           "pending_employees"
         )
         .select(
-          "id,full_name,email,role,status,created_at"
+          "id,full_name,email,role,status,created_at,gp_goal,voice_goal,mim_goal,upgrade_goal,hsi_goal,bts_goal,accessory_goal,features_goal"
         )
         .eq(
           "store_id",
@@ -307,7 +307,12 @@ export default async function TeamPage() {
                     employee.id
                   }
                   name={
-                    employee.full_name
+                    [
+                      employee.first_name,
+                      employee.last_name,
+                    ]
+                      .filter(Boolean)
+                      .join(" ")
                   }
                   role={
                     employee.role
@@ -331,7 +336,12 @@ export default async function TeamPage() {
                     employee.id
                   }
                   name={
-                    employee.full_name
+                    [
+                      employee.first_name,
+                      employee.last_name,
+                    ]
+                      .filter(Boolean)
+                      .join(" ")
                   }
                   role={
                     employee.role
@@ -339,7 +349,7 @@ export default async function TeamPage() {
                   viewerRole={
                     viewerRole
                   }
-                  goals={null}
+                  goals={employee}
                   registered={
                     false
                   }

@@ -275,19 +275,76 @@ export default function TeamMemberCard({
             )}
           </>
         ) : (
-          <div className="mt-6 rounded-2xl border border-dashed border-amber-200 bg-amber-50/60 p-4">
-            <p className="text-sm font-black text-amber-800">
-              Waiting for
-              registration
-            </p>
+          <>
+            <div className="mt-6 flex items-center justify-between gap-3">
+              <div>
+                <p className="text-[9px] font-black uppercase tracking-[0.18em] text-purple-600">
+                  Monthly Goals
+                </p>
 
-            <p className="mt-1 text-xs font-medium leading-5 text-amber-700/70">
-              Goal tracking becomes
-              available after this
-              employee creates their
-              SalesPulse account.
-            </p>
-          </div>
+                <p className="mt-1 text-xs font-bold text-slate-400">
+                  Set goals before registration
+                </p>
+              </div>
+
+              <Target
+                size={18}
+                className="text-purple-500"
+              />
+            </div>
+
+            <div className="mt-4 grid grid-cols-2 gap-2 sm:grid-cols-4">
+              {goalItems.map(
+                (item) => (
+                  <div
+                    key={
+                      item.label
+                    }
+                    className="rounded-xl bg-[#F7F6FB] p-2.5"
+                  >
+                    <div className="flex items-center gap-1.5 text-purple-600">
+                      {item.icon}
+
+                      <span className="text-[9px] font-black uppercase tracking-wide text-slate-400">
+                        {
+                          item.label
+                        }
+                      </span>
+                    </div>
+
+                    <p className="mt-1.5 truncate text-sm font-black text-[#17102F]">
+                      {
+                        item.value
+                      }
+                    </p>
+                  </div>
+                )
+              )}
+            </div>
+
+            {canEditGoals && (
+              <Link
+                href={`/goals/${id}`}
+                className="mt-5 flex min-h-11 items-center justify-between rounded-2xl bg-purple-50 px-4 py-3 text-sm font-black text-purple-700 transition hover:bg-purple-100"
+              >
+                Manage Goals
+
+                <ArrowRight
+                  size={17}
+                />
+              </Link>
+            )}
+
+            <div className="mt-3 rounded-2xl border border-dashed border-amber-200 bg-amber-50/60 p-4">
+              <p className="text-sm font-black text-amber-800">
+                Waiting for registration
+              </p>
+
+              <p className="mt-1 text-xs font-medium leading-5 text-amber-700/70">
+                Goals can be set now. The employee does not need a SalesPulse account yet.
+              </p>
+            </div>
+          </>
         )}
 
         {!registered &&
