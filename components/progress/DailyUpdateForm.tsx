@@ -552,7 +552,7 @@ export default function DailyUpdateForm({
               </p>
             </div>
 
-            <label className="col-span-2 rounded-2xl border border-white/10 bg-white/[0.07] p-4">
+            <label className="col-span-2 min-w-0 overflow-hidden rounded-2xl border border-white/10 bg-white/[0.07] p-4">
               <span className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.17em] text-purple-200">
                 <CalendarDays
                   size={14}
@@ -560,20 +560,26 @@ export default function DailyUpdateForm({
                 Snapshot Date
               </span>
 
-              <input
-                type="date"
-                value={date}
-                onChange={(
-                  event
-                ) =>
-                  setDate(
+              <div className="mt-2 min-w-0 max-w-full overflow-hidden rounded-xl">
+                <input
+                  type="date"
+                  value={date}
+                  onChange={(
                     event
-                      .target
-                      .value
-                  )
-                }
-                className="mt-2 w-full rounded-xl border border-white/10 bg-white px-3 py-2.5 font-black text-[#17102F] outline-none focus:ring-2 focus:ring-pink-300"
-              />
+                  ) =>
+                    setDate(
+                      event
+                        .target
+                        .value
+                    )
+                  }
+                  className="block min-w-0 max-w-full w-full box-border rounded-xl border border-white/10 bg-white px-3 py-2.5 text-sm font-black text-[#17102F] outline-none focus:ring-2 focus:ring-pink-300 sm:text-base"
+                  style={{
+                    WebkitAppearance:
+                      "none",
+                  }}
+                />
+              </div>
             </label>
           </div>
         </div>
