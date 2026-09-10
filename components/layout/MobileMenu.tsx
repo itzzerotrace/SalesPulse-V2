@@ -18,6 +18,7 @@ import {
 
 import {
   ClipboardPenLine,
+  BarChart3,
   Home,
   LogOut,
   Menu,
@@ -94,6 +95,11 @@ export default function MobileMenu({
       title: "Goals",
       href: "/goals",
       icon: Target,
+    },
+    {
+      title: "Team Overview",
+      href: "/team-overview",
+      icon: BarChart3,
     },
     {
       title: "Rankings",

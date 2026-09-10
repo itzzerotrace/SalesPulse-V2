@@ -6,6 +6,7 @@ import {
 } from "next/navigation";
 
 import {
+  BarChart3,
   Home,
   ClipboardPenLine,
   Target,
@@ -63,6 +64,11 @@ export default function Sidebar({
       title: "Goals",
       href: "/goals",
       icon: Target,
+    },
+    {
+      title: "Team Overview",
+      href: "/team-overview",
+      icon: BarChart3,
     },
     {
       title: "Rankings",
