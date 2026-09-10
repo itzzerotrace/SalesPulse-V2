@@ -336,12 +336,8 @@ export default async function TeamPage() {
                     employee.id
                   }
                   name={
-                    [
-                      employee.first_name,
-                      employee.last_name,
-                    ]
-                      .filter(Boolean)
-                      .join(" ")
+                    employee.full_name ||
+                    "Employee"
                   }
                   role={
                     employee.role
