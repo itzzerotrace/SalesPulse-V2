@@ -239,6 +239,7 @@ export default async function DailyUpdatePage() {
   return (
     <DashboardLayout>
       <DailyUpdateForm
+        key={activeStore.id}
         storeName={
           activeStore.name
         }
