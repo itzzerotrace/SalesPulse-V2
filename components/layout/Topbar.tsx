@@ -1,17 +1,7 @@
 "use client";
 
-import {
-  createClient,
-} from "@/lib/supabase/client";
-
-import {
-  useRouter,
-} from "next/navigation";
-
-import {
-  LogOut,
-  Sparkles,
-} from "lucide-react";
+import { createClient } from "@/lib/supabase/client";
+import { useRouter } from "next/navigation";
 
 import StoreSwitcher from "@/components/stores/StoreSwitcher";
 
@@ -20,28 +10,21 @@ export default function Topbar({
 }: {
   profile?: any;
 }) {
-  const router =
-    useRouter();
+  const router = useRouter();
 
   async function logout() {
-    const supabase =
-      createClient();
+    const supabase = createClient();
 
     await supabase.auth.signOut();
 
-    router.push(
-      "/login"
-    );
-
+    router.push("/login");
     router.refresh();
   }
 
   const name =
     profile?.full_name ||
     profile?.name ||
-    profile?.email?.split(
-      "@"
-    )[0] ||
+    profile?.email?.split("@")[0] ||
     "User";
 
   const role =
@@ -53,82 +36,56 @@ export default function Topbar({
   const activeStoreId =
     profile?.store?.id;
 
-  const roleLabel =
-    String(role)
-      .replaceAll("_", " ")
-      .replace(
-        /\b\w/g,
-        (letter) =>
-          letter.toUpperCase()
-      );
+  /*
+   * Only STORE MANAGERS get the
+   * Viewing Store dropdown in the top bar.
+   *
+   * Regional managers do NOT get it.
+   */
+  const showStoreSwitcher =
+    role === "manager" &&
+    stores.length > 1;
 
   return (
-    <header className="sticky top-0 z-20 hidden min-h-[84px] border-b border-slate-200/80 bg-white/90 px-8 backdrop-blur-xl lg:flex lg:items-center lg:justify-between">
-      <div className="flex min-w-0 items-center gap-6">
-        <div>
-          <div className="flex items-center gap-2">
-            <Sparkles
-              size={17}
-              className="text-pink-500"
-            />
+    <header className="hidden min-h-20 border-b bg-white px-8 lg:flex lg:items-center lg:justify-between">
+      <div className="flex items-center gap-6">
+        <h1 className="text-2xl font-black text-slate-900">
+          SalesPulse
+        </h1>
 
-            <p className="text-[11px] font-black uppercase tracking-[0.18em] text-purple-600">
-              SalesPulse
-            </p>
-          </div>
-
-          <p className="mt-1 text-sm font-bold text-slate-500">
-            {profile?.store
-              ?.name ||
-              "Performance Center"}
-          </p>
-        </div>
-
-        {(role === "manager" ||
-          role === "regional_manager") &&
-          stores.length >
-            1 && (
-            <>
-              <div className="h-9 w-px bg-slate-200" />
-
-              <StoreSwitcher
-                stores={
-                  stores
-                }
-                activeStoreId={
-                  activeStoreId
-                }
-              />
-            </>
-          )}
+        {showStoreSwitcher && (
+          <StoreSwitcher
+            stores={stores}
+            activeStoreId={activeStoreId}
+          />
+        )}
       </div>
 
-      <div className="flex items-center gap-3">
-        <div className="mr-1 text-right">
-          <p className="max-w-[220px] truncate text-sm font-black text-slate-900">
+      <div className="flex items-center gap-4">
+        <div className="hidden text-right md:block">
+          <p className="font-bold text-slate-900">
             {name}
           </p>
 
-          <p className="mt-0.5 text-[11px] font-bold uppercase tracking-wider text-slate-400">
-            {roleLabel}
+          <p className="text-xs font-bold uppercase tracking-wide text-slate-500">
+            {role === "regional_manager"
+              ? "Regional Manager"
+              : role === "manager"
+                ? "Store Manager"
+                : role}
           </p>
         </div>
 
-        <div className="salespulse-gradient flex h-11 w-11 items-center justify-center rounded-2xl text-base font-black text-white shadow-lg shadow-purple-500/20">
-          {name
-            .charAt(0)
-            .toUpperCase()}
+        <div className="flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-purple-600 to-pink-500 text-lg font-black text-white shadow-lg shadow-purple-200">
+          {name.charAt(0).toUpperCase()}
         </div>
 
         <button
           onClick={logout}
           aria-label="Logout"
-          title="Logout"
-          className="ml-1 flex h-11 w-11 items-center justify-center rounded-2xl border border-slate-200 bg-white text-slate-500 transition hover:border-pink-200 hover:bg-pink-50 hover:text-pink-600"
+          className="flex h-12 w-12 items-center justify-center rounded-2xl border border-slate-200 bg-white text-xl font-bold text-slate-600 transition hover:bg-slate-50 hover:text-slate-900"
         >
-          <LogOut
-            size={18}
-          />
+          ↪
         </button>
       </div>
     </header>
