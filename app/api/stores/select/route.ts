@@ -16,9 +16,13 @@ export async function POST(request: Request) {
       );
     }
 
-    if (context.profile.role !== "manager") {
+    const canManageMultipleStores =
+      context.profile.role === "manager" ||
+      context.profile.role === "regional_manager";
+
+    if (!canManageMultipleStores) {
       return NextResponse.json(
-        { error: "Store switching is only available to managers." },
+        { error: "Store switching is not available for this account." },
         { status: 403 }
       );
     }

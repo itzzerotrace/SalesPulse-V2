@@ -11,13 +11,17 @@ export async function getUserProfile() {
     return null;
   }
 
+  const canManageMultipleStores =
+    context.profile.role === "manager" ||
+    context.profile.role === "regional_manager";
+
   const activeStore =
-    context.profile.role === "manager"
+    canManageMultipleStores
       ? await getActiveStore()
       : context.profile.store;
 
   const managedStores =
-    context.profile.role === "manager"
+    canManageMultipleStores
       ? await getManagerStores()
       : [];
 

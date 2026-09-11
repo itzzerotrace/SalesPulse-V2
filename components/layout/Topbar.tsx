@@ -84,8 +84,8 @@ export default function Topbar({
           </p>
         </div>
 
-        {role ===
-          "manager" &&
+        {(role === "manager" ||
+          role === "regional_manager") &&
           stores.length >
             1 && (
             <>

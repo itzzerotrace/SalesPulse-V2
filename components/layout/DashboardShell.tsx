@@ -64,7 +64,8 @@ export default function DashboardShell({
             <div className="h-2.5 w-2.5 shrink-0 rounded-full bg-pink-500 shadow-[0_0_14px_rgba(247,37,133,0.9)]" />
           </div>
 
-          {role === "manager" &&
+          {(role === "manager" ||
+              role === "regional_manager") &&
             stores.length > 1 && (
               <div className="mt-3 border-t border-white/10 pt-3">
                 <StoreSwitcher

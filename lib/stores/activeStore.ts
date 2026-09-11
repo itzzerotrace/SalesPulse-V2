@@ -12,7 +12,11 @@ export async function getManagerStores() {
     return [];
   }
 
-  if (context.profile.role !== "manager") {
+  const canManageMultipleStores =
+    context.profile.role === "manager" ||
+    context.profile.role === "regional_manager";
+
+  if (!canManageMultipleStores) {
     return context.profile.store
       ? [context.profile.store]
       : [];
@@ -61,7 +65,11 @@ export async function getActiveStore() {
     return null;
   }
 
-  if (context.profile.role !== "manager") {
+  const canManageMultipleStores =
+    context.profile.role === "manager" ||
+    context.profile.role === "regional_manager";
+
+  if (!canManageMultipleStores) {
     return context.profile.store || null;
   }
 
