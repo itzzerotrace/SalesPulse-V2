@@ -1,7 +1,10 @@
 "use client";
 
 import { createClient } from "@/lib/supabase/client";
-import { useRouter } from "next/navigation";
+import {
+  usePathname,
+  useRouter,
+} from "next/navigation";
 
 import StoreSwitcher from "@/components/stores/StoreSwitcher";
 
@@ -11,6 +14,7 @@ export default function Topbar({
   profile?: any;
 }) {
   const router = useRouter();
+  const pathname = usePathname();
 
   async function logout() {
     const supabase = createClient();
@@ -37,14 +41,24 @@ export default function Topbar({
     profile?.store?.id;
 
   /*
-   * Only STORE MANAGERS get the
-   * Viewing Store dropdown in the top bar.
+   * Store Manager:
+   * Show store selector anywhere if they
+   * have more than one assigned store.
    *
-   * Regional managers do NOT get it.
+   * Regional Manager:
+   * Hide it on Regional Dashboard.
+   * Show it on Daily Update because a
+   * specific store must be selected.
    */
   const showStoreSwitcher =
-    role === "manager" &&
-    stores.length > 1;
+    stores.length > 1 &&
+    (
+      role === "manager" ||
+      (
+        role === "regional_manager" &&
+        pathname === "/daily-update"
+      )
+    );
 
   return (
     <header className="hidden min-h-20 border-b bg-white px-8 lg:flex lg:items-center lg:justify-between">

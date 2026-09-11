@@ -1,203 +1,354 @@
 import { createClient } from "@/lib/supabase/server";
 import { getUserContext } from "@/lib/auth/userContext";
-import { getMonthInfo } from "@/lib/progress/date";
 
-function percent(current: number, goal: number) {
-  if (!goal || goal <= 0) {
-    return 0;
-  }
+import {
+  getCaliforniaDate,
+  getMonthInfo,
+} from "@/lib/progress/date";
 
-  return Number(
-    ((current / goal) * 100).toFixed(1)
-  );
+type StoreGoalRow = {
+  gp_goal?: number | string | null;
+  voice_goal?: number | string | null;
+  mim_goal?: number | string | null;
+  upgrade_goal?: number | string | null;
+  hsi_goal?: number | string | null;
+  bts_goal?: number | string | null;
+  accessory_goal?: number | string | null;
+  features_goal?: number | string | null;
+};
+
+type StoreStatsRow = {
+  stat_date?: string | null;
+  gp?: number | string | null;
+  voice?: number | string | null;
+  mim?: number | string | null;
+  upgrade?: number | string | null;
+  hsi?: number | string | null;
+  bts?: number | string | null;
+  accessories?: number | string | null;
+  features?: number | string | null;
+};
+
+function numberValue(value: unknown) {
+  const parsed = Number(value);
+
+  return Number.isFinite(parsed)
+    ? parsed
+    : 0;
+}
+
+function metric(
+  current: unknown,
+  goal: unknown
+) {
+  const currentValue =
+    numberValue(current);
+
+  const goalValue =
+    numberValue(goal);
+
+  const percent =
+    goalValue > 0
+      ? Number(
+          (
+            (currentValue /
+              goalValue) *
+            100
+          ).toFixed(1)
+        )
+      : 0;
+
+  return {
+    current: currentValue,
+    goal: goalValue,
+    percent,
+  };
 }
 
 export async function getRegionalGoalProgress() {
-  const supabase = await createClient();
-  const context = await getUserContext();
-  const monthInfo = getMonthInfo();
+  const supabase =
+    await createClient();
 
-  if (!context?.user || !context.profile) {
+  const context =
+    await getUserContext();
+
+  if (
+    !context?.user ||
+    !context?.profile
+  ) {
     return [];
   }
 
-  let stores: any[] = [];
+  const today =
+    getCaliforniaDate();
 
-  // District Managers / Regional Managers now use
-  // explicit manager_stores assignments.
-  if (context.profile.role === "regional_manager") {
+  const {
+    monthName,
+    year,
+    monthStart,
+  } = getMonthInfo(today);
+
+  /*
+   * First use manager_stores.
+   * Regional managers can be assigned
+   * directly to stores even when the
+   * stores do not have region_id set.
+   */
+  const {
+    data: assignments,
+    error: assignmentError,
+  } = await supabase
+    .from("manager_stores")
+    .select("store_id")
+    .eq(
+      "manager_id",
+      context.user.id
+    );
+
+  if (assignmentError) {
+    console.error(
+      "REGIONAL STORE ASSIGNMENT ERROR:",
+      assignmentError
+    );
+  }
+
+  let storeIds: string[] =
+    Array.from(
+      new Set(
+        (assignments || [])
+          .map(
+            (row: any) =>
+              row.store_id
+          )
+          .filter(
+            (
+              id
+            ): id is string =>
+              Boolean(id)
+          )
+      )
+    );
+
+  /*
+   * Fallback to region_id if there
+   * are no manager_stores assignments.
+   */
+  if (
+    storeIds.length === 0 &&
+    context.profile.region_id
+  ) {
     const {
-      data: assignments,
-      error: assignmentError,
-    } = await supabase
-      .from("manager_stores")
-      .select("store_id")
-      .eq("manager_id", context.user.id);
-
-    if (assignmentError) {
-      console.error(
-        "DISTRICT STORE ASSIGNMENT ERROR:",
-        assignmentError
-      );
-      return [];
-    }
-
-    const storeIds = (assignments || [])
-      .map((assignment: any) => assignment.store_id)
-      .filter(Boolean);
-
-    if (storeIds.length === 0) {
-      return [];
-    }
-
-    const {
-      data: assignedStores,
-      error: storeError,
+      data: regionStores,
+      error: regionError,
     } = await supabase
       .from("stores")
-      .select("id,name")
-      .in("id", storeIds)
-      .order("name");
-
-    if (storeError) {
-      console.error(
-        "DISTRICT STORES ERROR:",
-        storeError
-      );
-      return [];
-    }
-
-    stores = assignedStores || [];
-  } else if (context.profile.region_id) {
-    const {
-      data: regionalStores,
-      error: storeError,
-    } = await supabase
-      .from("stores")
-      .select("id,name")
+      .select("id")
       .eq(
         "region_id",
         context.profile.region_id
-      )
-      .order("name");
-
-    if (storeError) {
-      console.error(
-        "REGIONAL STORES ERROR:",
-        storeError
       );
-      return [];
+
+    if (regionError) {
+      console.error(
+        "REGIONAL STORE LOOKUP ERROR:",
+        regionError
+      );
     }
 
-    stores = regionalStores || [];
-  } else {
+    storeIds = (
+      regionStores || []
+    )
+      .map(
+        (store: any) =>
+          store.id
+      )
+      .filter(
+        (
+          id
+        ): id is string =>
+          Boolean(id)
+      );
+  }
+
+  if (
+    storeIds.length === 0
+  ) {
     return [];
   }
 
-  const results = [];
+  const {
+    data: stores,
+    error: storesError,
+  } = await supabase
+    .from("stores")
+    .select("id,name")
+    .in(
+      "id",
+      storeIds
+    )
+    .order("name");
 
-  for (const store of stores) {
-    const {
-      data: goal,
-      error: goalError,
-    } = await supabase
-      .from("store_goals")
-      .select("*")
-      .eq("store_id", store.id)
-      .eq("month", monthInfo.monthName)
-      .eq("year", monthInfo.year)
-      .maybeSingle();
+  if (storesError) {
+    console.error(
+      "REGIONAL STORES ERROR:",
+      storesError
+    );
 
-    if (goalError) {
+    return [];
+  }
+
+  const results: any[] = [];
+
+  for (
+    const store
+    of stores || []
+  ) {
+    const [
+      goalResult,
+      statsResult,
+    ] = await Promise.all([
+      supabase
+        .from("store_goals")
+        .select(
+          `
+          gp_goal,
+          voice_goal,
+          mim_goal,
+          upgrade_goal,
+          hsi_goal,
+          bts_goal,
+          accessory_goal,
+          features_goal
+          `
+        )
+        .eq(
+          "store_id",
+          store.id
+        )
+        .eq(
+          "month",
+          monthName
+        )
+        .eq(
+          "year",
+          year
+        )
+        .maybeSingle(),
+
+      supabase
+        .from(
+          "store_daily_stats"
+        )
+        .select(
+          `
+          stat_date,
+          gp,
+          voice,
+          mim,
+          upgrade,
+          hsi,
+          bts,
+          accessories,
+          features
+          `
+        )
+        .eq(
+          "store_id",
+          store.id
+        )
+        .gte(
+          "stat_date",
+          monthStart
+        )
+        .lte(
+          "stat_date",
+          today
+        )
+        .order(
+          "stat_date",
+          {
+            ascending: false,
+          }
+        )
+        .limit(1)
+        .maybeSingle(),
+    ]);
+
+    if (goalResult.error) {
       console.error(
-        "DISTRICT STORE GOAL ERROR:",
-        goalError
+        `REGIONAL GOAL ERROR - ${store.name}:`,
+        goalResult.error
       );
     }
 
-    const {
-      data: snapshots,
-      error: snapshotError,
-    } = await supabase
-      .from("store_daily_stats")
-      .select("*")
-      .eq("store_id", store.id)
-      .gte(
-        "stat_date",
-        monthInfo.monthStart
-      )
-      .order("stat_date", {
-        ascending: false,
-      })
-      .limit(1);
-
-    if (snapshotError) {
+    if (statsResult.error) {
       console.error(
-        "DISTRICT SNAPSHOT ERROR:",
-        snapshotError
+        `REGIONAL STATS ERROR - ${store.name}:`,
+        statsResult.error
       );
     }
+
+    const goal =
+      (goalResult.data ||
+        {}) as StoreGoalRow;
 
     const stats =
-      snapshots?.[0] || {};
+      (statsResult.data ||
+        {}) as StoreStatsRow;
 
     results.push({
-      store: store.name,
+      id: store.id,
+      storeId: store.id,
 
-      goals: {
-        gp: Number(goal?.gp_goal || 0),
-        voice: Number(goal?.voice_goal || 0),
-        mim: Number(goal?.mim_goal || 0),
-        upgrade: Number(goal?.upgrade_goal || 0),
-        hsi: Number(goal?.hsi_goal || 0),
-        bts: Number(goal?.bts_goal || 0),
-        accessories: Number(
-          goal?.accessory_goal || 0
-        ),
-        features: Number(
-          goal?.features_goal || 0
-        ),
-      },
+      store:
+        store.name,
 
-      gp: percent(
-        Number(stats.gp || 0),
-        Number(goal?.gp_goal || 0)
+      name:
+        store.name,
+
+      gp: metric(
+        stats.gp,
+        goal.gp_goal
       ),
 
-      voice: percent(
-        Number(stats.voice || 0),
-        Number(goal?.voice_goal || 0)
+      voice: metric(
+        stats.voice,
+        goal.voice_goal
       ),
 
-      mim: percent(
-        Number(stats.mim || 0),
-        Number(goal?.mim_goal || 0)
+      mim: metric(
+        stats.mim,
+        goal.mim_goal
       ),
 
-      upgrade: percent(
-        Number(stats.upgrade || 0),
-        Number(goal?.upgrade_goal || 0)
+      upgrade: metric(
+        stats.upgrade,
+        goal.upgrade_goal
       ),
 
-      hsi: percent(
-        Number(stats.hsi || 0),
-        Number(goal?.hsi_goal || 0)
+      hsi: metric(
+        stats.hsi,
+        goal.hsi_goal
       ),
 
-      bts: percent(
-        Number(stats.bts || 0),
-        Number(goal?.bts_goal || 0)
+      bts: metric(
+        stats.bts,
+        goal.bts_goal
       ),
 
-      accessories: percent(
-        Number(stats.accessories || 0),
-        Number(goal?.accessory_goal || 0)
+      accessories: metric(
+        stats.accessories,
+        goal.accessory_goal
       ),
 
-      features: percent(
-        Number(stats.features || 0),
-        Number(goal?.features_goal || 0)
+      features: metric(
+        stats.features,
+        goal.features_goal
       ),
+
+      statDate:
+        stats.stat_date ||
+        null,
     });
   }
 
