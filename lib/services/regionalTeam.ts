@@ -30,30 +30,12 @@ const metricMap: Array<{
   metric: MetricKey;
   goal: GoalKey;
 }> = [
-  {
-    metric: "gp",
-    goal: "gp_goal",
-  },
-  {
-    metric: "voice",
-    goal: "voice_goal",
-  },
-  {
-    metric: "mim",
-    goal: "mim_goal",
-  },
-  {
-    metric: "upgrade",
-    goal: "upgrade_goal",
-  },
-  {
-    metric: "hsi",
-    goal: "hsi_goal",
-  },
-  {
-    metric: "bts",
-    goal: "bts_goal",
-  },
+  { metric: "gp", goal: "gp_goal" },
+  { metric: "voice", goal: "voice_goal" },
+  { metric: "mim", goal: "mim_goal" },
+  { metric: "upgrade", goal: "upgrade_goal" },
+  { metric: "hsi", goal: "hsi_goal" },
+  { metric: "bts", goal: "bts_goal" },
   {
     metric: "accessories",
     goal: "accessory_goal",
@@ -70,24 +52,20 @@ function calculateScore(
 ) {
   const percentages = metricMap
     .map(({ metric, goal }) => {
-      const goalValue =
-        Number(
-          goals?.[goal] || 0
-        );
+      const target =
+        Number(goals?.[goal] || 0);
 
-      if (goalValue <= 0) {
+      if (target <= 0) {
         return null;
       }
 
-      const currentValue =
-        Number(
-          stats?.[metric] || 0
-        );
+      const current =
+        Number(stats?.[metric] || 0);
 
       return (
-        currentValue /
-        goalValue
-      ) * 100;
+        (current / target) *
+        100
+      );
     })
     .filter(
       (
@@ -130,6 +108,7 @@ export async function getRegionalStoreIds() {
 
   const {
     data: assignments,
+    error: assignmentError,
   } = await supabase
     .from("manager_stores")
     .select("store_id")
@@ -137,6 +116,13 @@ export async function getRegionalStoreIds() {
       "manager_id",
       context.user.id
     );
+
+  if (assignmentError) {
+    console.error(
+      "REGIONAL MANAGER STORE ERROR:",
+      assignmentError
+    );
+  }
 
   let storeIds: string[] =
     Array.from(
@@ -156,6 +142,7 @@ export async function getRegionalStoreIds() {
   ) {
     const {
       data: regionStores,
+      error: regionError,
     } = await supabase
       .from("stores")
       .select("id")
@@ -163,6 +150,13 @@ export async function getRegionalStoreIds() {
         "region_id",
         context.profile.region_id
       );
+
+    if (regionError) {
+      console.error(
+        "REGIONAL REGION STORE ERROR:",
+        regionError
+      );
+    }
 
     storeIds = (
       regionStores || []
@@ -229,17 +223,31 @@ export async function getRegionalTeamData() {
 
   const {
     data: stores,
+    error: storeError,
   } = await supabase
     .from("stores")
-    .select(
-      "id,name"
-    )
+    .select("id,name")
     .in(
       "id",
       storeIds
     )
     .order("name");
 
+  if (storeError) {
+    console.error(
+      "REGIONAL TEAM STORES ERROR:",
+      storeError
+    );
+  }
+
+  /*
+   * IMPORTANT:
+   * Match the original Bryce/manager behavior.
+   *
+   * Do NOT require role === "employee".
+   * Include every approved non-management
+   * profile under Jason's assigned stores.
+   */
   const {
     data: employees,
     error: employeeError,
@@ -249,7 +257,9 @@ export async function getRegionalTeamData() {
       `
       id,
       full_name,
+      email,
       role,
+      status,
       store_id
       `
     )
@@ -261,11 +271,14 @@ export async function getRegionalTeamData() {
       "status",
       "approved"
     )
-    .eq(
+    .not(
       "role",
-      "employee"
+      "in",
+      '("manager","admin","regional_manager")'
     )
-    .order("full_name");
+    .order(
+      "full_name"
+    );
 
   if (employeeError) {
     console.error(
@@ -368,14 +381,14 @@ export async function getRegionalTeamData() {
 
     if (goalResult.error) {
       console.error(
-        "REGIONAL TEAM GOALS ERROR:",
+        "REGIONAL EMPLOYEE GOAL ERROR:",
         goalResult.error
       );
     }
 
     if (statsResult.error) {
       console.error(
-        "REGIONAL TEAM STATS ERROR:",
+        "REGIONAL EMPLOYEE STATS ERROR:",
         statsResult.error
       );
     }
@@ -394,9 +407,24 @@ export async function getRegionalTeamData() {
     const store
     of stores || []
   ) {
+    /*
+     * Safety normalization for display.
+     * Old Marconi should never display
+     * as just "Marconi".
+     */
+    const displayName =
+      String(
+        store.name || ""
+      )
+        .trim()
+        .toLowerCase() ===
+      "marconi"
+        ? "Marconi Ave"
+        : store.name;
+
     storeMap.set(
       store.id,
-      store.name
+      displayName
     );
   }
 
@@ -435,7 +463,7 @@ export async function getRegionalTeamData() {
   const enrichedEmployees =
     employeeRows.map(
       (employee: any) => {
-        const goal =
+        const goals =
           goalMap.get(
             employee.id
           ) || null;
@@ -454,16 +482,14 @@ export async function getRegionalTeamData() {
             ) ||
             "Unknown Store",
 
-          goals:
-            goal,
+          goals,
 
-          stats:
-            stats,
+          stats,
 
           score:
             calculateScore(
               stats || {},
-              goal || {}
+              goals || {}
             ),
         };
       }
@@ -473,21 +499,28 @@ export async function getRegionalTeamData() {
     [...enrichedEmployees]
       .sort(
         (a, b) =>
-          b.score -
-          a.score
+          Number(
+            b.score || 0
+          ) -
+          Number(
+            a.score || 0
+          )
       );
 
-  const scoredEmployees =
-    rankings.filter(
+  const employeesWithGoals =
+    enrichedEmployees.filter(
       (employee) =>
-        employee.goals
+        Boolean(
+          employee.goals
+        )
     );
 
   const averageScore =
-    scoredEmployees.length > 0
+    employeesWithGoals.length >
+    0
       ? Number(
           (
-            scoredEmployees.reduce(
+            employeesWithGoals.reduce(
               (
                 sum,
                 employee
@@ -499,7 +532,7 @@ export async function getRegionalTeamData() {
                 ),
               0
             ) /
-            scoredEmployees.length
+            employeesWithGoals.length
           ).toFixed(1)
         )
       : 0;
