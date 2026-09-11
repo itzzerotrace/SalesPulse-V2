@@ -17,33 +17,86 @@ export async function getRegionalGoalProgress() {
   const context = await getUserContext();
   const monthInfo = getMonthInfo();
 
-  if (!context?.profile?.region_id) {
+  if (!context?.user || !context.profile) {
     return [];
   }
 
-  const {
-    data: stores,
-    error: storeError,
-  } = await supabase
-    .from("stores")
-    .select("id,name")
-    .eq(
-      "region_id",
-      context.profile.region_id
-    )
-    .order("name");
+  let stores: any[] = [];
 
-  if (storeError) {
-    console.error(
-      "REGIONAL STORES ERROR:",
-      storeError
-    );
+  // District Managers / Regional Managers now use
+  // explicit manager_stores assignments.
+  if (context.profile.role === "regional_manager") {
+    const {
+      data: assignments,
+      error: assignmentError,
+    } = await supabase
+      .from("manager_stores")
+      .select("store_id")
+      .eq("manager_id", context.user.id);
+
+    if (assignmentError) {
+      console.error(
+        "DISTRICT STORE ASSIGNMENT ERROR:",
+        assignmentError
+      );
+      return [];
+    }
+
+    const storeIds = (assignments || [])
+      .map((assignment: any) => assignment.store_id)
+      .filter(Boolean);
+
+    if (storeIds.length === 0) {
+      return [];
+    }
+
+    const {
+      data: assignedStores,
+      error: storeError,
+    } = await supabase
+      .from("stores")
+      .select("id,name")
+      .in("id", storeIds)
+      .order("name");
+
+    if (storeError) {
+      console.error(
+        "DISTRICT STORES ERROR:",
+        storeError
+      );
+      return [];
+    }
+
+    stores = assignedStores || [];
+  } else if (context.profile.region_id) {
+    const {
+      data: regionalStores,
+      error: storeError,
+    } = await supabase
+      .from("stores")
+      .select("id,name")
+      .eq(
+        "region_id",
+        context.profile.region_id
+      )
+      .order("name");
+
+    if (storeError) {
+      console.error(
+        "REGIONAL STORES ERROR:",
+        storeError
+      );
+      return [];
+    }
+
+    stores = regionalStores || [];
+  } else {
     return [];
   }
 
   const results = [];
 
-  for (const store of stores || []) {
+  for (const store of stores) {
     const {
       data: goal,
       error: goalError,
@@ -57,7 +110,7 @@ export async function getRegionalGoalProgress() {
 
     if (goalError) {
       console.error(
-        "REGIONAL STORE GOAL ERROR:",
+        "DISTRICT STORE GOAL ERROR:",
         goalError
       );
     }
@@ -80,7 +133,7 @@ export async function getRegionalGoalProgress() {
 
     if (snapshotError) {
       console.error(
-        "REGIONAL SNAPSHOT ERROR:",
+        "DISTRICT SNAPSHOT ERROR:",
         snapshotError
       );
     }
@@ -90,6 +143,21 @@ export async function getRegionalGoalProgress() {
 
     results.push({
       store: store.name,
+
+      goals: {
+        gp: Number(goal?.gp_goal || 0),
+        voice: Number(goal?.voice_goal || 0),
+        mim: Number(goal?.mim_goal || 0),
+        upgrade: Number(goal?.upgrade_goal || 0),
+        hsi: Number(goal?.hsi_goal || 0),
+        bts: Number(goal?.bts_goal || 0),
+        accessories: Number(
+          goal?.accessory_goal || 0
+        ),
+        features: Number(
+          goal?.features_goal || 0
+        ),
+      },
 
       gp: percent(
         Number(stats.gp || 0),
@@ -108,9 +176,7 @@ export async function getRegionalGoalProgress() {
 
       upgrade: percent(
         Number(stats.upgrade || 0),
-        Number(
-          goal?.upgrade_goal || 0
-        )
+        Number(goal?.upgrade_goal || 0)
       ),
 
       hsi: percent(
@@ -124,19 +190,13 @@ export async function getRegionalGoalProgress() {
       ),
 
       accessories: percent(
-        Number(
-          stats.accessories || 0
-        ),
-        Number(
-          goal?.accessory_goal || 0
-        )
+        Number(stats.accessories || 0),
+        Number(goal?.accessory_goal || 0)
       ),
 
       features: percent(
         Number(stats.features || 0),
-        Number(
-          goal?.features_goal || 0
-        )
+        Number(goal?.features_goal || 0)
       ),
     });
   }

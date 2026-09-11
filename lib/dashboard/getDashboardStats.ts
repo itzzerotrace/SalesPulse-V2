@@ -204,7 +204,10 @@ export async function getDashboardStats() {
     monthStart,
   } = getMonthInfo(date);
 
-  if (role === "manager") {
+  if (
+    role === "manager" ||
+    role === "regional_manager"
+  ) {
     const activeStore =
       await getActiveStore();
 

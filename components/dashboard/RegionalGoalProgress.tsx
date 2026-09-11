@@ -3,14 +3,22 @@ import { getRegionalGoalProgress } from "@/lib/services/regionalGoals";
 function Metric({
   label,
   value,
+  goal,
+  money = false,
 }: {
   label: string;
   value: number;
+  goal: number;
+  money?: boolean;
 }) {
   const width = Math.min(
     Math.max(value, 0),
     100
   );
+
+  const formattedGoal = money
+    ? `$${Math.round(goal).toLocaleString()}`
+    : Math.round(goal).toLocaleString();
 
   return (
     <div>
@@ -32,6 +40,10 @@ function Metric({
           }}
         />
       </div>
+
+      <p className="mt-1 text-xs font-bold text-slate-400">
+        Goal: {formattedGoal}
+      </p>
     </div>
   );
 }
@@ -44,7 +56,7 @@ export default async function RegionalGoalProgress() {
     <section className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm sm:p-8">
       <div>
         <p className="text-xs font-bold uppercase tracking-wider text-purple-600">
-          Regional Progress
+          District Progress
         </p>
 
         <h2 className="mt-1 text-2xl font-black text-slate-900">
@@ -52,8 +64,8 @@ export default async function RegionalGoalProgress() {
         </h2>
 
         <p className="mt-2 text-sm text-slate-500">
-          Based on each store&apos;s latest
-          month-to-date progress update.
+          Goals and month-to-date progress for
+          each assigned store.
         </p>
       </div>
 
@@ -73,45 +85,52 @@ export default async function RegionalGoalProgress() {
                   <Metric
                     label="GP"
                     value={store.gp}
+                    goal={store.goals.gp}
+                    money
                   />
 
                   <Metric
                     label="Voice"
                     value={store.voice}
+                    goal={store.goals.voice}
                   />
 
                   <Metric
                     label="MiM"
                     value={store.mim}
+                    goal={store.goals.mim}
                   />
 
                   <Metric
                     label="Upgrades"
                     value={store.upgrade}
+                    goal={store.goals.upgrade}
                   />
 
                   <Metric
                     label="HSI"
                     value={store.hsi}
+                    goal={store.goals.hsi}
                   />
 
                   <Metric
                     label="BTS"
                     value={store.bts}
+                    goal={store.goals.bts}
                   />
 
                   <Metric
                     label="Accessories"
-                    value={
-                      store.accessories
-                    }
+                    value={store.accessories}
+                    goal={store.goals.accessories}
+                    money
                   />
 
                   <Metric
                     label="Features"
-                    value={
-                      store.features
-                    }
+                    value={store.features}
+                    goal={store.goals.features}
+                    money
                   />
                 </div>
               </div>
@@ -121,13 +140,12 @@ export default async function RegionalGoalProgress() {
       ) : (
         <div className="mt-6 rounded-2xl border border-dashed border-slate-300 p-8 text-center">
           <p className="font-bold text-slate-900">
-            No store progress available
+            No store goals available
           </p>
 
           <p className="mt-1 text-sm text-slate-500">
-            Stores in this region will
-            appear here once goals and
-            daily updates are entered.
+            Assigned stores will appear here
+            once monthly goals are entered.
           </p>
         </div>
       )}
