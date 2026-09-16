@@ -13,14 +13,23 @@ import {
 } from "lucide-react";
 
 import DashboardLayout from "@/components/layout/DashboardLayout";
+
 import { createClient } from "@/lib/supabase/server";
+import { getUserContext } from "@/lib/auth/userContext";
 import { getActiveStore } from "@/lib/stores/activeStore";
+
 import {
   getCaliforniaDate,
   getMonthInfo,
 } from "@/lib/progress/date";
 
-export const dynamic = "force-dynamic";
+import {
+  getRegionalStoreIds,
+} from "@/lib/services/regionalTeam";
+
+export const dynamic =
+  "force-dynamic";
+
 export const revalidate = 0;
 
 type Metric = {
@@ -34,8 +43,12 @@ type Metric = {
 };
 
 function num(value: unknown) {
-  const n = Number(value);
-  return Number.isFinite(n) ? n : 0;
+  const n =
+    Number(value);
+
+  return Number.isFinite(n)
+    ? n
+    : 0;
 }
 
 function formatValue(
@@ -43,9 +56,13 @@ function formatValue(
   money = false
 ) {
   if (money) {
-    return `$${value.toLocaleString(undefined, {
-      maximumFractionDigits: 2,
-    })}`;
+    return `$${value.toLocaleString(
+      undefined,
+      {
+        maximumFractionDigits:
+          2,
+      }
+    )}`;
   }
 
   return value.toLocaleString();
@@ -55,8 +72,32 @@ function percent(
   current: number,
   goal: number
 ) {
-  if (goal <= 0) return 0;
-  return (current / goal) * 100;
+  if (goal <= 0) {
+    return 0;
+  }
+
+  return (
+    (current / goal) *
+    100
+  );
+}
+
+function normalizeStoreName(
+  name: unknown
+) {
+  const value =
+    String(
+      name || ""
+    ).trim();
+
+  if (
+    value.toLowerCase() ===
+    "marconi"
+  ) {
+    return "Marconi Ave";
+  }
+
+  return value;
 }
 
 const metrics: Metric[] = [
@@ -64,79 +105,147 @@ const metrics: Metric[] = [
     key: "gp",
     label: "GP",
     goalKey: "gp_goal",
-    pendingProgressKey: "gp_progress",
-    registeredProgressKey: "gp",
+    pendingProgressKey:
+      "gp_progress",
+    registeredProgressKey:
+      "gp",
     money: true,
-    icon: <CircleDollarSign size={17} />,
+    icon: (
+      <CircleDollarSign
+        size={17}
+      />
+    ),
   },
   {
     key: "voice",
     label: "Voice",
     goalKey: "voice_goal",
-    pendingProgressKey: "voice_progress",
-    registeredProgressKey: "voice",
-    icon: <Smartphone size={17} />,
+    pendingProgressKey:
+      "voice_progress",
+    registeredProgressKey:
+      "voice",
+    icon: (
+      <Smartphone size={17} />
+    ),
   },
   {
     key: "mim",
     label: "MiM",
     goalKey: "mim_goal",
-    pendingProgressKey: "mim_progress",
-    registeredProgressKey: "mim",
-    icon: <RefreshCcw size={17} />,
+    pendingProgressKey:
+      "mim_progress",
+    registeredProgressKey:
+      "mim",
+    icon: (
+      <RefreshCcw size={17} />
+    ),
   },
   {
     key: "upgrade",
     label: "Upgrades",
     goalKey: "upgrade_goal",
-    pendingProgressKey: "upgrade_progress",
-    registeredProgressKey: "upgrade",
-    icon: <TrendingUp size={17} />,
+    pendingProgressKey:
+      "upgrade_progress",
+    registeredProgressKey:
+      "upgrade",
+    icon: (
+      <TrendingUp size={17} />
+    ),
   },
   {
     key: "hsi",
     label: "HSI",
     goalKey: "hsi_goal",
-    pendingProgressKey: "hsi_progress",
-    registeredProgressKey: "hsi",
+    pendingProgressKey:
+      "hsi_progress",
+    registeredProgressKey:
+      "hsi",
     icon: <Wifi size={17} />,
   },
   {
     key: "bts",
     label: "BTS",
     goalKey: "bts_goal",
-    pendingProgressKey: "bts_progress",
-    registeredProgressKey: "bts",
-    icon: <RadioTower size={17} />,
+    pendingProgressKey:
+      "bts_progress",
+    registeredProgressKey:
+      "bts",
+    icon: (
+      <RadioTower size={17} />
+    ),
   },
   {
     key: "accessories",
     label: "Accessories",
-    goalKey: "accessory_goal",
-    pendingProgressKey: "accessory_progress",
-    registeredProgressKey: "accessories",
+    goalKey:
+      "accessory_goal",
+    pendingProgressKey:
+      "accessory_progress",
+    registeredProgressKey:
+      "accessories",
     money: true,
-    icon: <Headphones size={17} />,
+    icon: (
+      <Headphones size={17} />
+    ),
   },
   {
     key: "features",
     label: "Features",
-    goalKey: "features_goal",
-    pendingProgressKey: "features_progress",
-    registeredProgressKey: "features",
+    goalKey:
+      "features_goal",
+    pendingProgressKey:
+      "features_progress",
+    registeredProgressKey:
+      "features",
     money: true,
     icon: <Star size={17} />,
   },
 ];
 
 export default async function TeamOverviewPage() {
-  const supabase = await createClient();
-  const activeStore = await getActiveStore();
+  const supabase =
+    await createClient();
 
-  const today = getCaliforniaDate();
-  const month = getMonthInfo(today);
+  const context =
+    await getUserContext();
 
-  if (!activeStore?.id) {
+  const role =
+    context?.profile?.role;
+
+  const isRegional =
+    role ===
+    "regional_manager";
+
+  const activeStore =
+    await getActiveStore();
+
+  const today =
+    getCaliforniaDate();
+
+  const month =
+    getMonthInfo(today);
+
+  /*
+   * ======================================================
+   * DETERMINE STORES
+   * ======================================================
+   */
+
+  let storeIds: string[] =
+    [];
+
+  if (isRegional) {
+    storeIds =
+      await getRegionalStoreIds();
+  } else if (activeStore?.id) {
+    storeIds = [
+      activeStore.id,
+    ];
+  }
+
+  if (
+    storeIds.length === 0
+  ) {
     return (
       <DashboardLayout>
         <div className="rounded-[30px] border border-slate-200 bg-white p-8 text-center">
@@ -157,17 +266,67 @@ export default async function TeamOverviewPage() {
     );
   }
 
+  /*
+   * ======================================================
+   * STORES
+   * ======================================================
+   */
+
+  const {
+    data: storeRows,
+    error: storeError,
+  } = await supabase
+    .from("stores")
+    .select("id,name")
+    .in(
+      "id",
+      storeIds
+    );
+
+  if (storeError) {
+    console.error(
+      "TEAM OVERVIEW STORE ERROR:",
+      storeError
+    );
+  }
+
+  const storeMap =
+    new Map<string, string>();
+
+  for (
+    const store
+    of storeRows || []
+  ) {
+    storeMap.set(
+      store.id,
+      normalizeStoreName(
+        store.name
+      )
+    );
+  }
+
+  /*
+   * ======================================================
+   * EMPLOYEE SOURCES
+   * ======================================================
+   */
+
   const [
     pendingResult,
     registeredResult,
+    trackedResult,
   ] = await Promise.all([
     supabase
-      .from("pending_employees")
-      .select(`
+      .from(
+        "pending_employees"
+      )
+      .select(
+        `
         id,
         full_name,
         role,
         status,
+        store_id,
         gp_goal,
         voice_goal,
         mim_goal,
@@ -184,18 +343,75 @@ export default async function TeamOverviewPage() {
         bts_progress,
         accessory_progress,
         features_progress
-      `)
-      .eq("store_id", activeStore.id)
-      .eq("status", "not_registered")
-      .order("full_name"),
+        `
+      )
+      .in(
+        "store_id",
+        storeIds
+      )
+      .eq(
+        "status",
+        "not_registered"
+      )
+      .order(
+        "full_name"
+      ),
 
     supabase
       .from("profiles")
-      .select("id,full_name,role")
-      .eq("store_id", activeStore.id)
-      .eq("status", "approved")
-      .eq("role", "employee")
-      .order("full_name"),
+      .select(
+        `
+        id,
+        full_name,
+        role,
+        status,
+        store_id
+        `
+      )
+      .in(
+        "store_id",
+        storeIds
+      )
+      .eq(
+        "status",
+        "approved"
+      )
+      .eq(
+        "role",
+        "employee"
+      )
+      .order(
+        "full_name"
+      ),
+
+    supabase
+      .from(
+        "tracked_employees"
+      )
+      .select(
+        `
+        id,
+        full_name,
+        designation,
+        status,
+        store_id
+        `
+      )
+      .in(
+        "store_id",
+        storeIds
+      )
+      .eq(
+        "status",
+        "active"
+      )
+      .eq(
+        "designation",
+        "ME"
+      )
+      .order(
+        "full_name"
+      ),
   ]);
 
   if (pendingResult.error) {
@@ -205,46 +421,120 @@ export default async function TeamOverviewPage() {
     );
   }
 
-  if (registeredResult.error) {
+  if (
+    registeredResult.error
+  ) {
     console.error(
       "TEAM OVERVIEW REGISTERED ERROR:",
       registeredResult.error
     );
   }
 
+  if (trackedResult.error) {
+    console.error(
+      "TEAM OVERVIEW TRACKED ERROR:",
+      trackedResult.error
+    );
+  }
+
   const registered =
-    registeredResult.data || [];
+    registeredResult.data ||
+    [];
 
-  const registeredIds = registered.map(
-    (employee: any) => employee.id
-  );
+  const tracked =
+    trackedResult.data || [];
 
-  let registeredGoals: any[] = [];
-  let registeredStats: any[] = [];
+  const registeredIds =
+    registered.map(
+      (employee: any) =>
+        employee.id
+    );
 
-  if (registeredIds.length > 0) {
+  const trackedIds =
+    tracked.map(
+      (employee: any) =>
+        employee.id
+    );
+
+  /*
+   * ======================================================
+   * REGISTERED GOALS + STATS
+   * ======================================================
+   */
+
+  let registeredGoals: any[] =
+    [];
+
+  let registeredStats: any[] =
+    [];
+
+  if (
+    registeredIds.length > 0
+  ) {
     const [
       goalsResult,
       statsResult,
     ] = await Promise.all([
       supabase
-        .from("employee_goals")
+        .from(
+          "employee_goals"
+        )
         .select("*")
-        .in("employee_id", registeredIds)
-        .eq("month", month.monthName)
-        .eq("year", month.year),
+        .in(
+          "employee_id",
+          registeredIds
+        )
+        .eq(
+          "month",
+          month.monthName
+        )
+        .eq(
+          "year",
+          month.year
+        ),
 
       supabase
-        .from("employee_daily_stats")
+        .from(
+          "employee_daily_stats"
+        )
         .select("*")
-        .in("employee_id", registeredIds)
-        .eq("store_id", activeStore.id)
-        .gte("stat_date", month.monthStart)
-        .lte("stat_date", today)
-        .order("stat_date", {
-          ascending: false,
-        }),
+        .in(
+          "employee_id",
+          registeredIds
+        )
+        .in(
+          "store_id",
+          storeIds
+        )
+        .gte(
+          "stat_date",
+          month.monthStart
+        )
+        .lte(
+          "stat_date",
+          today
+        )
+        .order(
+          "stat_date",
+          {
+            ascending: false,
+          }
+        ),
     ]);
+
+    if (goalsResult.error) {
+      console.error(
+        "TEAM OVERVIEW REGISTERED GOALS ERROR:",
+        goalsResult.error
+      );
+    }
+
+    if (statsResult.error) {
+      console.error(
+        "TEAM OVERVIEW REGISTERED STATS ERROR:",
+        statsResult.error
+      );
+    }
 
     registeredGoals =
       goalsResult.data || [];
@@ -253,118 +543,429 @@ export default async function TeamOverviewPage() {
       statsResult.data || [];
   }
 
-  const goalsMap =
-    new Map<string, any>();
+  /*
+   * ======================================================
+   * TRACKED GOALS + STATS
+   * ======================================================
+   */
 
-  for (const row of registeredGoals) {
-    goalsMap.set(row.employee_id, row);
+  let trackedGoals: any[] =
+    [];
+
+  let trackedStats: any[] =
+    [];
+
+  if (
+    trackedIds.length > 0
+  ) {
+    const [
+      goalsResult,
+      statsResult,
+    ] = await Promise.all([
+      supabase
+        .from(
+          "tracked_employee_goals"
+        )
+        .select("*")
+        .in(
+          "employee_id",
+          trackedIds
+        )
+        .eq(
+          "month",
+          month.monthName
+        )
+        .eq(
+          "year",
+          month.year
+        ),
+
+      supabase
+        .from(
+          "tracked_employee_daily_stats"
+        )
+        .select("*")
+        .in(
+          "employee_id",
+          trackedIds
+        )
+        .in(
+          "store_id",
+          storeIds
+        )
+        .gte(
+          "stat_date",
+          month.monthStart
+        )
+        .lte(
+          "stat_date",
+          today
+        )
+        .order(
+          "stat_date",
+          {
+            ascending: false,
+          }
+        ),
+    ]);
+
+    if (goalsResult.error) {
+      console.error(
+        "TEAM OVERVIEW TRACKED GOALS ERROR:",
+        goalsResult.error
+      );
+    }
+
+    if (statsResult.error) {
+      console.error(
+        "TEAM OVERVIEW TRACKED STATS ERROR:",
+        statsResult.error
+      );
+    }
+
+    trackedGoals =
+      goalsResult.data || [];
+
+    trackedStats =
+      statsResult.data || [];
   }
 
-  const statsMap =
+  /*
+   * ======================================================
+   * LOOKUP MAPS
+   * ======================================================
+   */
+
+  const registeredGoalsMap =
     new Map<string, any>();
 
-  for (const row of registeredStats) {
-    if (!statsMap.has(row.employee_id)) {
-      statsMap.set(row.employee_id, row);
+  for (
+    const row
+    of registeredGoals
+  ) {
+    registeredGoalsMap.set(
+      row.employee_id,
+      row
+    );
+  }
+
+  const registeredStatsMap =
+    new Map<string, any>();
+
+  for (
+    const row
+    of registeredStats
+  ) {
+    if (
+      !registeredStatsMap.has(
+        row.employee_id
+      )
+    ) {
+      registeredStatsMap.set(
+        row.employee_id,
+        row
+      );
     }
   }
 
+  const trackedGoalsMap =
+    new Map<string, any>();
+
+  for (
+    const row
+    of trackedGoals
+  ) {
+    trackedGoalsMap.set(
+      row.employee_id,
+      row
+    );
+  }
+
+  const trackedStatsMap =
+    new Map<string, any>();
+
+  for (
+    const row
+    of trackedStats
+  ) {
+    if (
+      !trackedStatsMap.has(
+        row.employee_id
+      )
+    ) {
+      trackedStatsMap.set(
+        row.employee_id,
+        row
+      );
+    }
+  }
+
+  /*
+   * ======================================================
+   * BUILD TEAM
+   * ======================================================
+   */
+
   const team: any[] = [];
 
-  for (const employee of registered) {
+  for (
+    const employee
+    of registered
+  ) {
     team.push({
-      id: employee.id,
+      id:
+        employee.id,
+
+      employeeType:
+        "profile",
+
       name:
         employee.full_name ||
         "Employee",
-      status: "active",
+
+      status:
+        "active",
+
+      storeId:
+        employee.store_id,
+
+      storeName:
+        storeMap.get(
+          employee.store_id
+        ) ||
+        "Unknown Store",
+
       goals:
-        goalsMap.get(employee.id) ||
-        {},
+        registeredGoalsMap.get(
+          employee.id
+        ) || {},
+
       stats:
-        statsMap.get(employee.id) ||
-        {},
-      pending: false,
+        registeredStatsMap.get(
+          employee.id
+        ) || {},
+
+      pending:
+        false,
     });
   }
+
+  for (
+    const employee
+    of tracked
+  ) {
+    team.push({
+      id:
+        employee.id,
+
+      employeeType:
+        "tracked",
+
+      name:
+        employee.full_name ||
+        "Employee",
+
+      status:
+        "active",
+
+      storeId:
+        employee.store_id,
+
+      storeName:
+        storeMap.get(
+          employee.store_id
+        ) ||
+        "Unknown Store",
+
+      goals:
+        trackedGoalsMap.get(
+          employee.id
+        ) || {},
+
+      stats:
+        trackedStatsMap.get(
+          employee.id
+        ) || {},
+
+      pending:
+        false,
+    });
+  }
+
+  /*
+   * Preserve the existing pending employee
+   * behavior. Their goals and progress live
+   * directly on pending_employees.
+   */
 
   for (
     const employee
     of pendingResult.data || []
   ) {
     team.push({
-      id: employee.id,
+      id:
+        employee.id,
+
+      employeeType:
+        "pending",
+
       name:
         employee.full_name ||
         "Employee",
-      status: "pending",
-      goals: employee,
-      stats: employee,
-      pending: true,
+
+      status:
+        "pending",
+
+      storeId:
+        employee.store_id,
+
+      storeName:
+        storeMap.get(
+          employee.store_id
+        ) ||
+        "Unknown Store",
+
+      goals:
+        employee,
+
+      stats:
+        employee,
+
+      pending:
+        true,
     });
   }
 
-  const scoredTeam = team.map(
-    (employee) => {
-      const activePercentages =
-        metrics
-          .map((metric) => {
-            const goal = num(
-              employee.goals[
-                metric.goalKey
-              ]
-            );
+  /*
+   * ======================================================
+   * SCORE TEAM
+   * ======================================================
+   */
 
-            if (goal <= 0) {
-              return null;
-            }
+  const scoredTeam =
+    team
+      .map(
+        (employee) => {
+          const activePercentages =
+            metrics
+              .map(
+                (metric) => {
+                  const goal =
+                    num(
+                      employee
+                        .goals[
+                        metric
+                          .goalKey
+                      ]
+                    );
 
-            const current = num(
-              employee.stats[
-                employee.pending
-                  ? metric.pendingProgressKey
-                  : metric.registeredProgressKey
-              ]
-            );
+                  if (
+                    goal <= 0
+                  ) {
+                    return null;
+                  }
 
-            return percent(
-              current,
-              goal
-            );
-          })
-          .filter(
-            (
-              value
-            ): value is number =>
-              value !== null
-          );
+                  const current =
+                    num(
+                      employee
+                        .stats[
+                        employee.pending
+                          ? metric
+                              .pendingProgressKey
+                          : metric
+                              .registeredProgressKey
+                      ]
+                    );
 
-      const overall =
-        activePercentages.length
-          ? activePercentages.reduce(
-              (sum, value) =>
-                sum + value,
-              0
-            ) /
+                  return percent(
+                    current,
+                    goal
+                  );
+                }
+              )
+              .filter(
+                (
+                  value
+                ): value is number =>
+                  value !== null
+              );
+
+          const overall =
             activePercentages.length
-          : 0;
+              ? activePercentages.reduce(
+                  (
+                    sum,
+                    value
+                  ) =>
+                    sum +
+                    value,
+                  0
+                ) /
+                activePercentages.length
+              : 0;
 
-      return {
-        ...employee,
-        overall,
-      };
-    }
-  );
+          return {
+            ...employee,
+            overall,
+          };
+        }
+      )
+      .sort(
+        (a, b) => {
+          if (isRegional) {
+            const storeCompare =
+              String(
+                a.storeName
+              ).localeCompare(
+                String(
+                  b.storeName
+                )
+              );
+
+            if (
+              storeCompare !== 0
+            ) {
+              return storeCompare;
+            }
+          }
+
+          return String(
+            a.name
+          ).localeCompare(
+            String(
+              b.name
+            )
+          );
+        }
+      );
 
   const teamAverage =
     scoredTeam.length
       ? scoredTeam.reduce(
-          (sum, employee) =>
+          (
+            sum,
+            employee
+          ) =>
             sum +
             employee.overall,
           0
-        ) / scoredTeam.length
+        ) /
+        scoredTeam.length
       : 0;
+
+  const pageStoreLabel =
+    isRegional
+      ? `${storeIds.length} Assigned Stores`
+      : normalizeStoreName(
+          activeStore?.name ||
+            "Store"
+        );
+
+  /*
+   * ======================================================
+   * UI
+   * ======================================================
+   */
 
   return (
     <DashboardLayout>
@@ -375,7 +976,9 @@ export default async function TeamOverviewPage() {
           <div className="relative grid gap-7 lg:grid-cols-[1.2fr_0.8fr] lg:items-end">
             <div>
               <span className="inline-flex items-center gap-2 rounded-full border border-pink-400/20 bg-pink-500/10 px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.18em] text-pink-300">
-                <Sparkles size={13} />
+                <Sparkles
+                  size={13}
+                />
                 Team Overview
               </span>
 
@@ -392,7 +995,7 @@ export default async function TeamOverviewPage() {
               </p>
 
               <p className="mt-4 text-sm font-black text-purple-200">
-                {activeStore.name}
+                {pageStoreLabel}
                 {" • "}
                 {month.monthName}
                 {" "}
@@ -408,7 +1011,9 @@ export default async function TeamOverviewPage() {
                 />
 
                 <p className="mt-4 text-3xl font-black">
-                  {scoredTeam.length}
+                  {
+                    scoredTeam.length
+                  }
                 </p>
 
                 <p className="mt-1 text-[9px] font-black uppercase tracking-[0.16em] text-white/40">
@@ -458,7 +1063,7 @@ export default async function TeamOverviewPage() {
             {scoredTeam.map(
               (employee) => (
                 <section
-                  key={employee.id}
+                  key={`${employee.employeeType}-${employee.id}`}
                   className="overflow-hidden rounded-[30px] border border-slate-200/80 bg-white shadow-[0_14px_40px_rgba(31,21,60,0.06)]"
                 >
                   <div className="border-b border-slate-100 px-5 py-5 sm:px-7">
@@ -466,14 +1071,18 @@ export default async function TeamOverviewPage() {
                       <div className="flex items-center gap-3">
                         <div className="salespulse-gradient flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl text-lg font-black text-white shadow-lg shadow-purple-500/20">
                           {employee.name
-                            .charAt(0)
+                            .charAt(
+                              0
+                            )
                             .toUpperCase()}
                         </div>
 
                         <div>
                           <div className="flex flex-wrap items-center gap-2">
                             <h2 className="text-xl font-black text-[#17102F] sm:text-2xl">
-                              {employee.name}
+                              {
+                                employee.name
+                              }
                             </h2>
 
                             <span
@@ -488,6 +1097,14 @@ export default async function TeamOverviewPage() {
                                 : "Active"}
                             </span>
                           </div>
+
+                          {isRegional && (
+                            <p className="mt-1 text-xs font-black text-purple-600">
+                              {
+                                employee.storeName
+                              }
+                            </p>
+                          )}
 
                           <p className="mt-1 text-xs font-bold text-slate-400">
                             Overall progress across active goals
@@ -544,8 +1161,10 @@ export default async function TeamOverviewPage() {
                             employee
                               .stats[
                               employee.pending
-                                ? metric.pendingProgressKey
-                                : metric.registeredProgressKey
+                                ? metric
+                                    .pendingProgressKey
+                                : metric
+                                    .registeredProgressKey
                             ]
                           );
 

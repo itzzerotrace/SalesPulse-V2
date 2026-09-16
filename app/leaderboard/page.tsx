@@ -133,6 +133,24 @@ function calculateScore(
   );
 }
 
+function normalizeStoreName(
+  name: unknown
+) {
+  const value =
+    String(
+      name || ""
+    ).trim();
+
+  if (
+    value.toLowerCase() ===
+    "marconi"
+  ) {
+    return "Marconi Ave";
+  }
+
+  return value;
+}
+
 function RankingRow({
   rank,
   name,
@@ -184,10 +202,11 @@ export default async function LeaderboardPage() {
     context?.profile?.role;
 
   /*
-   * JASON / REGIONAL
-   * Rank every employee across every
-   * assigned store.
+   * ======================================================
+   * REGIONAL MANAGER
+   * ======================================================
    */
+
   if (
     role ===
     "regional_manager"
@@ -263,9 +282,7 @@ export default async function LeaderboardPage() {
                   index: number
                 ) => (
                   <RankingRow
-                    key={
-                      employee.id
-                    }
+                    key={`${employee.employeeType}-${employee.id}`}
                     rank={
                       index + 1
                     }
@@ -299,8 +316,11 @@ export default async function LeaderboardPage() {
   }
 
   /*
+   * ======================================================
    * STORE MANAGER
+   * ======================================================
    */
+
   const supabase =
     await createClient();
 
@@ -323,40 +343,117 @@ export default async function LeaderboardPage() {
     );
   }
 
-  const {
-    data: employees,
-  } = await supabase
-    .from("profiles")
-    .select(
-      "id,full_name"
-    )
-    .eq(
-      "store_id",
-      activeStore.id
-    )
-    .eq(
-      "status",
-      "approved"
-    )
-    .eq(
-      "role",
-      "employee"
-    )
-    .order(
-      "full_name"
-    );
+  /*
+   * ======================================================
+   * LOAD BOTH EMPLOYEE TYPES
+   * ======================================================
+   */
 
-  const employeeIds =
-    (employees || []).map(
+  const [
+    profileResult,
+    trackedResult,
+  ] = await Promise.all([
+    supabase
+      .from("profiles")
+      .select(
+        `
+        id,
+        full_name,
+        store_id
+        `
+      )
+      .eq(
+        "store_id",
+        activeStore.id
+      )
+      .eq(
+        "status",
+        "approved"
+      )
+      .eq(
+        "role",
+        "employee"
+      )
+      .order(
+        "full_name"
+      ),
+
+    supabase
+      .from(
+        "tracked_employees"
+      )
+      .select(
+        `
+        id,
+        full_name,
+        store_id,
+        designation,
+        status
+        `
+      )
+      .eq(
+        "store_id",
+        activeStore.id
+      )
+      .eq(
+        "status",
+        "active"
+      )
+      .eq(
+        "designation",
+        "ME"
+      )
+      .order(
+        "full_name"
+      ),
+  ]);
+
+  if (profileResult.error) {
+    console.error(
+      "LEADERBOARD PROFILE EMPLOYEE ERROR:",
+      profileResult.error
+    );
+  }
+
+  if (trackedResult.error) {
+    console.error(
+      "LEADERBOARD TRACKED EMPLOYEE ERROR:",
+      trackedResult.error
+    );
+  }
+
+  const profileEmployees =
+    profileResult.data || [];
+
+  const trackedEmployees =
+    trackedResult.data || [];
+
+  const profileIds =
+    profileEmployees.map(
       (employee: any) =>
         employee.id
     );
 
-  let goals: any[] = [];
-  let stats: any[] = [];
+  const trackedIds =
+    trackedEmployees.map(
+      (employee: any) =>
+        employee.id
+    );
+
+  /*
+   * ======================================================
+   * PROFILE GOALS + STATS
+   * ======================================================
+   */
+
+  let profileGoals: any[] =
+    [];
+
+  let profileStats: any[] =
+    [];
 
   if (
-    employeeIds.length > 0
+    profileIds.length > 0
   ) {
     const [
       goalResult,
@@ -369,7 +466,7 @@ export default async function LeaderboardPage() {
         .select("*")
         .in(
           "employee_id",
-          employeeIds
+          profileIds
         )
         .eq(
           "month",
@@ -387,7 +484,7 @@ export default async function LeaderboardPage() {
         .select("*")
         .in(
           "employee_id",
-          employeeIds
+          profileIds
         )
         .eq(
           "store_id",
@@ -409,74 +506,248 @@ export default async function LeaderboardPage() {
         ),
     ]);
 
-    goals =
+    if (goalResult.error) {
+      console.error(
+        "LEADERBOARD PROFILE GOAL ERROR:",
+        goalResult.error
+      );
+    }
+
+    if (statsResult.error) {
+      console.error(
+        "LEADERBOARD PROFILE STATS ERROR:",
+        statsResult.error
+      );
+    }
+
+    profileGoals =
       goalResult.data || [];
 
-    stats =
+    profileStats =
       statsResult.data || [];
   }
 
-  const goalMap =
+  /*
+   * ======================================================
+   * TRACKED GOALS + STATS
+   * ======================================================
+   */
+
+  let trackedGoals: any[] =
+    [];
+
+  let trackedStats: any[] =
+    [];
+
+  if (
+    trackedIds.length > 0
+  ) {
+    const [
+      goalResult,
+      statsResult,
+    ] = await Promise.all([
+      supabase
+        .from(
+          "tracked_employee_goals"
+        )
+        .select("*")
+        .in(
+          "employee_id",
+          trackedIds
+        )
+        .eq(
+          "month",
+          monthInfo.monthName
+        )
+        .eq(
+          "year",
+          monthInfo.year
+        ),
+
+      supabase
+        .from(
+          "tracked_employee_daily_stats"
+        )
+        .select("*")
+        .in(
+          "employee_id",
+          trackedIds
+        )
+        .eq(
+          "store_id",
+          activeStore.id
+        )
+        .gte(
+          "stat_date",
+          monthInfo.monthStart
+        )
+        .lte(
+          "stat_date",
+          today
+        )
+        .order(
+          "stat_date",
+          {
+            ascending: false,
+          }
+        ),
+    ]);
+
+    if (goalResult.error) {
+      console.error(
+        "LEADERBOARD TRACKED GOAL ERROR:",
+        goalResult.error
+      );
+    }
+
+    if (statsResult.error) {
+      console.error(
+        "LEADERBOARD TRACKED STATS ERROR:",
+        statsResult.error
+      );
+    }
+
+    trackedGoals =
+      goalResult.data || [];
+
+    trackedStats =
+      statsResult.data || [];
+  }
+
+  /*
+   * ======================================================
+   * LOOKUP MAPS
+   * ======================================================
+   */
+
+  const profileGoalMap =
     new Map<string, any>();
 
   for (
     const goal
-    of goals
+    of profileGoals
   ) {
-    goalMap.set(
+    profileGoalMap.set(
       goal.employee_id,
       goal
     );
   }
 
-  const statsMap =
+  const trackedGoalMap =
+    new Map<string, any>();
+
+  for (
+    const goal
+    of trackedGoals
+  ) {
+    trackedGoalMap.set(
+      goal.employee_id,
+      goal
+    );
+  }
+
+  const profileStatsMap =
     new Map<string, any>();
 
   for (
     const row
-    of stats
+    of profileStats
   ) {
     if (
-      !statsMap.has(
+      !profileStatsMap.has(
         row.employee_id
       )
     ) {
-      statsMap.set(
+      profileStatsMap.set(
         row.employee_id,
         row
       );
     }
   }
 
-  const rankings =
-    (employees || [])
-      .map(
-        (
-          employee: any
-        ) => ({
-          id:
-            employee.id,
+  const trackedStatsMap =
+    new Map<string, any>();
 
-          name:
-            employee.full_name ||
-            "Team Member",
-
-          score:
-            calculateScore(
-              statsMap.get(
-                employee.id
-              ) || {},
-              goalMap.get(
-                employee.id
-              ) || {}
-            ),
-        })
+  for (
+    const row
+    of trackedStats
+  ) {
+    if (
+      !trackedStatsMap.has(
+        row.employee_id
       )
-      .sort(
-        (a, b) =>
-          b.score -
-          a.score
+    ) {
+      trackedStatsMap.set(
+        row.employee_id,
+        row
       );
+    }
+  }
+
+  /*
+   * ======================================================
+   * BUILD RANKINGS
+   * ======================================================
+   */
+
+  const rankings = [
+    ...profileEmployees.map(
+      (employee: any) => ({
+        id:
+          employee.id,
+
+        employeeType:
+          "profile" as const,
+
+        name:
+          employee.full_name ||
+          "Team Member",
+
+        score:
+          calculateScore(
+            profileStatsMap.get(
+              employee.id
+            ) || {},
+            profileGoalMap.get(
+              employee.id
+            ) || {}
+          ),
+      })
+    ),
+
+    ...trackedEmployees.map(
+      (employee: any) => ({
+        id:
+          employee.id,
+
+        employeeType:
+          "tracked" as const,
+
+        name:
+          employee.full_name ||
+          "Team Member",
+
+        score:
+          calculateScore(
+            trackedStatsMap.get(
+              employee.id
+            ) || {},
+            trackedGoalMap.get(
+              employee.id
+            ) || {}
+          ),
+      })
+    ),
+  ].sort(
+    (a, b) =>
+      b.score -
+      a.score
+  );
+
+  const displayStoreName =
+    normalizeStoreName(
+      activeStore.name
+    );
 
   return (
     <DashboardLayout>
@@ -491,36 +762,41 @@ export default async function LeaderboardPage() {
           </h1>
 
           <p className="mt-2 text-slate-500">
-            {
-              activeStore.name
-            }
+            {displayStoreName}
           </p>
         </div>
 
         <section className="space-y-3">
-          {rankings.map(
-            (
-              employee,
-              index
-            ) => (
-              <RankingRow
-                key={
-                  employee.id
-                }
-                rank={
-                  index + 1
-                }
-                name={
-                  employee.name
-                }
-                store={
-                  activeStore.name
-                }
-                score={
-                  employee.score
-                }
-              />
+          {rankings.length >
+          0 ? (
+            rankings.map(
+              (
+                employee,
+                index
+              ) => (
+                <RankingRow
+                  key={`${employee.employeeType}-${employee.id}`}
+                  rank={
+                    index + 1
+                  }
+                  name={
+                    employee.name
+                  }
+                  store={
+                    displayStoreName
+                  }
+                  score={
+                    employee.score
+                  }
+                />
+              )
             )
+          ) : (
+            <div className="rounded-3xl border border-dashed border-slate-300 bg-white p-8 text-center">
+              <p className="font-black text-slate-900">
+                No employee rankings yet.
+              </p>
+            </div>
           )}
         </section>
       </div>

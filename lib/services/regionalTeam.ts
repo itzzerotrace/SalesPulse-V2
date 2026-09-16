@@ -30,12 +30,30 @@ const metricMap: Array<{
   metric: MetricKey;
   goal: GoalKey;
 }> = [
-  { metric: "gp", goal: "gp_goal" },
-  { metric: "voice", goal: "voice_goal" },
-  { metric: "mim", goal: "mim_goal" },
-  { metric: "upgrade", goal: "upgrade_goal" },
-  { metric: "hsi", goal: "hsi_goal" },
-  { metric: "bts", goal: "bts_goal" },
+  {
+    metric: "gp",
+    goal: "gp_goal",
+  },
+  {
+    metric: "voice",
+    goal: "voice_goal",
+  },
+  {
+    metric: "mim",
+    goal: "mim_goal",
+  },
+  {
+    metric: "upgrade",
+    goal: "upgrade_goal",
+  },
+  {
+    metric: "hsi",
+    goal: "hsi_goal",
+  },
+  {
+    metric: "bts",
+    goal: "bts_goal",
+  },
   {
     metric: "accessories",
     goal: "accessory_goal",
@@ -53,14 +71,18 @@ function calculateScore(
   const percentages = metricMap
     .map(({ metric, goal }) => {
       const target =
-        Number(goals?.[goal] || 0);
+        Number(
+          goals?.[goal] || 0
+        );
 
       if (target <= 0) {
         return null;
       }
 
       const current =
-        Number(stats?.[metric] || 0);
+        Number(
+          stats?.[metric] || 0
+        );
 
       return (
         (current / target) *
@@ -83,13 +105,32 @@ function calculateScore(
   return Number(
     (
       percentages.reduce(
-        (sum, value) =>
+        (
+          sum,
+          value
+        ) =>
           sum + value,
         0
       ) /
       percentages.length
     ).toFixed(1)
   );
+}
+
+function normalizeStoreName(
+  name: unknown
+) {
+  const value =
+    String(name || "").trim();
+
+  if (
+    value.toLowerCase() ===
+    "marconi"
+  ) {
+    return "Marconi Ave";
+  }
+
+  return value;
 }
 
 export async function getRegionalStoreIds() {
@@ -136,6 +177,11 @@ export async function getRegionalStoreIds() {
       )
     );
 
+  /*
+   * Region fallback is retained for
+   * accounts that do not have explicit
+   * manager_stores assignments.
+   */
   if (
     storeIds.length === 0 &&
     context.profile.region_id
@@ -158,14 +204,13 @@ export async function getRegionalStoreIds() {
       );
     }
 
-    storeIds = (
-      regionStores || []
-    )
-      .map(
-        (store: any) =>
-          store.id
-      )
-      .filter(Boolean);
+    storeIds =
+      (regionStores || [])
+        .map(
+          (store: any) =>
+            store.id
+        )
+        .filter(Boolean);
   }
 
   return storeIds;
@@ -178,9 +223,7 @@ export async function getRegionalTeamData() {
   const context =
     await getUserContext();
 
-  if (
-    !context?.profile
-  ) {
+  if (!context?.profile) {
     return {
       stores: [],
       employees: [],
@@ -221,6 +264,12 @@ export async function getRegionalTeamData() {
   const monthInfo =
     getMonthInfo(today);
 
+  /*
+   * ======================================================
+   * STORES
+   * ======================================================
+   */
+
   const {
     data: stores,
     error: storeError,
@@ -240,17 +289,30 @@ export async function getRegionalTeamData() {
     );
   }
 
+  const storeMap =
+    new Map<string, string>();
+
+  for (
+    const store
+    of stores || []
+  ) {
+    storeMap.set(
+      store.id,
+      normalizeStoreName(
+        store.name
+      )
+    );
+  }
+
   /*
-   * IMPORTANT:
-   * Match the original Bryce/manager behavior.
-   *
-   * Do NOT require role === "employee".
-   * Include every approved non-management
-   * profile under Jason's assigned stores.
+   * ======================================================
+   * LOGIN / PROFILE EMPLOYEES
+   * ======================================================
    */
+
   const {
-    data: employees,
-    error: employeeError,
+    data: profileEmployees,
+    error: profileEmployeeError,
   } = await supabase
     .from("profiles")
     .select(
@@ -271,36 +333,119 @@ export async function getRegionalTeamData() {
       "status",
       "approved"
     )
-    .not(
-      "role",
-      "in",
-      '("manager","admin","regional_manager")'
+    .order(
+      "full_name"
+    );
+
+  if (profileEmployeeError) {
+    console.error(
+      "REGIONAL PROFILE EMPLOYEE ERROR:",
+      profileEmployeeError
+    );
+  }
+
+  /*
+   * Do this filtering in JavaScript rather
+   * than SQL so NULL or unusual employee
+   * roles are not accidentally excluded.
+   */
+
+  const managementRoles =
+    new Set([
+      "manager",
+      "admin",
+      "regional_manager",
+    ]);
+
+  const profileEmployeeRows =
+    (
+      profileEmployees || []
+    ).filter(
+      (employee: any) =>
+        !managementRoles.has(
+          employee.role
+        )
+    );
+
+  const profileEmployeeIds =
+    profileEmployeeRows
+      .map(
+        (employee: any) =>
+          employee.id
+      )
+      .filter(Boolean);
+
+  /*
+   * ======================================================
+   * TRACKED / NON-LOGIN EMPLOYEES
+   * ======================================================
+   */
+
+  const {
+    data: trackedEmployees,
+    error: trackedEmployeeError,
+  } = await supabase
+    .from(
+      "tracked_employees"
+    )
+    .select(
+      `
+      id,
+      full_name,
+      designation,
+      status,
+      store_id
+      `
+    )
+    .in(
+      "store_id",
+      storeIds
+    )
+    .eq(
+      "status",
+      "active"
+    )
+    .eq(
+      "designation",
+      "ME"
     )
     .order(
       "full_name"
     );
 
-  if (employeeError) {
+  if (trackedEmployeeError) {
     console.error(
-      "REGIONAL TEAM EMPLOYEE ERROR:",
-      employeeError
+      "REGIONAL TRACKED EMPLOYEE ERROR:",
+      trackedEmployeeError
     );
   }
 
-  const employeeRows =
-    employees || [];
+  const trackedEmployeeRows =
+    trackedEmployees || [];
 
-  const employeeIds =
-    employeeRows.map(
-      (employee: any) =>
-        employee.id
-    );
+  const trackedEmployeeIds =
+    trackedEmployeeRows
+      .map(
+        (employee: any) =>
+          employee.id
+      )
+      .filter(Boolean);
 
-  let goals: any[] = [];
-  let statsRows: any[] = [];
+  /*
+   * ======================================================
+   * PROFILE EMPLOYEE GOALS + STATS
+   * ======================================================
+   */
+
+  let profileGoals: any[] =
+    [];
+
+  let profileStats: any[] =
+    [];
 
   if (
-    employeeIds.length > 0
+    profileEmployeeIds.length >
+    0
   ) {
     const [
       goalResult,
@@ -325,7 +470,7 @@ export async function getRegionalTeamData() {
         )
         .in(
           "employee_id",
-          employeeIds
+          profileEmployeeIds
         )
         .eq(
           "month",
@@ -357,7 +502,7 @@ export async function getRegionalTeamData() {
         )
         .in(
           "employee_id",
-          employeeIds
+          profileEmployeeIds
         )
         .in(
           "store_id",
@@ -381,100 +526,236 @@ export async function getRegionalTeamData() {
 
     if (goalResult.error) {
       console.error(
-        "REGIONAL EMPLOYEE GOAL ERROR:",
+        "REGIONAL PROFILE GOAL ERROR:",
         goalResult.error
       );
     }
 
     if (statsResult.error) {
       console.error(
-        "REGIONAL EMPLOYEE STATS ERROR:",
+        "REGIONAL PROFILE STATS ERROR:",
         statsResult.error
       );
     }
 
-    goals =
+    profileGoals =
       goalResult.data || [];
 
-    statsRows =
+    profileStats =
       statsResult.data || [];
   }
 
-  const storeMap =
-    new Map<string, string>();
+  /*
+   * ======================================================
+   * TRACKED EMPLOYEE GOALS + STATS
+   * ======================================================
+   */
 
-  for (
-    const store
-    of stores || []
+  let trackedGoals: any[] =
+    [];
+
+  let trackedStats: any[] =
+    [];
+
+  if (
+    trackedEmployeeIds.length >
+    0
   ) {
-    /*
-     * Safety normalization for display.
-     * Old Marconi should never display
-     * as just "Marconi".
-     */
-    const displayName =
-      String(
-        store.name || ""
-      )
-        .trim()
-        .toLowerCase() ===
-      "marconi"
-        ? "Marconi Ave"
-        : store.name;
+    const [
+      goalResult,
+      statsResult,
+    ] = await Promise.all([
+      supabase
+        .from(
+          "tracked_employee_goals"
+        )
+        .select(
+          `
+          employee_id,
+          gp_goal,
+          voice_goal,
+          mim_goal,
+          upgrade_goal,
+          hsi_goal,
+          bts_goal,
+          accessory_goal,
+          features_goal
+          `
+        )
+        .in(
+          "employee_id",
+          trackedEmployeeIds
+        )
+        .eq(
+          "month",
+          monthInfo.monthName
+        )
+        .eq(
+          "year",
+          monthInfo.year
+        ),
 
-    storeMap.set(
-      store.id,
-      displayName
-    );
+      supabase
+        .from(
+          "tracked_employee_daily_stats"
+        )
+        .select(
+          `
+          employee_id,
+          store_id,
+          stat_date,
+          gp,
+          voice,
+          mim,
+          upgrade,
+          hsi,
+          bts,
+          accessories,
+          features
+          `
+        )
+        .in(
+          "employee_id",
+          trackedEmployeeIds
+        )
+        .in(
+          "store_id",
+          storeIds
+        )
+        .gte(
+          "stat_date",
+          monthInfo.monthStart
+        )
+        .lte(
+          "stat_date",
+          today
+        )
+        .order(
+          "stat_date",
+          {
+            ascending: false,
+          }
+        ),
+    ]);
+
+    if (goalResult.error) {
+      console.error(
+        "REGIONAL TRACKED GOAL ERROR:",
+        goalResult.error
+      );
+    }
+
+    if (statsResult.error) {
+      console.error(
+        "REGIONAL TRACKED STATS ERROR:",
+        statsResult.error
+      );
+    }
+
+    trackedGoals =
+      goalResult.data || [];
+
+    trackedStats =
+      statsResult.data || [];
   }
 
-  const goalMap =
+  /*
+   * ======================================================
+   * CREATE LOOKUP MAPS
+   * ======================================================
+   */
+
+  const profileGoalMap =
     new Map<string, any>();
 
   for (
     const goal
-    of goals
+    of profileGoals
   ) {
-    goalMap.set(
+    profileGoalMap.set(
       goal.employee_id,
       goal
     );
   }
 
-  const latestStatsMap =
+  const trackedGoalMap =
+    new Map<string, any>();
+
+  for (
+    const goal
+    of trackedGoals
+  ) {
+    trackedGoalMap.set(
+      goal.employee_id,
+      goal
+    );
+  }
+
+  const latestProfileStatsMap =
     new Map<string, any>();
 
   for (
     const row
-    of statsRows
+    of profileStats
   ) {
     if (
-      !latestStatsMap.has(
+      !latestProfileStatsMap.has(
         row.employee_id
       )
     ) {
-      latestStatsMap.set(
+      latestProfileStatsMap.set(
         row.employee_id,
         row
       );
     }
   }
 
-  const enrichedEmployees =
-    employeeRows.map(
+  const latestTrackedStatsMap =
+    new Map<string, any>();
+
+  for (
+    const row
+    of trackedStats
+  ) {
+    if (
+      !latestTrackedStatsMap.has(
+        row.employee_id
+      )
+    ) {
+      latestTrackedStatsMap.set(
+        row.employee_id,
+        row
+      );
+    }
+  }
+
+  /*
+   * ======================================================
+   * ENRICH LOGIN EMPLOYEES
+   * ======================================================
+   */
+
+  const enrichedProfileEmployees =
+    profileEmployeeRows.map(
       (employee: any) => {
         const goals =
-          goalMap.get(
+          profileGoalMap.get(
             employee.id
           ) || null;
 
         const stats =
-          latestStatsMap.get(
+          latestProfileStatsMap.get(
             employee.id
           ) || null;
 
         return {
           ...employee,
+
+          employeeType:
+            "profile" as const,
+
+          source:
+            "profile" as const,
 
           store_name:
             storeMap.get(
@@ -495,6 +776,112 @@ export async function getRegionalTeamData() {
       }
     );
 
+  /*
+   * ======================================================
+   * ENRICH TRACKED EMPLOYEES
+   * ======================================================
+   */
+
+  const enrichedTrackedEmployees =
+    trackedEmployeeRows.map(
+      (employee: any) => {
+        const goals =
+          trackedGoalMap.get(
+            employee.id
+          ) || null;
+
+        const stats =
+          latestTrackedStatsMap.get(
+            employee.id
+          ) || null;
+
+        return {
+          id:
+            employee.id,
+
+          full_name:
+            employee.full_name,
+
+          email:
+            null,
+
+          role:
+            "employee",
+
+          status:
+            employee.status,
+
+          store_id:
+            employee.store_id,
+
+          designation:
+            employee.designation,
+
+          employeeType:
+            "tracked" as const,
+
+          source:
+            "tracked" as const,
+
+          store_name:
+            storeMap.get(
+              employee.store_id
+            ) ||
+            "Unknown Store",
+
+          goals,
+
+          stats,
+
+          score:
+            calculateScore(
+              stats || {},
+              goals || {}
+            ),
+        };
+      }
+    );
+
+  /*
+   * ======================================================
+   * COMBINE ALL EMPLOYEES
+   * ======================================================
+   */
+
+  const enrichedEmployees = [
+    ...enrichedProfileEmployees,
+    ...enrichedTrackedEmployees,
+  ].sort(
+    (a: any, b: any) => {
+      const storeCompare =
+        String(
+          a.store_name || ""
+        ).localeCompare(
+          String(
+            b.store_name || ""
+          )
+        );
+
+      if (storeCompare !== 0) {
+        return storeCompare;
+      }
+
+      return String(
+        a.full_name || ""
+      ).localeCompare(
+        String(
+          b.full_name || ""
+        )
+      );
+    }
+  );
+
+  /*
+   * ======================================================
+   * RANKINGS
+   * ======================================================
+   */
+
   const rankings =
     [...enrichedEmployees]
       .sort(
@@ -506,6 +893,12 @@ export async function getRegionalTeamData() {
             a.score || 0
           )
       );
+
+  /*
+   * ======================================================
+   * TEAM OVERVIEW
+   * ======================================================
+   */
 
   const employeesWithGoals =
     enrichedEmployees.filter(
@@ -537,9 +930,26 @@ export async function getRegionalTeamData() {
         )
       : 0;
 
+  /*
+   * Normalize store names in the stores
+   * collection too, not just employees.
+   */
+
+  const normalizedStores =
+    (stores || []).map(
+      (store: any) => ({
+        ...store,
+
+        name:
+          normalizeStoreName(
+            store.name
+          ),
+      })
+    );
+
   return {
     stores:
-      stores || [],
+      normalizedStores,
 
     employees:
       enrichedEmployees,
@@ -548,12 +958,10 @@ export async function getRegionalTeamData() {
 
     overview: {
       stores:
-        (stores || [])
-          .length,
+        normalizedStores.length,
 
       employees:
-        enrichedEmployees
-          .length,
+        enrichedEmployees.length,
 
       employeesWithGoals:
         enrichedEmployees.filter(

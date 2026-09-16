@@ -23,8 +23,9 @@ function cleanStats(input: any) {
   const result: any = emptyProgressStats();
 
   for (const metric of progressMetrics) {
-    result[metric.key] =
-      cleanNumber(input?.[metric.key]);
+    result[metric.key] = cleanNumber(
+      input?.[metric.key]
+    );
   }
 
   return result;
@@ -32,21 +33,20 @@ function cleanStats(input: any) {
 
 export async function POST(request: Request) {
   try {
-    const context =
-      await getUserContext();
+    const context = await getUserContext();
 
-    if (
-      !context?.user ||
-      !context.profile
-    ) {
+    if (!context?.user || !context.profile) {
       return NextResponse.json(
-        { error: "You must be logged in." },
-        { status: 401 }
+        {
+          error: "You must be logged in.",
+        },
+        {
+          status: 401,
+        }
       );
     }
 
-    const role =
-      context.profile.role;
+    const role = context.profile.role;
 
     if (
       role !== "manager" &&
@@ -58,12 +58,13 @@ export async function POST(request: Request) {
           error:
             "You do not have permission to update store progress.",
         },
-        { status: 403 }
+        {
+          status: 403,
+        }
       );
     }
 
-    const activeStore =
-      await getActiveStore();
+    const activeStore = await getActiveStore();
 
     if (!activeStore?.id) {
       return NextResponse.json(
@@ -71,12 +72,13 @@ export async function POST(request: Request) {
           error:
             "No active store is selected.",
         },
-        { status: 400 }
+        {
+          status: 400,
+        }
       );
     }
 
-    const body =
-      await request.json();
+    const body = await request.json();
 
     const statDate =
       typeof body.statDate === "string"
@@ -93,7 +95,9 @@ export async function POST(request: Request) {
           error:
             "A valid update date is required.",
         },
-        { status: 400 }
+        {
+          status: 400,
+        }
       );
     }
 
@@ -102,11 +106,17 @@ export async function POST(request: Request) {
       year,
     } = getMonthInfo(statDate);
 
-    const supabase =
-      await createClient();
+    const supabase = await createClient();
 
-    const storeStats =
-      cleanStats(body.storeStats);
+    /*
+     * ======================================================
+     * STORE STATS
+     * ======================================================
+     */
+
+    const storeStats = cleanStats(
+      body.storeStats
+    );
 
     const storeGoalsInput =
       body.storeGoals || {};
@@ -149,7 +159,9 @@ export async function POST(request: Request) {
           error:
             storeGoalError.message,
         },
-        { status: 500 }
+        {
+          status: 500,
+        }
       );
     }
 
@@ -161,9 +173,12 @@ export async function POST(request: Request) {
         {
           store_id:
             activeStore.id,
+
           stat_date:
             statDate,
+
           ...storeStats,
+
           entered_by:
             context.user.id,
         },
@@ -184,9 +199,22 @@ export async function POST(request: Request) {
           error:
             storeStatsError.message,
         },
-        { status: 500 }
+        {
+          status: 500,
+        }
       );
     }
+
+    /*
+     * ======================================================
+     * EMPLOYEES
+     *
+     * employeeType:
+     *
+     * profile = employee with login
+     * tracked = imported employee without login
+     * ======================================================
+     */
 
     const employees =
       Array.isArray(body.employees)
@@ -194,111 +222,278 @@ export async function POST(request: Request) {
         : [];
 
     if (employees.length > 0) {
-      const employeeIds =
-        employees
-          .map(
-            (employee: any) =>
-              employee.employeeId
-          )
-          .filter(Boolean);
+      /*
+       * ----------------------------------------------------
+       * LOGIN EMPLOYEES
+       * ----------------------------------------------------
+       */
 
-      const {
-        data: validEmployees,
-        error:
-          validEmployeeError,
-      } = await supabase
-        .from("profiles")
-        .select("id")
-        .eq(
-          "store_id",
-          activeStore.id
-        )
-        .eq(
-          "status",
-          "approved"
-        )
-        .eq(
-          "role",
-          "employee"
-        )
-        .in(
-          "id",
-          employeeIds
+      const profileEmployees =
+        employees.filter(
+          (employee: any) =>
+            employee.employeeType !==
+            "tracked"
         );
 
-      if (validEmployeeError) {
-        return NextResponse.json(
-          {
-            error:
-              validEmployeeError.message,
-          },
-          { status: 500 }
-        );
+      if (profileEmployees.length > 0) {
+        const profileEmployeeIds =
+          profileEmployees
+            .map(
+              (employee: any) =>
+                employee.employeeId
+            )
+            .filter(Boolean);
+
+        if (profileEmployeeIds.length > 0) {
+          const {
+            data: validEmployees,
+            error: validEmployeeError,
+          } = await supabase
+            .from("profiles")
+            .select("id")
+            .eq(
+              "store_id",
+              activeStore.id
+            )
+            .eq(
+              "status",
+              "approved"
+            )
+            .eq(
+              "role",
+              "employee"
+            )
+            .in(
+              "id",
+              profileEmployeeIds
+            );
+
+          if (validEmployeeError) {
+            console.error(
+              "PROFILE EMPLOYEE VALIDATION ERROR:",
+              validEmployeeError
+            );
+
+            return NextResponse.json(
+              {
+                error:
+                  validEmployeeError.message,
+              },
+              {
+                status: 500,
+              }
+            );
+          }
+
+          const validIds = new Set(
+            (
+              validEmployees || []
+            ).map(
+              (employee: any) =>
+                employee.id
+            )
+          );
+
+          const employeeRows =
+            profileEmployees
+              .filter(
+                (employee: any) =>
+                  validIds.has(
+                    employee.employeeId
+                  )
+              )
+              .map(
+                (employee: any) => ({
+                  employee_id:
+                    employee.employeeId,
+
+                  store_id:
+                    activeStore.id,
+
+                  stat_date:
+                    statDate,
+
+                  ...cleanStats(
+                    employee.stats
+                  ),
+
+                  entered_by:
+                    context.user.id,
+                })
+              );
+
+          if (employeeRows.length > 0) {
+            const {
+              error:
+                employeeStatsError,
+            } = await supabase
+              .from(
+                "employee_daily_stats"
+              )
+              .upsert(
+                employeeRows,
+                {
+                  onConflict:
+                    "employee_id,stat_date",
+                }
+              );
+
+            if (employeeStatsError) {
+              console.error(
+                "EMPLOYEE DAILY SAVE ERROR:",
+                employeeStatsError
+              );
+
+              return NextResponse.json(
+                {
+                  error:
+                    employeeStatsError.message,
+                },
+                {
+                  status: 500,
+                }
+              );
+            }
+          }
+        }
       }
 
-      const validIds =
-        new Set(
-          (
-            validEmployees || []
-          ).map(
-            (employee: any) =>
-              employee.id
-          )
+      /*
+       * ----------------------------------------------------
+       * TRACKED / NON-LOGIN EMPLOYEES
+       * ----------------------------------------------------
+       */
+
+      const trackedEmployees =
+        employees.filter(
+          (employee: any) =>
+            employee.employeeType ===
+            "tracked"
         );
 
-      const employeeRows =
-        employees
-          .filter(
-            (employee: any) =>
-              validIds.has(
+      if (trackedEmployees.length > 0) {
+        const trackedEmployeeIds =
+          trackedEmployees
+            .map(
+              (employee: any) =>
                 employee.employeeId
+            )
+            .filter(Boolean);
+
+        if (
+          trackedEmployeeIds.length > 0
+        ) {
+          const {
+            data:
+              validTrackedEmployees,
+            error:
+              trackedValidationError,
+          } = await supabase
+            .from(
+              "tracked_employees"
+            )
+            .select(
+              "id, store_id, status"
+            )
+            .eq(
+              "store_id",
+              activeStore.id
+            )
+            .eq(
+              "status",
+              "active"
+            )
+            .in(
+              "id",
+              trackedEmployeeIds
+            );
+
+          if (trackedValidationError) {
+            console.error(
+              "TRACKED EMPLOYEE VALIDATION ERROR:",
+              trackedValidationError
+            );
+
+            return NextResponse.json(
+              {
+                error:
+                  trackedValidationError.message,
+              },
+              {
+                status: 500,
+              }
+            );
+          }
+
+          const validTrackedIds =
+            new Set(
+              (
+                validTrackedEmployees ||
+                []
+              ).map(
+                (employee: any) =>
+                  employee.id
               )
-          )
-          .map(
-            (employee: any) => ({
-              employee_id:
-                employee.employeeId,
-              store_id:
-                activeStore.id,
-              stat_date:
-                statDate,
-              ...cleanStats(
-                employee.stats
-              ),
-              entered_by:
-                context.user.id,
-            })
-          );
+            );
 
-      if (employeeRows.length) {
-        const {
-          error:
-            employeeStatsError,
-        } = await supabase
-          .from(
-            "employee_daily_stats"
-          )
-          .upsert(
-            employeeRows,
-            {
-              onConflict:
-                "employee_id,stat_date",
-            }
-          );
+          const trackedRows =
+            trackedEmployees
+              .filter(
+                (employee: any) =>
+                  validTrackedIds.has(
+                    employee.employeeId
+                  )
+              )
+              .map(
+                (employee: any) => ({
+                  employee_id:
+                    employee.employeeId,
 
-        if (employeeStatsError) {
-          console.error(
-            "EMPLOYEE DAILY SAVE ERROR:",
-            employeeStatsError
-          );
+                  store_id:
+                    activeStore.id,
 
-          return NextResponse.json(
-            {
+                  stat_date:
+                    statDate,
+
+                  ...cleanStats(
+                    employee.stats
+                  ),
+                })
+              );
+
+          if (trackedRows.length > 0) {
+            const {
               error:
-                employeeStatsError.message,
-            },
-            { status: 500 }
-          );
+                trackedStatsError,
+            } = await supabase
+              .from(
+                "tracked_employee_daily_stats"
+              )
+              .upsert(
+                trackedRows,
+                {
+                  onConflict:
+                    "employee_id,stat_date",
+                }
+              );
+
+            if (trackedStatsError) {
+              console.error(
+                "TRACKED EMPLOYEE DAILY SAVE ERROR:",
+                trackedStatsError
+              );
+
+              return NextResponse.json(
+                {
+                  error:
+                    trackedStatsError.message,
+                },
+                {
+                  status: 500,
+                }
+              );
+            }
+          }
         }
       }
     }
@@ -320,7 +515,9 @@ export async function POST(request: Request) {
           error?.message ||
           "Unable to save daily update.",
       },
-      { status: 500 }
+      {
+        status: 500,
+      }
     );
   }
 }

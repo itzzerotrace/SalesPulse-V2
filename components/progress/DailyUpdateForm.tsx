@@ -40,6 +40,7 @@ import {
 type Employee = {
   id: string;
   full_name: string;
+  employeeType: "profile" | "tracked";
   goals: any;
   stats: any;
 };
@@ -393,6 +394,8 @@ export default function DailyUpdateForm({
                       ) => ({
                         employeeId:
                           employee.id,
+                        employeeType:
+                          employee.employeeType,
                         stats:
                           employeeStats[
                             employee
