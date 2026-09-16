@@ -1,5 +1,4 @@
 import {
-  ArrowUpRight,
   Banknote,
   Building2,
   Headphones,
@@ -72,10 +71,15 @@ const metrics: Array<{
   },
 ];
 
-function safeNumber(value: unknown) {
-  const parsed = Number(value);
+function safeNumber(
+  value: unknown
+) {
+  const parsed =
+    Number(value);
 
-  return Number.isFinite(parsed)
+  return Number.isFinite(
+    parsed
+  )
     ? parsed
     : 0;
 }
@@ -114,7 +118,7 @@ function formatValue(
 function getStoreAverage(
   store: any
 ) {
-  const activeMetrics =
+  const values =
     metrics
       .map((metric) => {
         const data =
@@ -141,70 +145,75 @@ function getStoreAverage(
       );
 
   if (
-    activeMetrics.length === 0
+    values.length === 0
   ) {
     return 0;
   }
 
   return (
-    activeMetrics.reduce(
-      (total, value) =>
-        total + value,
+    values.reduce(
+      (sum, value) =>
+        sum + value,
       0
-    ) /
-    activeMetrics.length
+    ) / values.length
   );
 }
 
-function getPerformance(
-  score: number
+function getGoalStatus(
+  percent: number
 ) {
-  if (score >= 100) {
+  if (percent >= 100) {
     return {
-      label: "Goal Pace",
-      pill:
-        "border-emerald-400/30 bg-emerald-400/10 text-emerald-300",
-      ring:
-        "#34d399",
+      label: "Goal Achieved",
+      color: "#16A34A",
+      text:
+        "text-green-700",
+      bg:
+        "bg-green-50",
+      border:
+        "border-green-200",
+      bar:
+        "bg-green-600",
     };
   }
 
-  if (score >= 75) {
+  if (percent >= 50) {
     return {
-      label: "Strong Pace",
-      pill:
-        "border-cyan-400/30 bg-cyan-400/10 text-cyan-300",
-      ring:
-        "#22d3ee",
-    };
-  }
-
-  if (score >= 50) {
-    return {
-      label: "Building",
-      pill:
-        "border-amber-400/30 bg-amber-400/10 text-amber-300",
-      ring:
-        "#facc15",
+      label: "On the Way",
+      color: "#EAB308",
+      text:
+        "text-yellow-700",
+      bg:
+        "bg-yellow-50",
+      border:
+        "border-yellow-200",
+      bar:
+        "bg-yellow-500",
     };
   }
 
   return {
     label: "Needs Focus",
-    pill:
-      "border-orange-400/30 bg-orange-400/10 text-orange-300",
-    ring:
-      "#fb923c",
+    color: "#DC2626",
+    text:
+      "text-red-700",
+    bg:
+      "bg-red-50",
+    border:
+      "border-red-200",
+    bar:
+      "bg-red-600",
   };
 }
 
 function PerformanceRing({
   score,
-  color,
 }: {
   score: number;
-  color: string;
 }) {
+  const status =
+    getGoalStatus(score);
+
   const progress =
     Math.max(
       0,
@@ -216,14 +225,16 @@ function PerformanceRing({
 
   return (
     <div
-      className="relative flex h-[62px] w-[62px] shrink-0 items-center justify-center rounded-full"
+      className="relative flex h-[70px] w-[70px] shrink-0 items-center justify-center rounded-full"
       style={{
-        background: `conic-gradient(${color} ${progress * 3.6}deg, rgba(148,163,184,.18) 0deg)`,
+        background: `conic-gradient(${status.color} ${progress * 3.6}deg, rgba(255,255,255,.22) 0deg)`,
       }}
     >
-      <div className="absolute inset-[5px] rounded-full bg-[#101A33]" />
+      <div className="absolute inset-[6px] rounded-full bg-white" />
 
-      <span className="relative text-[13px] font-black text-white">
+      <span
+        className={`relative text-[13px] font-black ${status.text}`}
+      >
         {score.toFixed(1)}%
       </span>
     </div>
@@ -239,16 +250,17 @@ export default async function RegionalGoalProgress() {
     stores.length === 0
   ) {
     return (
-      <div className="rounded-[24px] border border-dashed border-purple-300/30 bg-[#101A33] px-6 py-14 text-center text-white">
-        <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-xl border border-purple-400/20 bg-purple-500/10 text-purple-300">
-          <Building2 size={22} />
-        </div>
+      <div className="rounded-[24px] border border-slate-200 bg-white p-12 text-center shadow-sm">
+        <Building2
+          size={30}
+          className="mx-auto text-[#E20074]"
+        />
 
-        <h3 className="mt-4 text-xl font-black">
+        <h3 className="mt-4 text-xl font-black text-[#2B2028]">
           No stores available
         </h3>
 
-        <p className="mt-2 text-sm text-slate-400">
+        <p className="mt-2 text-sm text-slate-500">
           Assigned stores will appear here once available.
         </p>
       </div>
@@ -256,7 +268,7 @@ export default async function RegionalGoalProgress() {
   }
 
   return (
-    <div className="grid gap-4 xl:grid-cols-2">
+    <div className="grid gap-5 xl:grid-cols-2">
       {stores.map(
         (store: any) => {
           const storeAverage =
@@ -264,36 +276,35 @@ export default async function RegionalGoalProgress() {
               store
             );
 
-          const performance =
-            getPerformance(
+          const storeStatus =
+            getGoalStatus(
               storeAverage
             );
 
           return (
             <article
               key={store.id}
-              className="group relative overflow-hidden rounded-[24px] border border-purple-400/20 bg-[#0D1730] shadow-[0_18px_50px_rgba(15,10,40,0.22)] transition duration-300 hover:-translate-y-0.5 hover:border-purple-400/40 hover:shadow-[0_24px_70px_rgba(76,29,149,0.24)]"
+              className="overflow-hidden rounded-[26px] border border-[#E9DCE4] bg-[#FAF7F9] shadow-[0_14px_40px_rgba(80,20,55,0.10)] transition duration-300 hover:-translate-y-0.5 hover:shadow-[0_20px_55px_rgba(226,0,116,0.14)]"
             >
-              <div className="pointer-events-none absolute -right-24 -top-28 h-64 w-64 rounded-full bg-purple-600/15 blur-[80px]" />
+              {/* METRO STORE HEADER */}
 
-              <div className="pointer-events-none absolute -left-28 bottom-0 h-56 w-56 rounded-full bg-fuchsia-600/10 blur-[80px]" />
+              <div className="relative overflow-hidden bg-gradient-to-r from-[#5A123D] via-[#8D0754] to-[#E20074] px-5 py-4 text-white">
+                <div className="pointer-events-none absolute -right-12 -top-20 h-44 w-44 rounded-full bg-white/10 blur-3xl" />
 
-              {/* HEADER */}
-
-              <div className="relative border-b border-white/[0.07] bg-gradient-to-r from-[#101A36] via-[#111832] to-[#21103B] px-5 py-4 sm:px-5">
-                <div className="flex items-center justify-between gap-4">
-
+                <div className="relative flex items-center justify-between gap-4">
                   <div className="flex min-w-0 items-center gap-3">
-                    <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-purple-300/20 bg-purple-400/10 text-purple-300 shadow-inner">
-                      <Building2 size={19} />
+                    <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-white/20 bg-white/15">
+                      <Building2
+                        size={20}
+                      />
                     </div>
 
                     <div className="min-w-0">
-                      <p className="text-[8px] font-black uppercase tracking-[0.2em] text-purple-300">
+                      <p className="text-[8px] font-black uppercase tracking-[0.2em] text-white/65">
                         Store Performance
                       </p>
 
-                      <h3 className="mt-1 truncate text-[21px] font-black tracking-[-0.025em] text-white">
+                      <h3 className="mt-1 truncate text-[22px] font-black tracking-[-0.025em]">
                         {store.store}
                       </h3>
                     </div>
@@ -304,25 +315,18 @@ export default async function RegionalGoalProgress() {
                       score={
                         storeAverage
                       }
-                      color={
-                        performance.ring
-                      }
                     />
 
-                    <div className="hidden min-w-[86px] sm:block">
-                      <p className="text-[8px] font-black uppercase tracking-[0.17em] text-slate-500">
+                    <div className="hidden sm:block">
+                      <p className="text-[8px] font-black uppercase tracking-[0.16em] text-white/60">
                         Overall
                       </p>
 
-                      <p className="mt-0.5 text-[10px] font-bold text-slate-300">
-                        Performance
-                      </p>
-
                       <span
-                        className={`mt-1.5 inline-flex rounded-full border px-2 py-1 text-[8px] font-black uppercase tracking-[0.08em] ${performance.pill}`}
+                        className={`mt-1.5 inline-flex rounded-full border bg-white px-2.5 py-1 text-[9px] font-black uppercase ${storeStatus.text}`}
                       >
                         {
-                          performance.label
+                          storeStatus.label
                         }
                       </span>
                     </div>
@@ -330,9 +334,9 @@ export default async function RegionalGoalProgress() {
                 </div>
               </div>
 
-              {/* METRIC GRID */}
+              {/* WHITE METRIC CARDS */}
 
-              <div className="relative grid grid-cols-1 gap-2.5 p-3 sm:grid-cols-2 sm:p-4">
+              <div className="grid gap-3 p-4 sm:grid-cols-2">
                 {metrics.map(
                   (metric) => {
                     const data =
@@ -359,6 +363,11 @@ export default async function RegionalGoalProgress() {
                         data.percent
                       );
 
+                    const status =
+                      getGoalStatus(
+                        percent
+                      );
+
                     const barWidth =
                       Math.max(
                         0,
@@ -368,90 +377,88 @@ export default async function RegionalGoalProgress() {
                         )
                       );
 
-                    const atGoal =
-                      goal > 0 &&
-                      percent >= 100;
-
                     return (
                       <div
                         key={
                           metric.key
                         }
-                        className="rounded-[15px] border border-white/[0.08] bg-white/[0.045] px-3.5 py-3 shadow-inner transition duration-200 hover:border-purple-400/20 hover:bg-white/[0.065]"
+                        className="rounded-[18px] border border-[#E9E4E7] bg-white p-4 shadow-[0_4px_14px_rgba(40,20,30,0.05)]"
                       >
                         <div className="flex items-center justify-between gap-3">
-                          <div className="flex min-w-0 items-center gap-2">
-                            <div
-                              className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-lg ${
-                                atGoal
-                                  ? "bg-emerald-400/10 text-emerald-300"
-                                  : "bg-purple-400/10 text-purple-300"
-                              }`}
-                            >
+                          <div className="flex items-center gap-2.5">
+                            <div className="flex h-8 w-8 items-center justify-center rounded-[10px] bg-[#FCE6F1] text-[#E20074]">
                               {
                                 metric.icon
                               }
                             </div>
 
-                            <p className="truncate text-[12px] font-black text-white">
+                            <p className="text-[13px] font-black text-[#2B2028]">
                               {
                                 metric.label
                               }
                             </p>
                           </div>
 
-                          <div
-                            className={`flex shrink-0 items-center gap-1 text-[10px] font-black ${
-                              atGoal
-                                ? "text-emerald-300"
-                                : "text-purple-300"
-                            }`}
+                          <span
+                            className={`rounded-full border px-2.5 py-1 text-[10px] font-black ${status.bg} ${status.border} ${status.text}`}
                           >
-                            {atGoal && (
-                              <ArrowUpRight
-                                size={11}
-                              />
-                            )}
-
                             {percent.toFixed(
                               1
                             )}
                             %
-                          </div>
+                          </span>
                         </div>
 
-                        <div className="mt-2.5 flex items-end justify-between gap-3">
-                          <p className="text-[13px] font-black tracking-[-0.01em] text-white">
-                            {formatValue(
-                              metric.key,
-                              current
-                            )}
+                        <div className="mt-4 flex items-end justify-between gap-4">
+                          <div>
+                            <p className="text-[8px] font-black uppercase tracking-[0.15em] text-slate-400">
+                              Current
+                            </p>
 
-                            <span className="mx-1 text-slate-600">
-                              /
-                            </span>
+                            <p className="mt-1 text-[19px] font-black tracking-[-0.02em] text-[#2B2028]">
+                              {formatValue(
+                                metric.key,
+                                current
+                              )}
+                            </p>
+                          </div>
 
-                            <span className="text-[11px] font-bold text-slate-400">
+                          <div className="text-right">
+                            <p className="text-[8px] font-black uppercase tracking-[0.15em] text-slate-400">
+                              Goal
+                            </p>
+
+                            <p className="mt-1 text-[13px] font-black text-slate-600">
                               {formatValue(
                                 metric.key,
                                 goal
                               )}
-                            </span>
-                          </p>
+                            </p>
+                          </div>
                         </div>
 
-                        <div className="mt-2.5 h-[5px] overflow-hidden rounded-full bg-slate-700/70">
+                        <div className="mt-3 h-[7px] overflow-hidden rounded-full bg-[#EEE9EC]">
                           <div
-                            className={`h-full rounded-full ${
-                              atGoal
-                                ? "bg-gradient-to-r from-emerald-500 to-teal-300"
-                                : "bg-gradient-to-r from-violet-500 via-fuchsia-500 to-pink-500"
-                            }`}
+                            className={`h-full rounded-full transition-all duration-500 ${status.bar}`}
                             style={{
                               width:
                                 `${barWidth}%`,
                             }}
                           />
+                        </div>
+
+                        <div className="mt-2 flex items-center justify-between">
+                          <span className="text-[8px] font-bold text-slate-400">
+                            Progress to goal
+                          </span>
+
+                          <span
+                            className={`text-[8px] font-black uppercase ${status.text}`}
+                          >
+                            {
+                              status.label
+                            }
+                          </span>
                         </div>
                       </div>
                     );

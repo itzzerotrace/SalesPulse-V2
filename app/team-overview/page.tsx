@@ -23,10 +23,6 @@ import {
   getMonthInfo,
 } from "@/lib/progress/date";
 
-import {
-  getRegionalStoreIds,
-} from "@/lib/services/regionalTeam";
-
 export const dynamic =
   "force-dynamic";
 
@@ -209,13 +205,6 @@ export default async function TeamOverviewPage() {
   const context =
     await getUserContext();
 
-  const role =
-    context?.profile?.role;
-
-  const isRegional =
-    role ===
-    "regional_manager";
-
   const activeStore =
     await getActiveStore();
 
@@ -231,17 +220,10 @@ export default async function TeamOverviewPage() {
    * ======================================================
    */
 
-  let storeIds: string[] =
-    [];
-
-  if (isRegional) {
-    storeIds =
-      await getRegionalStoreIds();
-  } else if (activeStore?.id) {
-    storeIds = [
-      activeStore.id,
-    ];
-  }
+  const storeIds: string[] =
+    activeStore?.id
+      ? [activeStore.id]
+      : [];
 
   if (
     storeIds.length === 0
@@ -912,22 +894,6 @@ export default async function TeamOverviewPage() {
       )
       .sort(
         (a, b) => {
-          if (isRegional) {
-            const storeCompare =
-              String(
-                a.storeName
-              ).localeCompare(
-                String(
-                  b.storeName
-                )
-              );
-
-            if (
-              storeCompare !== 0
-            ) {
-              return storeCompare;
-            }
-          }
 
           return String(
             a.name
@@ -954,12 +920,10 @@ export default async function TeamOverviewPage() {
       : 0;
 
   const pageStoreLabel =
-    isRegional
-      ? `${storeIds.length} Assigned Stores`
-      : normalizeStoreName(
-          activeStore?.name ||
-            "Store"
-        );
+    normalizeStoreName(
+      activeStore?.name ||
+        "Selected Store"
+    );
 
   /*
    * ======================================================
@@ -1098,13 +1062,7 @@ export default async function TeamOverviewPage() {
                             </span>
                           </div>
 
-                          {isRegional && (
-                            <p className="mt-1 text-xs font-black text-purple-600">
-                              {
-                                employee.storeName
-                              }
-                            </p>
-                          )}
+                          
 
                           <p className="mt-1 text-xs font-bold text-slate-400">
                             Overall progress across active goals
