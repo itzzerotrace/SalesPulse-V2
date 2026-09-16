@@ -1,10 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import {
-  usePathname,
-} from "next/navigation";
-
+import { usePathname } from "next/navigation";
 import {
   BarChart3,
   Home,
@@ -14,234 +11,125 @@ import {
   Users,
   Settings,
   Zap,
+  UserRoundSearch,
 } from "lucide-react";
 
-export default function Sidebar({
-  profile,
-}: {
+type SidebarProps = {
   profile: any;
-}) {
-  const pathname =
-    usePathname();
+};
 
-  const role =
-    profile?.role;
+export default function Sidebar({ profile }: SidebarProps) {
+  const pathname = usePathname();
 
-  const dashboardHref =
-    role === "admin"
-      ? "/admin/dashboard"
-      : role === "manager"
-        ? "/dashboard/manager"
-        : role ===
-            "regional_manager"
-          ? "/dashboard/regional"
-          : "/dashboard/employee";
+  const role = profile?.role;
 
-  const navigation: any[] = [
+  const isManagement =
+    role === "admin" ||
+    role === "manager" ||
+    role === "regional_manager";
+
+  const isRegionalManager =
+    role === "regional_manager";
+
+  const items = [
     {
       title: "Dashboard",
-      href: dashboardHref,
+      href: "/dashboard",
       icon: Home,
+      show: true,
     },
-  ];
-
-  if (
-    role === "manager" ||
-    role ===
-      "regional_manager" ||
-    role === "admin"
-  ) {
-    navigation.push({
+    {
       title: "Daily Update",
       href: "/daily-update",
-      icon:
-        ClipboardPenLine,
-    });
-  }
-
-  navigation.push(
+      icon: ClipboardPenLine,
+      show: isManagement,
+    },
     {
-      title: "Goals",
+      title: "Store Goals",
       href: "/goals",
       icon: Target,
+      show: isManagement,
     },
     {
       title: "Team Overview",
       href: "/team-overview",
       icon: BarChart3,
+      show: isManagement,
     },
     {
       title: "Rankings",
       href: "/leaderboard",
       icon: Trophy,
+      show: isManagement,
     },
     {
       title: "Team",
       href: "/team",
       icon: Users,
+      show: isManagement,
+    },
+    {
+      title: "All Employees",
+      href: "/all-employees",
+      icon: UserRoundSearch,
+      show: isRegionalManager,
     },
     {
       title: "Settings",
       href: "/settings",
       icon: Settings,
-    }
-  );
+      show: true,
+    },
+  ];
 
-  function isActive(
-    href: string
-  ) {
-    if (
-      href.includes(
-        "/dashboard"
-      )
-    ) {
-      return (
-        pathname ===
-        href
-      );
-    }
-
-    return (
-      pathname === href ||
-      pathname.startsWith(
-        `${href}/`
-      )
-    );
-  }
-
-  const roleLabel =
-    String(role || "")
-      .replaceAll("_", " ")
-      .replace(
-        /\b\w/g,
-        (letter) =>
-          letter.toUpperCase()
-      );
+  const visibleItems = items.filter((item) => item.show);
 
   return (
-    <aside className="salespulse-dark-gradient sticky top-0 hidden h-screen w-[286px] shrink-0 flex-col overflow-hidden border-r border-white/5 px-5 py-6 text-white lg:flex">
-      <div className="pointer-events-none absolute -left-24 top-40 h-52 w-52 rounded-full bg-purple-600/10 blur-3xl" />
-
-      <Link
-        href={dashboardHref}
-        aria-label="Go to dashboard"
-        className="relative mb-8 flex items-center gap-3 rounded-2xl px-2 py-1 transition hover:bg-white/[0.05]"
-      >
-        <div className="salespulse-gradient flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl text-xl font-black shadow-xl shadow-pink-500/20">
-          S
-        </div>
-
-        <div className="min-w-0">
-          <div className="flex items-center gap-2">
-            <h1 className="truncate text-xl font-black tracking-tight">
-              SalesPulse
-            </h1>
-
-            <Zap
-              size={15}
-              className="fill-pink-500 text-pink-500"
-            />
+    <aside className="hidden min-h-screen w-64 shrink-0 border-r border-slate-200 bg-white lg:flex lg:flex-col">
+      <div className="flex h-20 items-center border-b border-slate-200 px-6">
+        <div className="flex items-center gap-3">
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-purple-600 text-white">
+            <Zap size={21} />
           </div>
 
-          <p className="mt-0.5 text-[11px] font-bold uppercase tracking-[0.18em] text-purple-300">
-            Performance
-          </p>
-        </div>
-      </Link>
-
-      <div className="mb-3 px-3 text-[10px] font-black uppercase tracking-[0.2em] text-white/35">
-        Workspace
-      </div>
-
-      <nav className="relative flex-1 space-y-1.5">
-        {navigation.map(
-          (item) => {
-            const Icon =
-              item.icon;
-
-            const active =
-              isActive(
-                item.href
-              );
-
-            return (
-              <Link
-                key={
-                  item.title
-                }
-                href={
-                  item.href
-                }
-                className={`group relative flex min-h-12 items-center gap-3.5 overflow-hidden rounded-2xl px-4 py-3 transition-all ${
-                  active
-                    ? "bg-white text-[#17102F] shadow-xl shadow-black/15"
-                    : "text-white/65 hover:bg-white/8 hover:text-white"
-                }`}
-              >
-                {active && (
-                  <span className="salespulse-gradient absolute bottom-2 left-0 top-2 w-1 rounded-r-full" />
-                )}
-
-                <Icon
-                  size={20}
-                  strokeWidth={
-                    active
-                      ? 2.7
-                      : 2
-                  }
-                  className={
-                    active
-                      ? "text-purple-700"
-                      : "transition group-hover:text-pink-300"
-                  }
-                />
-
-                <span className="text-sm font-bold">
-                  {
-                    item.title
-                  }
-                </span>
-
-                {active && (
-                  <span className="ml-auto h-2 w-2 rounded-full bg-pink-500" />
-                )}
-              </Link>
-            );
-          }
-        )}
-      </nav>
-
-      <div className="relative mt-6 overflow-hidden rounded-3xl border border-white/10 bg-white/[0.06] p-4 backdrop-blur">
-        <div className="absolute -right-7 -top-8 h-20 w-20 rounded-full bg-pink-500/15 blur-2xl" />
-
-        <div className="relative">
-          <p className="text-[10px] font-black uppercase tracking-[0.18em] text-purple-300">
-            Active Store
-          </p>
-
-          <p className="mt-2 truncate text-base font-black">
-            {profile?.store
-              ?.name ||
-              "No Store"}
-          </p>
-
-          {profile?.store
-            ?.city && (
-            <p className="mt-1 truncate text-xs font-medium text-white/45">
-              {
-                profile
-                  .store.city
-              }
+          <div>
+            <p className="text-lg font-black tracking-tight text-slate-900">
+              SalesPulse
             </p>
-          )}
 
-          {roleLabel && (
-            <div className="mt-4 inline-flex rounded-full border border-pink-400/20 bg-pink-500/10 px-3 py-1 text-[10px] font-black uppercase tracking-wider text-pink-300">
-              {roleLabel}
-            </div>
-          )}
+            <p className="text-xs font-semibold text-slate-500">
+              Performance Hub
+            </p>
+          </div>
         </div>
       </div>
+
+      <nav className="flex-1 space-y-1 p-4">
+        {visibleItems.map((item) => {
+          const Icon = item.icon;
+
+          const active =
+            pathname === item.href ||
+            (item.href !== "/dashboard" &&
+              pathname.startsWith(`${item.href}/`));
+
+          return (
+            <Link
+              key={item.href}
+              href={item.href}
+              className={`flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-bold transition ${
+                active
+                  ? "bg-purple-50 text-purple-700"
+                  : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
+              }`}
+            >
+              <Icon size={19} />
+
+              <span>{item.title}</span>
+            </Link>
+          );
+        })}
+      </nav>
     </aside>
   );
 }

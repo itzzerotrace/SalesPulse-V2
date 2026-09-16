@@ -3,20 +3,13 @@ import Link from "next/link";
 import DashboardLayout from "@/components/layout/DashboardLayout";
 
 import { createClient } from "@/lib/supabase/server";
-import { getUserContext } from "@/lib/auth/userContext";
 import { getActiveStore } from "@/lib/stores/activeStore";
 import { getMonthInfo } from "@/lib/progress/date";
 
-import {
-  getRegionalTeamData,
-} from "@/lib/services/regionalTeam";
-
 function EmployeeCard({
   employee,
-  showStore = false,
 }: {
   employee: any;
-  showStore?: boolean;
 }) {
   const content = (
     <>
@@ -26,13 +19,6 @@ function EmployeeCard({
             {employee.full_name ||
               "Team Member"}
           </p>
-
-          {showStore &&
-            employee.store_name && (
-              <p className="mt-1 text-sm font-bold text-purple-600">
-                {employee.store_name}
-              </p>
-            )}
         </div>
 
         {typeof employee.score !==
@@ -53,15 +39,6 @@ function EmployeeCard({
             : "No Goals"}
         </span>
 
-        {typeof employee.stats !==
-          "undefined" && (
-          <span className="rounded-full bg-white px-3 py-1.5 text-slate-600">
-            {employee.stats
-              ? "MTD Updated"
-              : "No MTD"}
-          </span>
-        )}
-
         {employee.employeeType ===
           "tracked" && (
           <span className="rounded-full bg-purple-100 px-3 py-1.5 text-purple-700">
@@ -76,8 +53,10 @@ function EmployeeCard({
     "rounded-2xl border border-slate-200 bg-slate-50 p-5 transition hover:border-purple-300 hover:bg-purple-50";
 
   /*
-   * Tracked employees do not have an auth/profile
-   * record, so /goals/[id] does not apply to them.
+   * Tracked employees do not have
+   * profile/auth accounts, so the
+   * existing /goals/[id] route does
+   * not apply to them.
    */
   if (
     employee.employeeType ===
@@ -104,143 +83,16 @@ export default async function TeamPage() {
   const supabase =
     await createClient();
 
-  const context =
-    await getUserContext();
-
-  const role =
-    context?.profile?.role;
-
   /*
-   * ======================================================
-   * REGIONAL MANAGER
-   * ======================================================
+   * Team is ALWAYS store-specific.
+   *
+   * This applies to managers and
+   * regional managers.
+   *
+   * Regional managers use the
+   * Viewing Store selector to choose
+   * which store's team is displayed.
    */
-
-  if (
-    role ===
-    "regional_manager"
-  ) {
-    const data =
-      await getRegionalTeamData();
-
-    return (
-      <DashboardLayout>
-        <div className="space-y-6 sm:space-y-8">
-          <div>
-            <p className="text-xs font-black uppercase tracking-wider text-purple-600">
-              District Team
-            </p>
-
-            <h1 className="mt-1 text-3xl font-black text-slate-900 sm:text-4xl">
-              Team
-            </h1>
-
-            <p className="mt-2 text-slate-500">
-              All employees across your assigned stores.
-            </p>
-          </div>
-
-          <section className="grid grid-cols-2 gap-3 sm:grid-cols-4 sm:gap-5">
-            <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-              <p className="text-xs font-bold uppercase tracking-wide text-slate-500">
-                Stores
-              </p>
-
-              <p className="mt-2 text-3xl font-black text-slate-900">
-                {
-                  data.overview
-                    .stores
-                }
-              </p>
-            </div>
-
-            <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-              <p className="text-xs font-bold uppercase tracking-wide text-slate-500">
-                Employees
-              </p>
-
-              <p className="mt-2 text-3xl font-black text-slate-900">
-                {
-                  data.overview
-                    .employees
-                }
-              </p>
-            </div>
-
-            <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-              <p className="text-xs font-bold uppercase tracking-wide text-slate-500">
-                With Goals
-              </p>
-
-              <p className="mt-2 text-3xl font-black text-slate-900">
-                {
-                  data.overview
-                    .employeesWithGoals
-                }
-              </p>
-            </div>
-
-            <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-              <p className="text-xs font-bold uppercase tracking-wide text-slate-500">
-                MTD Updated
-              </p>
-
-              <p className="mt-2 text-3xl font-black text-slate-900">
-                {
-                  data.overview
-                    .employeesWithStats
-                }
-              </p>
-            </div>
-          </section>
-
-          <section className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm sm:p-7">
-            <div className="mb-5">
-              <h2 className="text-2xl font-black text-slate-900">
-                All Employees
-              </h2>
-
-              <p className="mt-1 text-sm text-slate-500">
-                Employees from all assigned stores.
-              </p>
-            </div>
-
-            {data.employees.length >
-            0 ? (
-              <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-                {data.employees.map(
-                  (
-                    employee: any
-                  ) => (
-                    <EmployeeCard
-                      key={`${employee.employeeType}-${employee.id}`}
-                      employee={
-                        employee
-                      }
-                      showStore
-                    />
-                  )
-                )}
-              </div>
-            ) : (
-              <div className="rounded-2xl border border-dashed border-slate-300 p-8 text-center">
-                <p className="font-black text-slate-900">
-                  No employees found
-                </p>
-              </div>
-            )}
-          </section>
-        </div>
-      </DashboardLayout>
-    );
-  }
-
-  /*
-   * ======================================================
-   * NORMAL STORE MANAGER
-   * ======================================================
-   */
-
   const activeStore =
     await getActiveStore();
 
@@ -255,6 +107,12 @@ export default async function TeamPage() {
 
   let trackedEmployees: any[] =
     [];
+
+  /*
+   * ======================================================
+   * LOAD EMPLOYEES FOR SELECTED STORE
+   * ======================================================
+   */
 
   if (storeId) {
     const [
@@ -340,21 +198,25 @@ export default async function TeamPage() {
 
   /*
    * ======================================================
-   * LOAD GOALS FOR BOTH TYPES
+   * LOAD GOALS FOR BOTH EMPLOYEE TYPES
    * ======================================================
    */
 
   const profileIds =
-    profileEmployees.map(
-      (employee: any) =>
-        employee.id
-    );
+    profileEmployees
+      .map(
+        (employee: any) =>
+          employee.id
+      )
+      .filter(Boolean);
 
   const trackedIds =
-    trackedEmployees.map(
-      (employee: any) =>
-        employee.id
-    );
+    trackedEmployees
+      .map(
+        (employee: any) =>
+          employee.id
+      )
+      .filter(Boolean);
 
   let profileGoals: any[] =
     [];
@@ -362,95 +224,81 @@ export default async function TeamPage() {
   let trackedGoals: any[] =
     [];
 
-  const goalRequests: Promise<any>[] =
-    [];
-
-  if (profileIds.length > 0) {
-    goalRequests.push(
-      Promise.resolve(
-        supabase
-          .from(
-            "employee_goals"
-          )
-          .select("*")
-          .in(
-            "employee_id",
-            profileIds
-          )
-          .eq(
-            "month",
-            monthInfo.monthName
-          )
-          .eq(
-            "year",
-            monthInfo.year
-          )
+  if (
+    profileIds.length > 0
+  ) {
+    const {
+      data,
+      error,
+    } = await supabase
+      .from(
+        "employee_goals"
       )
-    );
-  }
-
-  if (trackedIds.length > 0) {
-    goalRequests.push(
-      Promise.resolve(
-        supabase
-          .from(
-            "tracked_employee_goals"
-          )
-          .select("*")
-          .in(
-            "employee_id",
-            trackedIds
-          )
-          .eq(
-            "month",
-            monthInfo.monthName
-          )
-          .eq(
-            "year",
-            monthInfo.year
-          )
+      .select("*")
+      .in(
+        "employee_id",
+        profileIds
       )
-    );
-  }
-
-  if (goalRequests.length > 0) {
-    const results =
-      await Promise.all(
-        goalRequests
+      .eq(
+        "month",
+        monthInfo.monthName
+      )
+      .eq(
+        "year",
+        monthInfo.year
       );
 
-    let resultIndex = 0;
-
-    if (profileIds.length > 0) {
-      const result =
-        results[resultIndex++];
-
-      if (result.error) {
-        console.error(
-          "TEAM PROFILE GOALS ERROR:",
-          result.error
-        );
-      }
-
-      profileGoals =
-        result.data || [];
+    if (error) {
+      console.error(
+        "TEAM PROFILE GOALS ERROR:",
+        error
+      );
     }
 
-    if (trackedIds.length > 0) {
-      const result =
-        results[resultIndex++];
-
-      if (result.error) {
-        console.error(
-          "TEAM TRACKED GOALS ERROR:",
-          result.error
-        );
-      }
-
-      trackedGoals =
-        result.data || [];
-    }
+    profileGoals =
+      data || [];
   }
+
+  if (
+    trackedIds.length > 0
+  ) {
+    const {
+      data,
+      error,
+    } = await supabase
+      .from(
+        "tracked_employee_goals"
+      )
+      .select("*")
+      .in(
+        "employee_id",
+        trackedIds
+      )
+      .eq(
+        "month",
+        monthInfo.monthName
+      )
+      .eq(
+        "year",
+        monthInfo.year
+      );
+
+    if (error) {
+      console.error(
+        "TEAM TRACKED GOALS ERROR:",
+        error
+      );
+    }
+
+    trackedGoals =
+      data || [];
+  }
+
+  /*
+   * ======================================================
+   * GOAL LOOKUP MAPS
+   * ======================================================
+   */
 
   const profileGoalMap =
     new Map<string, any>();
@@ -480,7 +328,7 @@ export default async function TeamPage() {
 
   /*
    * ======================================================
-   * MERGE BOTH TYPES
+   * COMBINE BOTH EMPLOYEE TYPES
    * ======================================================
    */
 
@@ -526,6 +374,12 @@ export default async function TeamPage() {
       )
   );
 
+  /*
+   * ======================================================
+   * PAGE
+   * ======================================================
+   */
+
   return (
     <DashboardLayout>
       <div className="space-y-6 sm:space-y-8">
@@ -546,6 +400,25 @@ export default async function TeamPage() {
         </div>
 
         <section className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm sm:p-7">
+          <div className="mb-5 flex items-center justify-between gap-4">
+            <div>
+              <h2 className="text-xl font-black text-slate-900">
+                {activeStore?.name ||
+                  "Selected Store"}
+              </h2>
+
+              <p className="mt-1 text-sm text-slate-500">
+                {
+                  employeesWithGoals.length
+                }{" "}
+                {employeesWithGoals.length ===
+                1
+                  ? "employee"
+                  : "employees"}
+              </p>
+            </div>
+          </div>
+
           {employeesWithGoals.length >
           0 ? (
             <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
@@ -563,9 +436,18 @@ export default async function TeamPage() {
               )}
             </div>
           ) : (
-            <p className="text-slate-500">
-              No employees found.
-            </p>
+            <div className="rounded-2xl border border-dashed border-slate-300 p-8 text-center">
+              <p className="font-black text-slate-900">
+                No employees found
+              </p>
+
+              <p className="mt-1 text-sm text-slate-500">
+                No employees are assigned
+                to{" "}
+                {activeStore?.name ||
+                  "this store"}.
+              </p>
+            </div>
           )}
         </section>
       </div>
