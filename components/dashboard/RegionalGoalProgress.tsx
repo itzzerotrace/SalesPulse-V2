@@ -253,7 +253,7 @@ export default async function RegionalGoalProgress() {
       <div className="rounded-[24px] border border-slate-200 bg-white p-12 text-center shadow-sm">
         <Building2
           size={30}
-          className="mx-auto text-[#E20074]"
+          className="mx-auto text-[#8B00FF]"
         />
 
         <h3 className="mt-4 text-xl font-black text-[#2B2028]">
@@ -291,12 +291,12 @@ export default async function RegionalGoalProgress() {
               <div className="border-b border-[#E8E1E5] bg-white px-5 py-5">
                 <div className="flex items-center justify-between gap-5">
                   <div className="flex min-w-0 items-center gap-3.5">
-                    <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-[14px] bg-[#FCE6F1] text-[#E20074]">
+                    <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-[14px] bg-[#F3E8FF] text-[#8B00FF]">
                       <Building2 size={21} />
                     </div>
 
                     <div className="min-w-0">
-                      <p className="text-[9px] font-black uppercase tracking-[0.18em] text-[#E20074]">
+                      <p className="text-[9px] font-black uppercase tracking-[0.18em] text-[#8B00FF]">
                         Store Performance
                       </p>
 
@@ -382,7 +382,7 @@ export default async function RegionalGoalProgress() {
                       >
                         <div className="flex items-center justify-between gap-3">
                           <div className="flex items-center gap-2.5">
-                            <div className="flex h-8 w-8 items-center justify-center rounded-[10px] bg-[#FCE6F1] text-[#E20074]">
+                            <div className="flex h-8 w-8 items-center justify-center rounded-[10px] bg-[#F3E8FF] text-[#8B00FF]">
                               {
                                 metric.icon
                               }
