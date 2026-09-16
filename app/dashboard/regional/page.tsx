@@ -74,7 +74,7 @@ export default async function RegionalDashboard() {
                   </span>
                 </h1>
 
-                <p className="mt-3 max-w-lg text-sm font-medium leading-5 text-white/50">
+                <p className="mt-3 max-w-lg text-sm font-medium leading-5 text-white">
                   Monitor store performance, team execution,
                   monthly goals, and district rankings from one
                   command center.
@@ -190,7 +190,7 @@ export default async function RegionalDashboard() {
                 Store Goal Performance
               </h2>
 
-              <p className="mt-1 text-xs font-medium text-slate-500 sm:text-sm">
+              <p className="mt-1 text-xs font-medium text-white sm:text-sm">
                 Current month-to-date performance compared with monthly goals.
               </p>
             </div>
@@ -363,7 +363,7 @@ export default async function RegionalDashboard() {
                                 "Team Member"}
                             </p>
 
-                            <p className="mt-0.5 truncate text-[10px] font-bold text-slate-500">
+                            <p className="mt-0.5 truncate text-[10px] font-bold text-white">
                               {
                                 employee.store_name
                               }
@@ -378,7 +378,7 @@ export default async function RegionalDashboard() {
                               %
                             </p>
 
-                            <p className="text-[7px] font-black uppercase tracking-[0.15em] text-slate-400">
+                            <p className="text-[7px] font-black uppercase tracking-[0.15em] text-white">
                               Score
                             </p>
                           </div>
@@ -398,7 +398,7 @@ export default async function RegionalDashboard() {
                     Rankings coming soon
                   </p>
 
-                  <p className="mt-1 text-xs text-slate-500">
+                  <p className="mt-1 text-xs text-white">
                     Rankings will appear when employee goals and performance are available.
                   </p>
                 </div>

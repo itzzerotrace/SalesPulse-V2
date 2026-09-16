@@ -288,46 +288,42 @@ export default async function RegionalGoalProgress() {
             >
               {/* METRO STORE HEADER */}
 
-              <div className="relative overflow-hidden bg-gradient-to-r from-[#5A123D] via-[#8D0754] to-[#E20074] px-5 py-4 text-white">
-                <div className="pointer-events-none absolute -right-12 -top-20 h-44 w-44 rounded-full bg-white/10 blur-3xl" />
-
-                <div className="relative flex items-center justify-between gap-4">
-                  <div className="flex min-w-0 items-center gap-3">
-                    <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-white/20 bg-white/15">
-                      <Building2
-                        size={20}
-                      />
+              <div className="border-b border-[#E8E1E5] bg-white px-5 py-5">
+                <div className="flex items-center justify-between gap-5">
+                  <div className="flex min-w-0 items-center gap-3.5">
+                    <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-[14px] bg-[#FCE6F1] text-[#E20074]">
+                      <Building2 size={21} />
                     </div>
 
                     <div className="min-w-0">
-                      <p className="text-[8px] font-black uppercase tracking-[0.2em] text-white/65">
+                      <p className="text-[9px] font-black uppercase tracking-[0.18em] text-[#E20074]">
                         Store Performance
                       </p>
 
-                      <h3 className="mt-1 truncate text-[22px] font-black tracking-[-0.025em]">
+                      <h3 className="mt-1 truncate text-[22px] font-black tracking-[-0.025em] text-[#211A1E]">
                         {store.store}
                       </h3>
                     </div>
                   </div>
 
-                  <div className="flex shrink-0 items-center gap-3">
+                  <div className="flex shrink-0 items-center gap-3.5">
                     <PerformanceRing
-                      score={
-                        storeAverage
-                      }
+                      score={storeAverage}
                     />
 
-                    <div className="hidden sm:block">
-                      <p className="text-[8px] font-black uppercase tracking-[0.16em] text-white/60">
+                    <div className="hidden min-w-[105px] sm:block">
+                      <p className="text-[9px] font-black uppercase tracking-[0.16em] text-slate-400">
                         Overall
                       </p>
 
+                      <p className="mt-1 text-[11px] font-bold text-[#332A2F]">
+                        Performance
+                      </p>
+
                       <span
-                        className={`mt-1.5 inline-flex rounded-full border bg-white px-2.5 py-1 text-[9px] font-black uppercase ${storeStatus.text}`}
+                        className={`mt-2 inline-flex rounded-full border px-3 py-1.5 text-[9px] font-black uppercase ${storeStatus.bg} ${storeStatus.border} ${storeStatus.text}`}
                       >
-                        {
-                          storeStatus.label
-                        }
+                        {storeStatus.label}
                       </span>
                     </div>
                   </div>
