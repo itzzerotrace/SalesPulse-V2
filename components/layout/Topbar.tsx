@@ -59,7 +59,7 @@ export default function Topbar({
 
   const roleLabel =
     role === "regional_manager"
-      ? "Regional Manager"
+      ? "District Manager"
       : role === "manager"
         ? "Store Manager"
         : role
