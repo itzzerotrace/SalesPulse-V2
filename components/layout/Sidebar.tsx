@@ -98,7 +98,7 @@ export default function Sidebar({ profile }: SidebarProps) {
               SalesPulse
             </p>
 
-            <p className="text-[10px] font-black uppercase tracking-[0.16em] text-purple-200/70">
+            <p className="text-[10px] font-black uppercase tracking-[0.16em] text-white/70">
               Performance
             </p>
           </div>
