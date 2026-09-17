@@ -3,11 +3,11 @@
 import {
   useMemo,
   useState,
-} from "react";
+  } from "react";
 
 import {
   useRouter,
-} from "next/navigation";
+  } from "next/navigation";
 
 import {
   CalendarDays,
@@ -16,10 +16,10 @@ import {
   Clock3,
   Gauge,
   Headphones,
-  RadioTower,
+  Tablet,
   RefreshCcw,
   Save,
-  Smartphone,
+  Phone,
   Sparkles,
   Star,
   Store,
@@ -27,8 +27,9 @@ import {
   TrendingUp,
   UserRound,
   Users,
-  Wifi,
+  HouseWifi,
   Zap,
+  RefreshCw,
 } from "lucide-react";
 
 import {
@@ -106,7 +107,7 @@ function metricIcon(
 
     case "voice":
       return (
-        <Smartphone
+        <Phone
           {...props}
         />
       );
@@ -127,14 +128,14 @@ function metricIcon(
 
     case "hsi":
       return (
-        <Wifi
+        <HouseWifi
           {...props}
         />
       );
 
     case "bts":
       return (
-        <RadioTower
+        <Tablet
           {...props}
         />
       );

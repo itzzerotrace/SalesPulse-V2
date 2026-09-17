@@ -1,13 +1,13 @@
 import {
-  Banknote,
-  Building2,
+  CircleDollarSign,
   Headphones,
   HouseWifi,
-  MessageSquareMore,
   Phone,
   RefreshCw,
   Star,
-  Watch,
+  Tablet,
+  TrendingUp,
+  Building2,
 } from "lucide-react";
 
 import {
@@ -32,7 +32,7 @@ const metrics: Array<{
   {
     key: "gp",
     label: "GP",
-    icon: <Banknote size={15} />,
+    icon: <CircleDollarSign size={15} />,
   },
   {
     key: "voice",
@@ -42,12 +42,12 @@ const metrics: Array<{
   {
     key: "mim",
     label: "MiM",
-    icon: <MessageSquareMore size={15} />,
+    icon: <RefreshCw size={15} />,
   },
   {
     key: "upgrade",
     label: "Upgrades",
-    icon: <RefreshCw size={15} />,
+    icon: <TrendingUp size={15} />,
   },
   {
     key: "hsi",
@@ -57,7 +57,7 @@ const metrics: Array<{
   {
     key: "bts",
     label: "BTS",
-    icon: <Watch size={15} />,
+    icon: <Tablet size={15} />,
   },
   {
     key: "accessories",
