@@ -119,6 +119,46 @@ export default async function RegionalDashboard() {
         storeScores.length
       : 0;
 
+
+  const rankedStores =
+    storeProgress
+      .map(
+        (
+          store: any,
+          index: number
+        ) => ({
+          ...store,
+          overallScore:
+            Number(
+              storeScores[index] ||
+                0
+            ),
+        })
+      )
+      .sort(
+        (
+          a: any,
+          b: any
+        ) =>
+          b.overallScore -
+          a.overallScore
+      );
+
+  const topFiveStores =
+    rankedStores.slice(0, 5);
+
+  const bottomFiveStores =
+    [...rankedStores]
+      .sort(
+        (
+          a: any,
+          b: any
+        ) =>
+          a.overallScore -
+          b.overallScore
+      )
+      .slice(0, 5);
+
   return (
     <DashboardLayout>
       <div className="space-y-6 pb-10">
@@ -252,218 +292,202 @@ export default async function RegionalDashboard() {
           <RegionalGoalProgress />
         </section>
 
-        {/* LOWER DASHBOARD */}
+        {/* STORE RANKINGS */}
 
-        <div className="grid gap-5 xl:grid-cols-[0.9fr_1.1fr]">
+        <div className="grid gap-5 xl:grid-cols-2">
 
-          <section className="relative overflow-hidden rounded-[26px] border border-slate-200 bg-white p-5 shadow-[0_16px_45px_rgba(31,21,60,0.06)] sm:p-6">
-            <div className="pointer-events-none absolute -right-20 -top-20 h-52 w-52 rounded-full bg-purple-100/70 blur-3xl" />
-
-            <div className="relative">
-              <div className="flex items-start justify-between gap-4">
-                <div>
-                  <p className="text-[9px] font-black uppercase tracking-[0.2em] text-purple-600">
-                    District Stores
-                  </p>
-
-                  <h2 className="mt-1.5 text-2xl font-black tracking-[-0.03em] text-[#17102F]">
-                    Store Health
-                  </h2>
-                </div>
-
-                <Link
-                  href="/all-employees"
-                  className="flex h-9 w-9 items-center justify-center rounded-xl border border-slate-200 bg-white text-purple-600 transition hover:bg-purple-50"
-                >
-                  <ArrowRight size={16} />
-                </Link>
-              </div>
-
-              <div className="mt-5 grid grid-cols-2 gap-2.5">
-                <div className="rounded-[17px] bg-[#F7F5FC] p-4">
-                  <p className="text-[8px] font-black uppercase tracking-[0.16em] text-purple-600">
-                    Stores
-                  </p>
-
-                  <p className="mt-2 text-2xl font-black text-[#17102F]">
-                    {overview.stores}
-                  </p>
-                </div>
-
-                <div className="rounded-[17px] bg-[#F7F5FC] p-4">
-                  <p className="text-[8px] font-black uppercase tracking-[0.16em] text-purple-600">
-                    Stores With Goals
-                  </p>
-
-                  <p className="mt-2 text-2xl font-black text-[#17102F]">
-                    {
-                      storeProgress.filter(
-                        (store: any) =>
-                          metricKeys.some(
-                            (key) =>
-                              Number(
-                                store[key]?.goal || 0
-                              ) > 0
-                          )
-                      ).length
-                    }
-                  </p>
-                </div>
-
-                <div className="rounded-[17px] bg-[#F7F5FC] p-4">
-                  <p className="text-[8px] font-black uppercase tracking-[0.16em] text-purple-600">
-                    MTD Updated
-                  </p>
-
-                  <p className="mt-2 text-2xl font-black text-[#17102F]">
-                    {
-                      storeProgress.filter(
-                        (store: any) =>
-                          metricKeys.some(
-                            (key) =>
-                              Number(
-                                store[key]?.current || 0
-                              ) > 0
-                          )
-                      ).length
-                    }
-                  </p>
-                </div>
-
-                <div className="rounded-[17px] bg-[#17102F] p-4 text-white">
-                  <p className="text-[8px] font-black uppercase tracking-[0.16em] text-purple-300">
-                    Avg Store Score
-                  </p>
-
-                  <p className="mt-2 text-2xl font-black">
-                    {averageStoreScore.toFixed(
-                      1
-                    )}
-                    %
-                  </p>
-                </div>
-              </div>
-            </div>
-          </section>
+          {/* TOP 5 STORES */}
 
           <section className="overflow-hidden rounded-[26px] border border-slate-200 bg-white shadow-[0_16px_45px_rgba(31,21,60,0.06)]">
-            <div className="flex items-start justify-between gap-4 border-b border-slate-100 px-5 py-5 sm:px-6">
+            <div className="flex items-center justify-between border-b border-slate-100 px-5 py-5 sm:px-6">
               <div>
                 <div className="flex items-center gap-2">
                   <Trophy
                     size={14}
-                    className="text-purple-600"
+                    className="text-[#8B00FF]"
                   />
 
-                  <p className="text-[9px] font-black uppercase tracking-[0.2em] text-purple-600">
-                    Rankings
+                  <p className="text-[9px] font-black uppercase tracking-[0.2em] text-[#8B00FF]">
+                    District Rankings
                   </p>
                 </div>
 
                 <h2 className="mt-1.5 text-2xl font-black tracking-[-0.03em] text-[#17102F]">
-                  Top Stores
+                  Top 5 Stores
                 </h2>
               </div>
 
               <Link
                 href="/leaderboard"
-                className="inline-flex items-center gap-1.5 rounded-xl bg-purple-50 px-3 py-2 text-[10px] font-black text-purple-700"
+                className="inline-flex items-center gap-1.5 rounded-xl bg-[#F3E8FF] px-3 py-2 text-[10px] font-black text-[#8B00FF] transition hover:bg-[#EBDDFF]"
               >
                 View All
                 <ArrowRight size={13} />
               </Link>
             </div>
 
-            <div className="p-3.5 sm:p-4">
-              {topStores.length >
-              0 ? (
-                <div className="space-y-2">
-                  {topStores.map(
-                    (
-                      employee: any,
-                      index: number
-                    ) => {
-                      const score =
-                        Number(
-                          employee.score ||
-                            0
-                        );
-
-                      return (
-                        <div
-                          key={
-                            employee.id
-                          }
-                          className={`flex items-center gap-3 rounded-[16px] p-3 ${
-                            index === 0
-                              ? "border border-purple-200 bg-gradient-to-r from-purple-50 to-fuchsia-50"
-                              : "bg-[#F8F8FC]"
-                          }`}
-                        >
-                          <div
-                            className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-[11px] font-black ${
-                              index === 0
-                                ? "bg-[#17102F] text-white"
-                                : "bg-white text-purple-700 shadow-sm"
-                            }`}
-                          >
-                            {index ===
-                            0 ? (
-                              <Crown size={16} />
-                            ) : (
-                              index + 1
-                            )}
-                          </div>
-
-                          <div className="min-w-0 flex-1">
-                            <p className="truncate text-sm font-black text-[#17102F]">
-                              {employee.full_name ||
-                                "Team Member"}
-                            </p>
-
-                            <p className="mt-0.5 truncate text-[10px] font-bold text-white">
-                              {
-                                employee.store_name
-                              }
-                            </p>
-                          </div>
-
-                          <div className="text-right">
-                            <p className="text-base font-black text-[#17102F]">
-                              {score.toFixed(
-                                1
-                              )}
-                              %
-                            </p>
-
-                            <p className="text-[7px] font-black uppercase tracking-[0.15em] text-white">
-                              Score
-                            </p>
-                          </div>
-                        </div>
-                      );
+            <div className="space-y-2 p-4">
+              {topFiveStores.map(
+                (
+                  store: any,
+                  index: number
+                ) => (
+                  <div
+                    key={
+                      store.store_id ||
+                      store.id ||
+                      store.store
                     }
-                  )}
-                </div>
-              ) : (
-                <div className="flex min-h-[180px] flex-col items-center justify-center rounded-[18px] border border-dashed border-slate-200 bg-slate-50 px-5 text-center">
-                  <Trophy
-                    size={24}
-                    className="text-slate-300"
+                    className={`flex items-center gap-3 rounded-[16px] border p-3.5 ${
+                      index === 0
+                        ? "border-[#E3C9FF] bg-[#FAF5FF]"
+                        : "border-slate-100 bg-[#F8F8FC]"
+                    }`}
+                  >
+                    <div
+                      className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-[12px] font-black ${
+                        index === 0
+                          ? "bg-gradient-to-br from-[#7C20D4] to-[#EC168C] text-white shadow-[0_5px_14px_rgba(139,0,255,0.18)]"
+                          : "bg-white text-[#8B00FF] shadow-sm"
+                      }`}
+                    >
+                      {index === 0 ? (
+                        <Crown size={17} />
+                      ) : (
+                        index + 1
+                      )}
+                    </div>
+
+                    <div className="min-w-0 flex-1">
+                      <p className="truncate text-[15px] font-black text-[#17102F]">
+                        {store.store ||
+                          store.store_name ||
+                          store.name ||
+                          "Store"}
+                      </p>
+
+                      <p className="mt-0.5 text-[9px] font-black uppercase tracking-[0.14em] text-slate-400">
+                        District Rank #{index + 1}
+                      </p>
+                    </div>
+
+                    <div className="text-right">
+                      <p className="text-lg font-black text-[#17102F]">
+                        {Number(
+                          store.overallScore ||
+                            0
+                        ).toFixed(1)}
+                        %
+                      </p>
+
+                      <p className="text-[8px] font-black uppercase tracking-[0.14em] text-[#8B00FF]">
+                        Store Score
+                      </p>
+                    </div>
+                  </div>
+                )
+              )}
+            </div>
+          </section>
+
+          {/* BOTTOM 5 STORES */}
+
+          <section className="overflow-hidden rounded-[26px] border border-slate-200 bg-white shadow-[0_16px_45px_rgba(31,21,60,0.06)]">
+            <div className="flex items-center justify-between border-b border-slate-100 px-5 py-5 sm:px-6">
+              <div>
+                <div className="flex items-center gap-2">
+                  <Gauge
+                    size={14}
+                    className="text-[#8B00FF]"
                   />
 
-                  <p className="mt-3 font-black text-[#17102F]">
-                    Rankings coming soon
-                  </p>
-
-                  <p className="mt-1 text-xs text-white">
-                    Rankings will appear when employee goals and performance are available.
+                  <p className="text-[9px] font-black uppercase tracking-[0.2em] text-[#8B00FF]">
+                    Opportunity Stores
                   </p>
                 </div>
+
+                <h2 className="mt-1.5 text-2xl font-black tracking-[-0.03em] text-[#17102F]">
+                  Bottom 5 Stores
+                </h2>
+              </div>
+
+              <Link
+                href="/leaderboard"
+                className="inline-flex items-center gap-1.5 rounded-xl bg-[#F3E8FF] px-3 py-2 text-[10px] font-black text-[#8B00FF] transition hover:bg-[#EBDDFF]"
+              >
+                View All
+                <ArrowRight size={13} />
+              </Link>
+            </div>
+
+            <div className="space-y-2 p-4">
+              {bottomFiveStores.map(
+                (
+                  store: any,
+                  index: number
+                ) => {
+                  const districtRank =
+                    rankedStores.findIndex(
+                      (ranked: any) =>
+                        (
+                          ranked.store_id ||
+                          ranked.id ||
+                          ranked.store
+                        ) ===
+                        (
+                          store.store_id ||
+                          store.id ||
+                          store.store
+                        )
+                    ) + 1;
+
+                  return (
+                    <div
+                      key={
+                        store.store_id ||
+                        store.id ||
+                        store.store
+                      }
+                      className="flex items-center gap-3 rounded-[16px] border border-slate-100 bg-[#F8F8FC] p-3.5"
+                    >
+                      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[12px] bg-white font-black text-[#8B00FF] shadow-sm">
+                        {districtRank}
+                      </div>
+
+                      <div className="min-w-0 flex-1">
+                        <p className="truncate text-[15px] font-black text-[#17102F]">
+                          {store.store ||
+                            store.store_name ||
+                            store.name ||
+                            "Store"}
+                        </p>
+
+                        <p className="mt-0.5 text-[9px] font-black uppercase tracking-[0.14em] text-slate-400">
+                          District Rank #{districtRank}
+                        </p>
+                      </div>
+
+                      <div className="text-right">
+                        <p className="text-lg font-black text-[#17102F]">
+                          {Number(
+                            store.overallScore ||
+                              0
+                          ).toFixed(1)}
+                          %
+                        </p>
+
+                        <p className="text-[8px] font-black uppercase tracking-[0.14em] text-[#8B00FF]">
+                          Store Score
+                        </p>
+                      </div>
+                    </div>
+                  );
+                }
               )}
             </div>
           </section>
         </div>
+
       </div>
     </DashboardLayout>
   );
