@@ -30,6 +30,7 @@ import {
   HouseWifi,
   Zap,
   RefreshCw,
+  Watch,
 } from "lucide-react";
 
 import {

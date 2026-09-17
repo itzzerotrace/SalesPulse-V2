@@ -8,6 +8,7 @@ import {
   Tablet,
   TrendingUp,
   Building2,
+  Watch,
 } from "lucide-react";
 
 import {
@@ -57,7 +58,7 @@ const metrics: Array<{
   {
     key: "bts",
     label: "BTS",
-    icon: <Tablet size={15} />,
+    icon: <Watch size={15} />,
   },
   {
     key: "accessories",
