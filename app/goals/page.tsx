@@ -255,12 +255,8 @@ export default async function GoalsPage() {
               </span>
 
               <h1 className="mt-5 text-3xl font-black tracking-[-0.035em] sm:text-4xl lg:text-5xl">
-                Chase the target.
-                <span className="text-pink-400">
-                  {" "}
-                  Beat the goal.
-                </span>
-              </h1>
+                  {storeName || "Store Goals"}
+                </h1>
 
               <p className="mt-3 max-w-2xl text-sm font-medium leading-6 text-white/55 sm:text-base">
                 {role ===

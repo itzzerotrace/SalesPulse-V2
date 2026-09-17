@@ -1,46 +1,100 @@
 export function getCaliforniaDate() {
-  const formatter = new Intl.DateTimeFormat("en-US", {
+  const now = new Date();
+
+  const parts = new Intl.DateTimeFormat("en-US", {
     timeZone: "America/Los_Angeles",
     year: "numeric",
     month: "2-digit",
     day: "2-digit",
-  });
+  }).formatToParts(now);
 
-  const parts = formatter.formatToParts(new Date());
+  const year = parts.find(
+    (part) => part.type === "year"
+  )?.value;
 
-  const year =
-    parts.find((part) => part.type === "year")?.value || "2026";
+  const month = parts.find(
+    (part) => part.type === "month"
+  )?.value;
 
-  const month =
-    parts.find((part) => part.type === "month")?.value || "01";
+  const day = parts.find(
+    (part) => part.type === "day"
+  )?.value;
 
-  const day =
-    parts.find((part) => part.type === "day")?.value || "01";
+  if (!year || !month || !day) {
+    throw new Error(
+      "Unable to determine current California date."
+    );
+  }
 
   return `${year}-${month}-${day}`;
 }
 
-export function getMonthInfo(dateString?: string) {
-  const value = dateString || getCaliforniaDate();
+export function getMonthInfo(
+  dateString?: string
+) {
+  const value =
+    dateString || getCaliforniaDate();
 
-  const [yearString, monthString, dayString] =
-    value.split("-");
+  const [
+    yearString,
+    monthString,
+    dayString,
+  ] = value.split("-");
 
-  const year = Number(yearString);
-  const monthIndex = Number(monthString) - 1;
-  const day = Number(dayString);
+  const year =
+    Number(yearString);
 
-  const monthName = new Intl.DateTimeFormat("en-US", {
-    month: "long",
-    timeZone: "America/Los_Angeles",
-  }).format(new Date(Date.UTC(year, monthIndex, 1)));
+  const monthNumber =
+    Number(monthString);
+
+  const monthIndex =
+    monthNumber - 1;
+
+  const day =
+    Number(dayString);
+
+  const monthNames = [
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
+  ];
+
+  const monthName =
+    monthNames[monthIndex];
+
+  if (
+    !monthName ||
+    !Number.isFinite(year) ||
+    !Number.isFinite(day)
+  ) {
+    throw new Error(
+      `Invalid date supplied to getMonthInfo: ${value}`
+    );
+  }
 
   const daysInMonth =
-    new Date(year, monthIndex + 1, 0).getDate();
+    new Date(
+      Date.UTC(
+        year,
+        monthNumber,
+        0
+      )
+    ).getUTCDate();
 
-  // Morning tracker: today is still available to make progress.
   const daysRemaining =
-    Math.max(1, daysInMonth - day + 1);
+    Math.max(
+      1,
+      daysInMonth - day + 1
+    );
 
   const monthStart =
     `${yearString}-${monthString}-01`;
