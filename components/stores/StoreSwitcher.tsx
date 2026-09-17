@@ -77,12 +77,7 @@ export default function StoreSwitcher({
 
   return (
     <div className="w-full sm:w-auto">
-      <label
-        htmlFor="salespulse-store-switcher"
-        className="mb-1 block text-xs font-black uppercase tracking-wide text-slate-500"
-      >
-        Viewing Store
-      </label>
+      
 
       <div className="relative">
         <select

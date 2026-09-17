@@ -84,7 +84,7 @@ export default function Topbar({
           {showStoreSwitcher && (
             <>
               <div className="flex items-center">
-                <span className="text-[13px] font-black uppercase tracking-[0.12em] text-[#8B00FF]">
+                <span className="text-[16px] font-black uppercase tracking-[0.10em] text-[#8B00FF]">
                   Viewing Store
                 </span>
               </div>
