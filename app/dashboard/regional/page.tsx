@@ -163,117 +163,7 @@ export default async function RegionalDashboard() {
     <DashboardLayout>
       <div className="space-y-6 pb-10">
 
-        {/* HERO */}
-
-        <section className="relative overflow-hidden rounded-[28px] border border-purple-400/10 bg-[#130925] px-6 py-6 text-white shadow-[0_24px_70px_rgba(20,9,37,0.24)] sm:px-8 sm:py-7">
-          <div className="pointer-events-none absolute -right-20 -top-40 h-[430px] w-[430px] rounded-full bg-fuchsia-600/20 blur-[120px]" />
-
-          <div className="pointer-events-none absolute bottom-[-180px] left-[25%] h-[360px] w-[360px] rounded-full bg-violet-600/15 blur-[110px]" />
-
-          <div className="relative">
-            <div className="flex flex-col gap-6 xl:flex-row xl:items-center xl:justify-between">
-
-              <div className="max-w-[560px]">
-                <div className="inline-flex items-center gap-2 rounded-full border border-purple-300/25 bg-white/[0.06] px-3 py-1.5">
-                  <Sparkles
-                    size={12}
-                    className="text-pink-400"
-                  />
-
-                  <span className="text-[9px] font-black uppercase tracking-[0.2em] text-purple-200">
-                    Regional Dashboard
-                  </span>
-                </div>
-
-                <h1 className="mt-4 text-[38px] font-black leading-[0.98] tracking-[-0.045em] sm:text-[48px]">
-                  Your district.
-                  <br />
-
-                  <span className="bg-gradient-to-r from-purple-300 via-fuchsia-400 to-pink-400 bg-clip-text text-transparent">
-                    One performance pulse.
-                  </span>
-                </h1>
-
-                <p className="mt-3 max-w-lg text-sm font-medium leading-5 text-white">
-                  Monitor store performance, team execution,
-                  monthly goals, and district rankings from one
-                  command center.
-                </p>
-              </div>
-
-              <div className="grid grid-cols-2 gap-3 sm:w-[360px] xl:w-[400px]">
-                <div className="rounded-[18px] border border-white/20 bg-white/[0.07] p-4 backdrop-blur">
-                  <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-purple-400/15 text-purple-200">
-                    <Building2 size={16} />
-                  </div>
-
-                  <p className="mt-3 text-2xl font-black text-white">
-                    {overview.stores}
-                  </p>
-
-                  <p className="mt-1 text-[9px] font-black uppercase tracking-[0.16em] text-white">
-                    Stores
-                  </p>
-                </div>
-
-                <div className="rounded-[18px] border border-white/20 bg-white/[0.07] p-4 backdrop-blur">
-                  <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-purple-400/15 text-purple-200">
-                    <Gauge size={16} />
-                  </div>
-
-                  <p className="mt-3 text-2xl font-black text-white">
-                    {averageStoreScore.toFixed(1)}%
-                  </p>
-
-                  <p className="mt-1 text-[9px] font-black uppercase tracking-[0.16em] text-white">
-                    Avg Store Score
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            
-          </div>
-        </section>
-
-        {/* STORE PERFORMANCE */}
-
-        <section>
-          <div className="mb-4 flex flex-col gap-3 px-1 sm:flex-row sm:items-end sm:justify-between">
-            <div>
-              <div className="flex items-center gap-2">
-                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-purple-100 text-purple-700">
-                  <Zap size={15} />
-                </div>
-
-                <p className="text-[9px] font-black uppercase tracking-[0.2em] text-purple-600">
-                  District Performance
-                </p>
-              </div>
-
-              <h2 className="mt-2 text-2xl font-black tracking-[-0.03em] text-[#17102F] sm:text-[28px]">
-                Store Goal Performance
-              </h2>
-
-              <p className="mt-1 text-xs font-medium text-white sm:text-sm">
-                Current month-to-date performance compared with monthly goals.
-              </p>
-            </div>
-
-            <div className="inline-flex w-fit items-center gap-2 rounded-full border border-slate-200 bg-white px-3.5 py-2 text-[10px] font-black text-slate-600 shadow-sm">
-              <Building2
-                size={13}
-                className="text-purple-600"
-              />
-
-              {overview.stores} Active Stores
-            </div>
-          </div>
-
-          <RegionalGoalProgress />
-        </section>
-
-        {/* STORE RANKINGS */}
+        {/* DISTRICT STORE RANKINGS */}
 
         <div className="grid gap-5 xl:grid-cols-2">
 
@@ -456,6 +346,43 @@ export default async function RegionalDashboard() {
             </div>
           </section>
         </div>
+
+        {/* STORE PERFORMANCE */}
+
+        <section>
+          <div className="mb-4 flex flex-col gap-3 px-1 sm:flex-row sm:items-end sm:justify-between">
+            <div>
+              <div className="flex items-center gap-2">
+                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-purple-100 text-purple-700">
+                  <Zap size={15} />
+                </div>
+
+                <p className="text-[9px] font-black uppercase tracking-[0.2em] text-purple-600">
+                  District Performance
+                </p>
+              </div>
+
+              <h2 className="mt-2 text-2xl font-black tracking-[-0.03em] text-[#17102F] sm:text-[28px]">
+                Store Goal Performance
+              </h2>
+
+              <p className="mt-1 text-xs font-medium text-white sm:text-sm">
+                Current month-to-date performance compared with monthly goals.
+              </p>
+            </div>
+
+            <div className="inline-flex w-fit items-center gap-2 rounded-full border border-slate-200 bg-white px-3.5 py-2 text-[10px] font-black text-slate-600 shadow-sm">
+              <Building2
+                size={13}
+                className="text-purple-600"
+              />
+
+              {overview.stores} Active Stores
+            </div>
+          </div>
+
+          <RegionalGoalProgress />
+        </section>
 
       </div>
     </DashboardLayout>
