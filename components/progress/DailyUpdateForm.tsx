@@ -18,7 +18,7 @@ import {
   Headphones,
   Tablet,
   RefreshCcw,
-  Save,
+
   Phone,
   Sparkles,
   Star,
@@ -221,22 +221,12 @@ export default function DailyUpdateForm({
     }
   );
 
-  const [
-    saving,
-    setSaving,
-  ] = useState(false);
-
-  const [
+const [
     message,
     setMessage,
   ] = useState("");
 
-  const [
-    error,
-    setError,
-  ] = useState("");
-
-  const storeAverage =
+const storeAverage =
     useMemo(() => {
       const percentages =
         progressMetrics
@@ -366,80 +356,7 @@ export default function DailyUpdateForm({
     );
   }
 
-  async function saveUpdate() {
-    setSaving(true);
-    setMessage("");
-    setError("");
 
-    try {
-      const response =
-        await fetch(
-          "/api/daily-update",
-          {
-            method:
-              "POST",
-            headers: {
-              "Content-Type":
-                "application/json",
-            },
-            body:
-              JSON.stringify(
-                {
-                  statDate:
-                    date,
-                  storeStats,
-                  storeGoals,
-                  employees:
-                    employees.map(
-                      (
-                        employee
-                      ) => ({
-                        employeeId:
-                          employee.id,
-                        employeeType:
-                          employee.employeeType,
-                        stats:
-                          employeeStats[
-                            employee
-                              .id
-                          ] ||
-                          emptyProgressStats(),
-                      })
-                    ),
-                }
-              ),
-          }
-        );
-
-      const result =
-        await response.json();
-
-      if (
-        !response.ok
-      ) {
-        throw new Error(
-          result.error ||
-            "Unable to save update."
-        );
-      }
-
-      setMessage(
-        `${storeName} progress saved successfully.`
-      );
-
-      router.refresh();
-    } catch (
-      saveError: any
-    ) {
-      setError(
-        saveError
-          ?.message ||
-          "Unable to save update."
-      );
-    } finally {
-      setSaving(false);
-    }
-  }
 
   const overallWidth =
     Math.min(
@@ -1022,25 +939,7 @@ export default function DailyUpdateForm({
         </div>
       </section>
 
-      {(message ||
-        error) && (
-        <div
-          className={`flex items-center gap-3 rounded-2xl border p-4 font-bold shadow-sm ${
-            error
-              ? "border-red-200 bg-red-50 text-red-700"
-              : "border-emerald-200 bg-emerald-50 text-emerald-700"
-          }`}
-        >
-          {!error && (
-            <CheckCircle2
-              size={20}
-            />
-          )}
-
-          {error ||
-            message}
-        </div>
-      )}
+      
 
       <div className="sticky bottom-3 z-20 rounded-[22px] border border-slate-200/80 bg-white/95 p-3 shadow-[0_16px_50px_rgba(23,16,47,0.18)] backdrop-blur-xl sm:bottom-4 sm:flex sm:items-center sm:justify-between sm:px-4">
         <div className="hidden items-center gap-2 text-xs font-bold text-slate-500 sm:flex">
@@ -1053,24 +952,7 @@ export default function DailyUpdateForm({
           {storeName}.
         </div>
 
-        <button
-          type="button"
-          onClick={
-            saveUpdate
-          }
-          disabled={
-            saving
-          }
-          className="salespulse-gradient flex min-h-12 w-full items-center justify-center gap-2 rounded-2xl px-7 py-3.5 font-black text-white shadow-lg shadow-purple-500/20 transition hover:scale-[1.01] disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto"
-        >
-          <Save
-            size={19}
-          />
-
-          {saving
-            ? "Saving..."
-            : "Save Daily Update"}
-        </button>
+        
       </div>
     </div>
   );
