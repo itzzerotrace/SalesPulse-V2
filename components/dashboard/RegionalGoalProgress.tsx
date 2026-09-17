@@ -383,7 +383,7 @@ export default async function RegionalGoalProgress() {
                       >
                         <div className="flex items-center justify-between gap-3">
                           <div className="flex items-center gap-2.5">
-                            <div className="flex h-8 w-8 items-center justify-center rounded-[10px] bg-[#F3E8FF] text-[#8B00FF]">
+                            <div className="flex h-10 w-10 items-center justify-center rounded-[12px] bg-gradient-to-br from-[#7C20D4] to-[#EC168C] text-white shadow-[0_6px_14px_rgba(139,0,255,0.20)]">
                               {
                                 metric.icon
                               }
