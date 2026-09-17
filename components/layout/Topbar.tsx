@@ -80,22 +80,22 @@ export default function Topbar({
       <div className="flex min-h-[58px] items-center justify-between gap-6">
         {/* LEFT */}
 
-        <div className="flex min-w-0 items-center gap-5">
+        <div className="flex min-w-0 items-center gap-4">
           {showStoreSwitcher && (
-            <div className="flex items-center gap-4">
-              <div>
-                <p className="text-[10px] font-black uppercase tracking-[0.16em] text-[#8B00FF]">
+            <>
+              <div className="flex items-center">
+                <span className="text-[13px] font-black uppercase tracking-[0.12em] text-[#8B00FF]">
                   Viewing Store
-                </p>
+                </span>
               </div>
+
+              <div className="h-8 w-px bg-[#E5DDE9]" />
 
               <StoreSwitcher
                 stores={stores}
-                activeStoreId={
-                  activeStoreId
-                }
+                activeStoreId={activeStoreId}
               />
-            </div>
+            </>
           )}
         </div>
 
