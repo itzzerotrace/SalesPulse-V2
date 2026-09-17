@@ -7,7 +7,6 @@ import {
 } from "next/navigation";
 import {
   LogOut,
-  Sparkles,
 } from "lucide-react";
 
 import StoreSwitcher from "@/components/stores/StoreSwitcher";
@@ -82,32 +81,13 @@ export default function Topbar({
         {/* LEFT */}
 
         <div className="flex min-w-0 items-center gap-5">
-          <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-[13px] bg-[#F3E8FF] text-[#8B00FF]">
-              <Sparkles
-                size={19}
-                strokeWidth={2.5}
-              />
-            </div>
-
-            <div>
-              <h1 className="text-[21px] font-black tracking-[-0.035em] text-[#201722]">
-                SalesPulse
-              </h1>
-
-              <div className="mt-[2px] flex items-center gap-1.5">
-                <span className="h-1.5 w-1.5 rounded-full bg-[#8B00FF]" />
-
-                <span className="text-[8px] font-black uppercase tracking-[0.18em] text-[#8B00FF]">
-                  Performance
-                </span>
-              </div>
-            </div>
-          </div>
-
           {showStoreSwitcher && (
-            <>
-              <div className="h-8 w-px bg-[#ECE5F0]" />
+            <div className="flex items-center gap-4">
+              <div>
+                <p className="text-[10px] font-black uppercase tracking-[0.16em] text-[#8B00FF]">
+                  Viewing Store
+                </p>
+              </div>
 
               <StoreSwitcher
                 stores={stores}
@@ -115,7 +95,7 @@ export default function Topbar({
                   activeStoreId
                 }
               />
-            </>
+            </div>
           )}
         </div>
 
