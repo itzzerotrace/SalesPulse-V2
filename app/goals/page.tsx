@@ -258,12 +258,7 @@ export default async function GoalsPage() {
                   {storeName || "Store Goals"}
                 </h1>
 
-              <p className="mt-3 max-w-2xl text-sm font-medium leading-6 text-white/55 sm:text-base">
-                {role ===
-                "employee"
-                  ? "Your month-to-date performance against your assigned goals."
-                  : `${storeName} month-to-date performance against the current store goals.`}
-              </p>
+              
             </div>
 
             <div className="flex items-center gap-3 rounded-2xl border border-white/10 bg-white/[0.07] px-4 py-3">
