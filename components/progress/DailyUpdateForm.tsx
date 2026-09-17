@@ -358,6 +358,46 @@ const storeAverage =
 
 
 
+  const [saving, setSaving] = useState(false);
+
+  async function saveUpdate() {
+    setSaving(true);
+
+    try {
+      const response = await fetch("/api/daily-update", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          statDate: date,
+          storeStats,
+          storeGoals,
+          employees: [],
+        }),
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(
+          result?.error || "Unable to save MTD and goals."
+        );
+      }
+
+      router.refresh();
+      window.alert("MTD and goals updated successfully.");
+    } catch (error) {
+      window.alert(
+        error instanceof Error
+          ? error.message
+          : "Unable to save MTD and goals."
+      );
+    } finally {
+      setSaving(false);
+    }
+  }
+
   const overallWidth =
     Math.min(
       100,
@@ -514,9 +554,22 @@ const storeAverage =
               Store Performance
             </p>
 
-            <h2 className="mt-1 text-2xl font-black tracking-tight text-[#17102F] sm:text-3xl">
-              {storeName} MTD
-            </h2>
+            <div className="mt-1 flex flex-wrap items-center gap-3">
+              <h2 className="text-2xl font-black tracking-tight text-[#17102F] sm:text-3xl">
+                {storeName} MTD
+              </h2>
+
+              <button
+                type="button"
+                onClick={saveUpdate}
+                disabled={saving}
+                className="salespulse-gradient rounded-xl px-4 py-2 text-sm font-black text-white shadow-lg shadow-purple-500/20 transition hover:scale-[1.02] disabled:cursor-not-allowed disabled:opacity-60"
+              >
+                {saving
+                  ? "Saving..."
+                  : "Save & Update Goals"}
+              </button>
+            </div>
           </div>
 
           <p className="max-w-lg text-sm font-medium text-slate-500">
@@ -941,11 +994,6 @@ const storeAverage =
 
       
 
-      <div className="sticky bottom-3 z-20 rounded-[22px] border border-slate-200/80 bg-white/95 p-3 shadow-[0_16px_50px_rgba(23,16,47,0.18)] backdrop-blur-xl sm:bottom-4 sm:flex sm:items-center sm:justify-between sm:px-4">
-        
-
-        
-      </div>
     </div>
   );
 }
