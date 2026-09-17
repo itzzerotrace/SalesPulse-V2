@@ -136,7 +136,7 @@ function metricIcon(
 
     case "bts":
       return (
-        <Tablet
+        <Watch
           {...props}
         />
       );
