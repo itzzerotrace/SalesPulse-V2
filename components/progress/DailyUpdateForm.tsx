@@ -942,15 +942,7 @@ const storeAverage =
       
 
       <div className="sticky bottom-3 z-20 rounded-[22px] border border-slate-200/80 bg-white/95 p-3 shadow-[0_16px_50px_rgba(23,16,47,0.18)] backdrop-blur-xl sm:bottom-4 sm:flex sm:items-center sm:justify-between sm:px-4">
-        <div className="hidden items-center gap-2 text-xs font-bold text-slate-500 sm:flex">
-          <Sparkles
-            size={15}
-            className="text-pink-500"
-          />
-          Save the latest MTD
-          snapshot for{" "}
-          {storeName}.
-        </div>
+        
 
         
       </div>
