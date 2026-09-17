@@ -298,13 +298,7 @@ export default async function RegionalDashboard() {
                 </h2>
               </div>
 
-              <Link
-                href="/leaderboard"
-                className="inline-flex items-center gap-1.5 rounded-xl bg-[#F3E8FF] px-3 py-2 text-[10px] font-black text-[#8B00FF] transition hover:bg-[#EBDDFF]"
-              >
-                View All
-                <ArrowRight size={13} />
-              </Link>
+              
             </div>
 
             <div className="space-y-2 p-4">
@@ -392,13 +386,7 @@ export default async function RegionalDashboard() {
                 </h2>
               </div>
 
-              <Link
-                href="/leaderboard"
-                className="inline-flex items-center gap-1.5 rounded-xl bg-[#F3E8FF] px-3 py-2 text-[10px] font-black text-[#8B00FF] transition hover:bg-[#EBDDFF]"
-              >
-                View All
-                <ArrowRight size={13} />
-              </Link>
+              
             </div>
 
             <div className="space-y-2 p-4">
