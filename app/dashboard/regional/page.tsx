@@ -232,26 +232,7 @@ export default async function RegionalDashboard() {
               </div>
             </div>
 
-            <div className="mt-5 flex flex-wrap items-center gap-x-5 gap-y-2 border-t border-white/[0.08] pt-4 text-[10px] font-bold text-white/35">
-              <span className="flex items-center gap-2">
-                <CheckCircle2
-                  size={12}
-                  className="text-emerald-400"
-                />
-
-                {
-                  overview
-                    .employeesWithStats
-                }{" "}
-                employees updated MTD
-              </span>
-
-              <span className="hidden h-1 w-1 rounded-full bg-white/20 sm:block" />
-
-              <span>
-                Live district performance
-              </span>
-            </div>
+            
           </div>
         </section>
 
