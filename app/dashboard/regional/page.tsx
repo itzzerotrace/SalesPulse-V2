@@ -161,74 +161,31 @@ export default async function RegionalDashboard() {
                 </p>
               </div>
 
-              <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-4 xl:w-[500px]">
-                <div className="rounded-[18px] border border-white/10 bg-white/[0.055] p-3.5 backdrop-blur">
-                  <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-purple-400/10 text-purple-300">
+              <div className="grid grid-cols-2 gap-3 sm:w-[360px] xl:w-[400px]">
+                <div className="rounded-[18px] border border-white/20 bg-white/[0.07] p-4 backdrop-blur">
+                  <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-purple-400/15 text-purple-200">
                     <Building2 size={16} />
                   </div>
 
-                  <p className="mt-3 text-2xl font-black">
+                  <p className="mt-3 text-2xl font-black text-white">
                     {overview.stores}
                   </p>
 
-                  <p className="mt-0.5 text-[8px] font-black uppercase tracking-[0.16em] text-white/30">
+                  <p className="mt-1 text-[9px] font-black uppercase tracking-[0.16em] text-white">
                     Stores
                   </p>
                 </div>
 
-                <div className="rounded-[18px] border border-white/10 bg-white/[0.055] p-3.5 backdrop-blur">
-                  <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-fuchsia-400/10 text-fuchsia-300">
-                    <Users size={16} />
-                  </div>
-
-                  <p className="mt-3 text-2xl font-black">
-                    {
-                      overview.stores
-                    }
-                  </p>
-
-                  <p className="mt-0.5 text-[8px] font-black uppercase tracking-[0.16em] text-white/30">
-                    Stores
-                  </p>
-                </div>
-
-                <div className="rounded-[18px] border border-white/10 bg-white/[0.055] p-3.5 backdrop-blur">
-                  <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-pink-400/10 text-pink-300">
-                    <Target size={16} />
-                  </div>
-
-                  <p className="mt-3 text-2xl font-black">
-                    {
-                      storeProgress.filter(
-                        (store: any) =>
-                          metricKeys.some(
-                            (key) =>
-                              Number(
-                                store[key]?.goal || 0
-                              ) > 0
-                          )
-                      ).length
-                    }
-                  </p>
-
-                  <p className="mt-0.5 text-[8px] font-black uppercase tracking-[0.16em] text-white/30">
-                    Stores With Goals
-                  </p>
-                </div>
-
-                <div className="rounded-[18px] border border-white/10 bg-white/[0.055] p-3.5 backdrop-blur">
-                  <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-violet-400/10 text-violet-300">
+                <div className="rounded-[18px] border border-white/20 bg-white/[0.07] p-4 backdrop-blur">
+                  <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-purple-400/15 text-purple-200">
                     <Gauge size={16} />
                   </div>
 
-                  <p className="mt-3 text-2xl font-black">
-                    {averageStoreScore.toFixed(
-                      1
-                    )}
-                    %
+                  <p className="mt-3 text-2xl font-black text-white">
+                    {averageStoreScore.toFixed(1)}%
                   </p>
 
-                  <p className="mt-0.5 text-[8px] font-black uppercase tracking-[0.16em] text-white/30">
+                  <p className="mt-1 text-[9px] font-black uppercase tracking-[0.16em] text-white">
                     Avg Store Score
                   </p>
                 </div>
