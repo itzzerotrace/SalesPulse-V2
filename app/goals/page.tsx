@@ -276,18 +276,7 @@ export default async function GoalsPage() {
                 className="text-pink-400"
               />
 
-              <div>
-                <p className="text-[9px] font-black uppercase tracking-[0.17em] text-purple-300">
-                  Active Goals
-                </p>
-
-                <p className="mt-0.5 text-lg font-black">
-                  {
-                    goalsWithTargets.length
-                  }
-                  /8
-                </p>
-              </div>
+              
             </div>
           </div>
         </section>
