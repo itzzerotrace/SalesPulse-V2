@@ -20,9 +20,18 @@ import {
   getRegionalTeamData,
 } from "@/lib/services/regionalTeam";
 
+import {
+  getRegionalGoalProgress,
+} from "@/lib/services/regionalGoals";
+
 export default async function RegionalDashboard() {
-  const team =
-    await getRegionalTeamData();
+  const [
+    team,
+    storeProgress,
+  ] = await Promise.all([
+    getRegionalTeamData(),
+    getRegionalGoalProgress(),
+  ]);
 
   const topEmployees =
     team.rankings.slice(
@@ -33,11 +42,82 @@ export default async function RegionalDashboard() {
   const overview =
     team.overview;
 
-  const averageScore =
-    Number(
-      overview.averageScore ||
-        0
+  const metricKeys = [
+    "gp",
+    "voice",
+    "mim",
+    "upgrade",
+    "hsi",
+    "bts",
+    "accessories",
+    "features",
+  ] as const;
+
+  const storeScores =
+    storeProgress.map(
+      (store: any) => {
+        const percentages =
+          metricKeys
+            .map((key) => {
+              const metric =
+                store[key];
+
+              const goal =
+                Number(
+                  metric?.goal ||
+                    0
+                );
+
+              if (goal <= 0) {
+                return null;
+              }
+
+              const percent =
+                Number(
+                  metric?.percent ||
+                    0
+                );
+
+              return Number.isFinite(
+                percent
+              )
+                ? percent
+                : 0;
+            })
+            .filter(
+              (
+                value
+              ): value is number =>
+                value !== null
+            );
+
+        if (
+          percentages.length ===
+          0
+        ) {
+          return 0;
+        }
+
+        return (
+          percentages.reduce(
+            (sum, value) =>
+              sum + value,
+            0
+          ) /
+          percentages.length
+        );
+      }
     );
+
+  const averageStoreScore =
+    storeScores.length > 0
+      ? storeScores.reduce(
+          (sum, score) =>
+            sum + score,
+          0
+        ) /
+        storeScores.length
+      : 0;
 
   return (
     <DashboardLayout>
@@ -135,14 +215,14 @@ export default async function RegionalDashboard() {
                   </div>
 
                   <p className="mt-3 text-2xl font-black">
-                    {averageScore.toFixed(
+                    {averageStoreScore.toFixed(
                       1
                     )}
                     %
                   </p>
 
                   <p className="mt-0.5 text-[8px] font-black uppercase tracking-[0.16em] text-white/30">
-                    Avg Score
+                    Avg Store Score
                   </p>
                 </div>
               </div>
@@ -278,7 +358,7 @@ export default async function RegionalDashboard() {
                   </p>
 
                   <p className="mt-2 text-2xl font-black">
-                    {averageScore.toFixed(
+                    {averageStoreScore.toFixed(
                       1
                     )}
                     %

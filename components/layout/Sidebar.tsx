@@ -38,7 +38,7 @@ export default function Sidebar({ profile }: SidebarProps) {
       show: true,
     },
     {
-      title: "Daily Update",
+      title: "Need Per Day",
       href: "/daily-update",
       icon: ClipboardPenLine,
       show: isManagement,
