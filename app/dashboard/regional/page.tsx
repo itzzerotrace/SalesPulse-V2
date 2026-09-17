@@ -366,7 +366,7 @@ export default async function RegionalDashboard() {
                 Store Goal Performance
               </h2>
 
-              <p className="mt-1 text-xs font-medium text-white sm:text-sm">
+              <p className="mt-1 text-xs font-semibold text-[#8B00FF] sm:text-sm">
                 Current month-to-date performance compared with monthly goals.
               </p>
             </div>
