@@ -33,7 +33,7 @@ export default async function RegionalDashboard() {
     getRegionalGoalProgress(),
   ]);
 
-  const topEmployees =
+  const topStores =
     team.rankings.slice(
       0,
       5
@@ -183,12 +183,12 @@ export default async function RegionalDashboard() {
 
                   <p className="mt-3 text-2xl font-black">
                     {
-                      overview.employees
+                      overview.stores
                     }
                   </p>
 
                   <p className="mt-0.5 text-[8px] font-black uppercase tracking-[0.16em] text-white/30">
-                    Employees
+                    Stores
                   </p>
                 </div>
 
@@ -199,13 +199,20 @@ export default async function RegionalDashboard() {
 
                   <p className="mt-3 text-2xl font-black">
                     {
-                      overview
-                        .employeesWithGoals
+                      storeProgress.filter(
+                        (store: any) =>
+                          metricKeys.some(
+                            (key) =>
+                              Number(
+                                store[key]?.goal || 0
+                              ) > 0
+                          )
+                      ).length
                     }
                   </p>
 
                   <p className="mt-0.5 text-[8px] font-black uppercase tracking-[0.16em] text-white/30">
-                    Goals Set
+                    Stores With Goals
                   </p>
                 </div>
 
@@ -299,11 +306,11 @@ export default async function RegionalDashboard() {
               <div className="flex items-start justify-between gap-4">
                 <div>
                   <p className="text-[9px] font-black uppercase tracking-[0.2em] text-purple-600">
-                    District Team
+                    District Stores
                   </p>
 
                   <h2 className="mt-1.5 text-2xl font-black tracking-[-0.03em] text-[#17102F]">
-                    Team Health
+                    Store Health
                   </h2>
                 </div>
 
@@ -318,23 +325,30 @@ export default async function RegionalDashboard() {
               <div className="mt-5 grid grid-cols-2 gap-2.5">
                 <div className="rounded-[17px] bg-[#F7F5FC] p-4">
                   <p className="text-[8px] font-black uppercase tracking-[0.16em] text-purple-600">
-                    Employees
+                    Stores
                   </p>
 
                   <p className="mt-2 text-2xl font-black text-[#17102F]">
-                    {overview.employees}
+                    {overview.stores}
                   </p>
                 </div>
 
                 <div className="rounded-[17px] bg-[#F7F5FC] p-4">
                   <p className="text-[8px] font-black uppercase tracking-[0.16em] text-purple-600">
-                    Goals Set
+                    Stores With Goals
                   </p>
 
                   <p className="mt-2 text-2xl font-black text-[#17102F]">
                     {
-                      overview
-                        .employeesWithGoals
+                      storeProgress.filter(
+                        (store: any) =>
+                          metricKeys.some(
+                            (key) =>
+                              Number(
+                                store[key]?.goal || 0
+                              ) > 0
+                          )
+                      ).length
                     }
                   </p>
                 </div>
@@ -346,15 +360,22 @@ export default async function RegionalDashboard() {
 
                   <p className="mt-2 text-2xl font-black text-[#17102F]">
                     {
-                      overview
-                        .employeesWithStats
+                      storeProgress.filter(
+                        (store: any) =>
+                          metricKeys.some(
+                            (key) =>
+                              Number(
+                                store[key]?.current || 0
+                              ) > 0
+                          )
+                      ).length
                     }
                   </p>
                 </div>
 
                 <div className="rounded-[17px] bg-[#17102F] p-4 text-white">
                   <p className="text-[8px] font-black uppercase tracking-[0.16em] text-purple-300">
-                    Avg Score
+                    Avg Store Score
                   </p>
 
                   <p className="mt-2 text-2xl font-black">
@@ -383,7 +404,7 @@ export default async function RegionalDashboard() {
                 </div>
 
                 <h2 className="mt-1.5 text-2xl font-black tracking-[-0.03em] text-[#17102F]">
-                  Top Employees
+                  Top Stores
                 </h2>
               </div>
 
@@ -397,10 +418,10 @@ export default async function RegionalDashboard() {
             </div>
 
             <div className="p-3.5 sm:p-4">
-              {topEmployees.length >
+              {topStores.length >
               0 ? (
                 <div className="space-y-2">
-                  {topEmployees.map(
+                  {topStores.map(
                     (
                       employee: any,
                       index: number
