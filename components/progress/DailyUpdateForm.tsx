@@ -946,7 +946,7 @@ const storeAverage =
                                   .value
                               )
                             }
-                            className="mt-3 min-w-0 w-full rounded-xl border border-slate-200 bg-white" px-3 py-3 text-base font-black text-[#17102F] outline-none transition focus:border-purple-400 focus:ring-2 focus:ring-purple-100"
+                            className="mt-3 min-w-0 w-full rounded-xl border border-slate-200 bg-white px-3 py-3 text-base font-black text-[#17102F] outline-none transition focus:border-purple-400 focus:ring-2 focus:ring-purple-100"
                           />
 
                           <div className="mt-3 h-2 overflow-hidden rounded-full bg-slate-200">

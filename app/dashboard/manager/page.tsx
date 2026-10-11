@@ -396,8 +396,7 @@ export default async function ManagerDashboard() {
                 href="/daily-update"
                 className="salespulse-gradient col-span-2 flex min-h-14 items-center justify-between rounded-2xl px-5 py-3 font-black text-white shadow-xl shadow-pink-950/20 transition hover:scale-[1.01]"
               >
-                Update Today&apos;s
-                Progress
+                Need Per Day
 
                 <ArrowRight
                   size={19}
