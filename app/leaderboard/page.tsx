@@ -627,12 +627,8 @@ export default async function LeaderboardPage() {
           </p>
 
           <h1 className="mt-1 text-3xl font-black text-slate-900 sm:text-4xl">
-            Rankings
+            Rankings - {displayStoreName}
           </h1>
-
-          <p className="mt-2 text-slate-500">
-            {displayStoreName}
-          </p>
         </div>
 
         <section className="space-y-3">
