@@ -1,17 +1,12 @@
 import DashboardLayout from "@/components/layout/DashboardLayout";
 
 import { createClient } from "@/lib/supabase/server";
-import { getUserContext } from "@/lib/auth/userContext";
 import { getActiveStore } from "@/lib/stores/activeStore";
 
 import {
   getCaliforniaDate,
   getMonthInfo,
 } from "@/lib/progress/date";
-
-import {
-  getRegionalTeamData,
-} from "@/lib/services/regionalTeam";
 
 type MetricKey =
   | "gp"
@@ -195,132 +190,6 @@ function RankingRow({
 }
 
 export default async function LeaderboardPage() {
-  const context =
-    await getUserContext();
-
-  const role =
-    context?.profile?.role;
-
-  /*
-   * ======================================================
-   * REGIONAL MANAGER
-   * ======================================================
-   */
-
-  if (
-    role ===
-    "regional_manager"
-  ) {
-    const data =
-      await getRegionalTeamData();
-
-    return (
-      <DashboardLayout>
-        <div className="space-y-6 sm:space-y-8">
-          <div>
-            <p className="text-xs font-black uppercase tracking-wider text-purple-600">
-              District Rankings
-            </p>
-
-            <h1 className="mt-1 text-3xl font-black text-slate-900 sm:text-4xl">
-              Rankings
-            </h1>
-
-            <p className="mt-2 text-slate-500">
-              Employees ranked across all assigned stores.
-            </p>
-          </div>
-
-          <section className="grid gap-4 sm:grid-cols-3">
-            <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-              <p className="text-xs font-bold uppercase tracking-wide text-slate-500">
-                Employees
-              </p>
-
-              <p className="mt-2 text-3xl font-black text-slate-900">
-                {
-                  data.overview
-                    .employees
-                }
-              </p>
-            </div>
-
-            <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-              <p className="text-xs font-bold uppercase tracking-wide text-slate-500">
-                Stores
-              </p>
-
-              <p className="mt-2 text-3xl font-black text-slate-900">
-                {
-                  data.overview
-                    .stores
-                }
-              </p>
-            </div>
-
-            <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-              <p className="text-xs font-bold uppercase tracking-wide text-slate-500">
-                Team Average
-              </p>
-
-              <p className="mt-2 text-3xl font-black text-slate-900">
-                {
-                  data.overview
-                    .averageScore
-                }
-                %
-              </p>
-            </div>
-          </section>
-
-          <section className="space-y-3">
-            {data.rankings.length >
-            0 ? (
-              data.rankings.map(
-                (
-                  employee: any,
-                  index: number
-                ) => (
-                  <RankingRow
-                    key={`${employee.employeeType}-${employee.id}`}
-                    rank={
-                      index + 1
-                    }
-                    name={
-                      employee.full_name ||
-                      "Team Member"
-                    }
-                    store={
-                      employee.store_name
-                    }
-                    score={
-                      Number(
-                        employee.score ||
-                          0
-                      )
-                    }
-                  />
-                )
-              )
-            ) : (
-              <div className="rounded-3xl border border-dashed border-slate-300 bg-white p-8 text-center">
-                <p className="font-black text-slate-900">
-                  No employee rankings yet.
-                </p>
-              </div>
-            )}
-          </section>
-        </div>
-      </DashboardLayout>
-    );
-  }
-
-  /*
-   * ======================================================
-   * STORE MANAGER
-   * ======================================================
-   */
-
   const supabase =
     await createClient();
 
