@@ -28,7 +28,7 @@ export async function getTeamGoalSummary() {
     `)
     .in("store_id", storeIds)
     .eq("status", "active")
-    .eq("designation", "ME");
+    .in("designation", ["ME", "RSM", "Interim RSM"]);
 
   if (trackedError) {
     console.error(
