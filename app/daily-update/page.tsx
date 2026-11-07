@@ -144,9 +144,9 @@ export default async function DailyUpdatePage() {
         "status",
         "active"
       )
-      .eq(
+      .in(
         "designation",
-        "ME"
+        ["ME", "RSM", "Interim RSM"]
       )
       .order("full_name"),
 
