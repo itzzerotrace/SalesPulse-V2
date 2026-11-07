@@ -40,7 +40,7 @@ export async function getTeamGoalProgress() {
     `)
     .in("store_id", storeIds)
     .eq("status", "active")
-    .eq("designation", "ME")
+    .in("designation", ["ME", "RSM", "Interim RSM"])
     .order("full_name");
 
   if (trackedError) {
