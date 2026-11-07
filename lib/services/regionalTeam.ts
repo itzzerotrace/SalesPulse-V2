@@ -405,9 +405,9 @@ export async function getRegionalTeamData() {
       "status",
       "active"
     )
-    .eq(
+    .in(
       "designation",
-      "ME"
+      ["ME", "RSM", "Interim RSM"]
     )
     .order(
       "full_name"
