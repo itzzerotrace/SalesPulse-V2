@@ -166,9 +166,9 @@ export default async function TeamPage() {
           "status",
           "active"
         )
-        .eq(
+        .in(
           "designation",
-          "ME"
+          ["ME", "RSM", "Interim RSM"]
         )
         .order(
           "full_name"
