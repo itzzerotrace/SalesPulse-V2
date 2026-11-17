@@ -1,7 +1,6 @@
 import DashboardLayout from "@/components/layout/DashboardLayout";
 
 import { createClient } from "@/lib/supabase/server";
-import { getActiveStore } from "@/lib/stores/activeStore";
 
 import {
   getCaliforniaDate,
@@ -190,477 +189,79 @@ function RankingRow({
 }
 
 export default async function LeaderboardPage() {
-  const supabase =
-    await createClient();
+  const supabase = await createClient();
+  const today = getCaliforniaDate();
+  const { monthName, year, monthStart } = getMonthInfo(today);
 
-  const activeStore =
-    await getActiveStore();
-
-  const today =
-    getCaliforniaDate();
-
-  const monthInfo =
-    getMonthInfo(today);
-
-  if (!activeStore) {
-    return (
-      <DashboardLayout>
-        <div className="rounded-3xl border border-slate-200 bg-white p-8">
-          No active store selected.
-        </div>
-      </DashboardLayout>
-    );
-  }
-
-  /*
-   * ======================================================
-   * LOAD BOTH EMPLOYEE TYPES
-   * ======================================================
-   */
-
-  const [
-    profileResult,
-    trackedResult,
-  ] = await Promise.all([
-    supabase
-      .from("profiles")
-      .select(
-        `
-        id,
-        full_name,
-        store_id
-        `
-      )
-      .eq(
-        "store_id",
-        activeStore.id
-      )
-      .eq(
-        "status",
-        "approved"
-      )
-      .eq(
-        "role",
-        "employee"
-      )
-      .order(
-        "full_name"
-      ),
-
-    supabase
-      .from(
-        "tracked_employees"
-      )
-      .select(
-        `
-        id,
-        full_name,
-        store_id,
-        designation,
-        status
-        `
-      )
-      .eq(
-        "store_id",
-        activeStore.id
-      )
-      .eq(
-        "status",
-        "active"
-      )
-      .eq(
-        "designation",
-        "ME"
-      )
-      .order(
-        "full_name"
-      ),
+  // Rankings are district-wide and do not depend on the selected store.
+  // Only active Mobile Experts (ME) are included.
+  const [employeesResult, storesResult] = await Promise.all([
+    supabase.from("tracked_employees")
+      .select("id,full_name,store_id")
+      .eq("status", "active")
+      .eq("designation", "ME")
+      .order("full_name"),
+    supabase.from("stores").select("id,name"),
   ]);
 
-  if (profileResult.error) {
-    console.error(
-      "LEADERBOARD PROFILE EMPLOYEE ERROR:",
-      profileResult.error
-    );
+  if (employeesResult.error || storesResult.error) {
+    console.error("LEADERBOARD LOAD ERROR", employeesResult.error || storesResult.error);
+    return <DashboardLayout><div className="rounded-3xl border border-red-200 bg-white p-8 text-red-700">Unable to load employee rankings.</div></DashboardLayout>;
   }
 
-  if (trackedResult.error) {
-    console.error(
-      "LEADERBOARD TRACKED EMPLOYEE ERROR:",
-      trackedResult.error
-    );
-  }
+  const employees = employeesResult.data || [];
+  const storeNames = new Map((storesResult.data || []).map(store => [store.id, store.name]));
+  const employeeIds = employees.map(employee => employee.id);
+  const goals: any[] = [];
+  const stats: any[] = [];
 
-  const profileEmployees =
-    profileResult.data || [];
-
-  const trackedEmployees =
-    trackedResult.data || [];
-
-  const profileIds =
-    profileEmployees.map(
-      (employee: any) =>
-        employee.id
-    );
-
-  const trackedIds =
-    trackedEmployees.map(
-      (employee: any) =>
-        employee.id
-    );
-
-  /*
-   * ======================================================
-   * PROFILE GOALS + STATS
-   * ======================================================
-   */
-
-  let profileGoals: any[] =
-    [];
-
-  let profileStats: any[] =
-    [];
-
-  if (
-    profileIds.length > 0
-  ) {
-    const [
-      goalResult,
-      statsResult,
-    ] = await Promise.all([
-      supabase
-        .from(
-          "employee_goals"
-        )
-        .select("*")
-        .in(
-          "employee_id",
-          profileIds
-        )
-        .eq(
-          "month",
-          monthInfo.monthName
-        )
-        .eq(
-          "year",
-          monthInfo.year
-        ),
-
-      supabase
-        .from(
-          "employee_daily_stats"
-        )
-        .select("*")
-        .in(
-          "employee_id",
-          profileIds
-        )
-        .eq(
-          "store_id",
-          activeStore.id
-        )
-        .gte(
-          "stat_date",
-          monthInfo.monthStart
-        )
-        .lte(
-          "stat_date",
-          today
-        )
-        .order(
-          "stat_date",
-          {
-            ascending: false,
-          }
-        ),
+  // Batch IDs to stay within PostgREST URL limits.
+  for (let offset = 0; offset < employeeIds.length; offset += 100) {
+    const ids = employeeIds.slice(offset, offset + 100);
+    const [goalResult, statsResult] = await Promise.all([
+      supabase.from("tracked_employee_goals").select("*")
+        .in("employee_id", ids).eq("month", monthName).eq("year", year),
+      supabase.from("tracked_employee_daily_stats").select("*")
+        .in("employee_id", ids).gte("stat_date", monthStart)
+        .lte("stat_date", today)
+        .order("stat_date", { ascending: false }),
     ]);
-
-    if (goalResult.error) {
-      console.error(
-        "LEADERBOARD PROFILE GOAL ERROR:",
-        goalResult.error
-      );
+    if (goalResult.error || statsResult.error) {
+      console.error("LEADERBOARD STATS ERROR", goalResult.error || statsResult.error);
+      return <DashboardLayout><div className="rounded-3xl border border-red-200 bg-white p-8 text-red-700">Unable to load employee rankings.</div></DashboardLayout>;
     }
-
-    if (statsResult.error) {
-      console.error(
-        "LEADERBOARD PROFILE STATS ERROR:",
-        statsResult.error
-      );
-    }
-
-    profileGoals =
-      goalResult.data || [];
-
-    profileStats =
-      statsResult.data || [];
+    goals.push(...(goalResult.data || []));
+    stats.push(...(statsResult.data || []));
   }
 
-  /*
-   * ======================================================
-   * TRACKED GOALS + STATS
-   * ======================================================
-   */
-
-  let trackedGoals: any[] =
-    [];
-
-  let trackedStats: any[] =
-    [];
-
-  if (
-    trackedIds.length > 0
-  ) {
-    const [
-      goalResult,
-      statsResult,
-    ] = await Promise.all([
-      supabase
-        .from(
-          "tracked_employee_goals"
-        )
-        .select("*")
-        .in(
-          "employee_id",
-          trackedIds
-        )
-        .eq(
-          "month",
-          monthInfo.monthName
-        )
-        .eq(
-          "year",
-          monthInfo.year
-        ),
-
-      supabase
-        .from(
-          "tracked_employee_daily_stats"
-        )
-        .select("*")
-        .in(
-          "employee_id",
-          trackedIds
-        )
-        .eq(
-          "store_id",
-          activeStore.id
-        )
-        .gte(
-          "stat_date",
-          monthInfo.monthStart
-        )
-        .lte(
-          "stat_date",
-          today
-        )
-        .order(
-          "stat_date",
-          {
-            ascending: false,
-          }
-        ),
-    ]);
-
-    if (goalResult.error) {
-      console.error(
-        "LEADERBOARD TRACKED GOAL ERROR:",
-        goalResult.error
-      );
-    }
-
-    if (statsResult.error) {
-      console.error(
-        "LEADERBOARD TRACKED STATS ERROR:",
-        statsResult.error
-      );
-    }
-
-    trackedGoals =
-      goalResult.data || [];
-
-    trackedStats =
-      statsResult.data || [];
+  const goalMap = new Map(goals.map(goal => [goal.employee_id, goal]));
+  const statsMap = new Map<string, any>();
+  for (const row of stats) {
+    if (!statsMap.has(row.employee_id)) statsMap.set(row.employee_id, row);
   }
 
-  /*
-   * ======================================================
-   * LOOKUP MAPS
-   * ======================================================
-   */
-
-  const profileGoalMap =
-    new Map<string, any>();
-
-  for (
-    const goal
-    of profileGoals
-  ) {
-    profileGoalMap.set(
-      goal.employee_id,
-      goal
-    );
-  }
-
-  const trackedGoalMap =
-    new Map<string, any>();
-
-  for (
-    const goal
-    of trackedGoals
-  ) {
-    trackedGoalMap.set(
-      goal.employee_id,
-      goal
-    );
-  }
-
-  const profileStatsMap =
-    new Map<string, any>();
-
-  for (
-    const row
-    of profileStats
-  ) {
-    if (
-      !profileStatsMap.has(
-        row.employee_id
-      )
-    ) {
-      profileStatsMap.set(
-        row.employee_id,
-        row
-      );
-    }
-  }
-
-  const trackedStatsMap =
-    new Map<string, any>();
-
-  for (
-    const row
-    of trackedStats
-  ) {
-    if (
-      !trackedStatsMap.has(
-        row.employee_id
-      )
-    ) {
-      trackedStatsMap.set(
-        row.employee_id,
-        row
-      );
-    }
-  }
-
-  /*
-   * ======================================================
-   * BUILD RANKINGS
-   * ======================================================
-   */
-
-  const rankings = [
-    ...profileEmployees.map(
-      (employee: any) => ({
-        id:
-          employee.id,
-
-        employeeType:
-          "profile" as const,
-
-        name:
-          employee.full_name ||
-          "Team Member",
-
-        score:
-          calculateScore(
-            profileStatsMap.get(
-              employee.id
-            ) || {},
-            profileGoalMap.get(
-              employee.id
-            ) || {}
-          ),
-      })
-    ),
-
-    ...trackedEmployees.map(
-      (employee: any) => ({
-        id:
-          employee.id,
-
-        employeeType:
-          "tracked" as const,
-
-        name:
-          employee.full_name ||
-          "Team Member",
-
-        score:
-          calculateScore(
-            trackedStatsMap.get(
-              employee.id
-            ) || {},
-            trackedGoalMap.get(
-              employee.id
-            ) || {}
-          ),
-      })
-    ),
-  ].sort(
-    (a, b) =>
-      b.score -
-      a.score
-  );
-
-  const displayStoreName =
-    normalizeStoreName(
-      activeStore.name
-    );
+  const rankings = employees.map(employee => ({
+    id: employee.id,
+    name: employee.full_name || "Team Member",
+    store: normalizeStoreName(storeNames.get(employee.store_id) || "Unknown Store"),
+    score: calculateScore(statsMap.get(employee.id) || {}, goalMap.get(employee.id) || {}),
+  })).sort((a, b) => b.score - a.score || a.name.localeCompare(b.name));
 
   return (
     <DashboardLayout>
       <div className="space-y-6 sm:space-y-8">
         <div>
-          <p className="text-xs font-black uppercase tracking-wider text-purple-600">
-            Store Rankings
-          </p>
-
-          <h1 className="mt-1 text-3xl font-black text-slate-900 sm:text-4xl">
-            Rankings - {displayStoreName}
-          </h1>
+          <p className="text-xs font-black uppercase tracking-wider text-purple-600">Employee Rankings</p>
+          <h1 className="mt-1 text-3xl font-black text-slate-900 sm:text-4xl">All ME Rankings</h1>
+          <p className="mt-2 text-sm font-semibold text-slate-500">All active Mobile Experts · Ranked highest to lowest by MTD goal score</p>
         </div>
-
         <section className="space-y-3">
-          {rankings.length >
-          0 ? (
-            rankings.map(
-              (
-                employee,
-                index
-              ) => (
-                <RankingRow
-                  key={`${employee.employeeType}-${employee.id}`}
-                  rank={
-                    index + 1
-                  }
-                  name={
-                    employee.name
-                  }
-                  store={
-                    displayStoreName
-                  }
-                  score={
-                    employee.score
-                  }
-                />
-              )
-            )
-          ) : (
+          {rankings.length ? rankings.map((employee, index) => (
+            <RankingRow key={employee.id} rank={index + 1} name={employee.name}
+              store={employee.store} score={employee.score} />
+          )) : (
             <div className="rounded-3xl border border-dashed border-slate-300 bg-white p-8 text-center">
-              <p className="font-black text-slate-900">
-                No employee rankings yet.
-              </p>
+              <p className="font-black text-slate-900">No active Mobile Experts found.</p>
             </div>
           )}
         </section>
