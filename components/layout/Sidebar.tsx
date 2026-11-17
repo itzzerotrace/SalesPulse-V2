@@ -55,11 +55,12 @@ export default function Sidebar({ profile }: SidebarProps) {
       icon: BarChart3,
       show: isManagement,
     },
+    // Team remains accessible at /team, but is hidden from sidebar navigation.
     {
       title: "Team",
       href: "/team",
       icon: Users,
-      show: isManagement,
+      show: false,
     },
     {
       title: "Rankings",
