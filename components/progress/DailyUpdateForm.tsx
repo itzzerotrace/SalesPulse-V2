@@ -958,8 +958,8 @@ const storeAverage =
                             />
                           </div>
 
-                          <div className="mt-2 flex items-center justify-between gap-2 text-[10px] font-bold">
-                            <span className="text-slate-400">
+                          <div className="mt-3 flex flex-wrap items-center justify-between gap-x-3 gap-y-1 text-sm font-extrabold sm:text-base">
+                            <span className="text-black">
                               Goal{" "}
                               {formatValue(
                                 goal,
@@ -971,7 +971,7 @@ const storeAverage =
                               null &&
                               goal >
                                 0 && (
-                                <span className="text-slate-600">
+                                <span className="text-black">
                                   Need{" "}
                                   {formatValue(
                                     progress.neededPerDay,
