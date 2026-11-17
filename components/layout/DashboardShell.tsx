@@ -72,7 +72,8 @@ export default function DashboardShell({
           {(role === "manager" ||
               role === "regional_manager") &&
             stores.length > 1 &&
-            pathname !== "/leaderboard" && (
+            pathname !== "/leaderboard" &&
+            pathname !== "/all-employees" && (
               <div className="mt-3 border-t border-white/10 pt-3">
                 <StoreSwitcher
                   stores={
