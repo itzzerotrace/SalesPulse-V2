@@ -1,4 +1,7 @@
+"use client";
+
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import Sidebar from "./Sidebar";
 import Topbar from "./Topbar";
 import MobileMenu from "./MobileMenu";
@@ -12,6 +15,8 @@ export default function DashboardShell({
   children: React.ReactNode;
   profile?: any;
 }) {
+  const pathname = usePathname();
+
   const role =
     profile?.role || "";
 
@@ -66,7 +71,8 @@ export default function DashboardShell({
 
           {(role === "manager" ||
               role === "regional_manager") &&
-            stores.length > 1 && (
+            stores.length > 1 &&
+            pathname !== "/leaderboard" && (
               <div className="mt-3 border-t border-white/10 pt-3">
                 <StoreSwitcher
                   stores={
