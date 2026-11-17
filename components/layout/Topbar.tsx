@@ -47,10 +47,11 @@ export default function Topbar({
   const isRegionalDashboard =
     pathname === "/dashboard/regional";
 
-  const isRankingsPage = pathname === "/leaderboard";
+  const hideStoreSwitcher =
+    pathname === "/leaderboard" || pathname === "/all-employees";
 
   const showStoreSwitcher =
-    !isRankingsPage &&
+    !hideStoreSwitcher &&
     stores.length > 1 &&
     (
       role === "manager" ||
