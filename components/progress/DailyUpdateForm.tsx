@@ -63,6 +63,13 @@ function goalPercentColor(percent: number): string {
   return "#4ADE80";
 }
 
+function goalProgressBarColor(percent: number): string {
+  const displayedPercent = Math.round(percent);
+  if (displayedPercent >= 90) return "bg-emerald-400";
+  if (displayedPercent >= 51) return "bg-amber-400";
+  return "bg-red-400";
+}
+
 function numericValue(
   value: unknown
 ) {
@@ -695,7 +702,7 @@ const storeAverage =
 
                     <div className="mt-4 h-2.5 overflow-hidden rounded-full bg-white/10">
                       <div
-                        className="h-full rounded-full transition-all duration-700" style={{ backgroundColor: goalPercentColor(progress.percent) }}
+                        className={`h-full rounded-full transition-all duration-700 ${goal ? goalProgressBarColor(progress.percent) : "bg-violet-400/40"}`}
                         style={{
                           width: `${width}%`,
                         }}
@@ -925,7 +932,7 @@ const storeAverage =
 
                           <div className="mt-3 h-2.5 overflow-hidden rounded-full bg-white/10">
                             <div
-                              className="h-full rounded-full transition-all duration-700" style={{ backgroundColor: goalPercentColor(progress.percent) }}
+                              className={`h-full rounded-full transition-all duration-700 ${goal ? goalProgressBarColor(progress.percent) : "bg-violet-400/40"}`}
                               style={{
                                 width: `${width}%`,
                               }}
