@@ -397,7 +397,7 @@ export default async function RegionalGoalProgress() {
                           </div>
 
                           <span
-                            className={`rounded-full border px-2.5 py-1 text-[10px] font-black ${status.bg} ${status.border} ${status.text}`}
+                            className={`rounded-full border px-3 py-1.5 text-base font-black tabular-nums ${status.bg} ${status.border} ${status.text}`}
                           >
                             {percent.toFixed(
                               1
@@ -425,7 +425,7 @@ export default async function RegionalGoalProgress() {
                               Goal
                             </p>
 
-                            <p className="mt-1 text-[13px] font-black text-slate-600">
+                            <p className="mt-1 text-[19px] font-black tracking-[-0.02em] text-white">
                               {formatValue(
                                 metric.key,
                                 goal
