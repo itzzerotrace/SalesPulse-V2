@@ -26,6 +26,13 @@ export const metadata: Metadata = {
   },
   description:
     "Sales performance, goals, rankings, and team progress in one place.",
+  applicationName: "SalesPulse",
+  appleWebApp: { capable: true, title: "SalesPulse", statusBarStyle: "black-translucent" },
+  icons: {
+    icon: [{ url: "/icon", sizes: "192x192", type: "image/png" }],
+    apple: [{ url: "/apple-icon", sizes: "180x180", type: "image/png" }],
+  },
+  manifest: "/manifest.webmanifest",
 };
 
 export default function RootLayout({
