@@ -431,30 +431,9 @@ const storeAverage =
               Daily Update
             </span>
 
-            <h1 className="mt-4 text-[28px] font-black leading-[1.05] tracking-[-0.035em] sm:mt-5 sm:text-4xl lg:text-5xl">
-              Update the
-              <span className="text-pink-400">
-                {" "}
-                pulse.
-              </span>
-            </h1>
-
-            <div className="mt-3 flex items-center gap-2 text-sm font-black text-white/80 sm:text-base">
-              <Store
-                size={17}
-                className="text-purple-300"
-              />
+            <h1 className="mt-4 text-[28px] font-black leading-[1.05] tracking-[-0.035em] text-white sm:mt-5 sm:text-4xl lg:text-5xl">
               {storeName}
-            </div>
-
-            <p className="mt-3 max-w-2xl text-[13px] font-medium leading-5 text-white/55 sm:text-base sm:leading-6">
-              Enter the current
-              month-to-date totals.
-              SalesPulse will calculate
-              progress, remaining goals,
-              and the pace needed for
-              the rest of the month.
-            </p>
+            </h1>
 
             <div className="mt-5 max-w-xl sm:mt-6">
               <div className="flex items-end justify-between gap-4">
