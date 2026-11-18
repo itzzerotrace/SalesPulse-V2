@@ -241,8 +241,8 @@ export default async function GoalsPage() {
 
   return (
     <DashboardLayout>
-      <div className="space-y-6 sm:space-y-8">
-        <section className="salespulse-dark-gradient relative overflow-hidden rounded-[30px] px-5 py-6 text-white shadow-[0_24px_70px_rgba(23,16,47,0.18)] sm:px-8 sm:py-8">
+      <div className="space-y-5 sm:space-y-6">
+        <section className="salespulse-dark-gradient relative overflow-hidden rounded-[26px] border border-violet-300/20 px-5 py-5 text-white shadow-[0_24px_70px_rgba(23,16,47,0.18)] sm:px-7 sm:py-6">
           <div className="pointer-events-none absolute -right-20 -top-24 h-64 w-64 rounded-full bg-pink-500/15 blur-3xl" />
 
           <div className="relative flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
@@ -254,7 +254,7 @@ export default async function GoalsPage() {
                 Goal Center
               </span>
 
-              <h1 className="mt-5 text-3xl font-black tracking-[-0.035em] sm:text-4xl lg:text-5xl">
+              <h1 className="mt-3 text-3xl font-black tracking-[-0.035em] sm:text-4xl lg:text-5xl">
                   {storeName || "Store Goals"}
                 </h1>
 
@@ -272,13 +272,13 @@ export default async function GoalsPage() {
           </div>
         </section>
 
-        <section className="grid grid-cols-1 gap-4 lg:grid-cols-3">
+        <section className="grid grid-cols-1 items-stretch gap-3 lg:grid-cols-3">
           <GoalScore
             score={score}
           />
 
           <div className="lg:col-span-2">
-            <div className="grid h-full grid-cols-1 gap-4 sm:grid-cols-2">
+            <div className="grid h-full grid-cols-1 gap-3 sm:grid-cols-2">
               {cards
                 .slice(0, 2)
                 .map(
@@ -296,17 +296,17 @@ export default async function GoalsPage() {
         </section>
 
         <section>
-          <div className="mb-5">
-            <p className="text-[10px] font-black uppercase tracking-[0.2em] text-purple-600">
+          <div className="mb-3">
+            <p className="text-xs font-black uppercase tracking-[0.16em] text-violet-300">
               Monthly Targets
             </p>
 
-            <h2 className="mt-1 text-2xl font-black tracking-tight text-[#17102F] sm:text-3xl">
+            <h2 className="mt-1 text-2xl font-black tracking-tight text-white sm:text-3xl">
               Performance Breakdown
             </h2>
           </div>
 
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3">
             {cards
               .slice(2)
               .map(
