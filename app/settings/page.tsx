@@ -171,13 +171,13 @@ export default async function SettingsPage() {
               />
             }
           >
-            <div className="rounded-2xl border border-slate-100 bg-[#F8F7FC] p-4">
-              <p className="text-sm font-black text-[#17102F]">
+            <div className="rounded-2xl border border-violet-300/20 bg-gradient-to-br from-[#2B1B42] to-[#211431] p-4">
+              <p className="text-sm font-black text-white">
                 Sign out of this
                 device
               </p>
 
-              <p className="mt-1 text-xs font-medium leading-5 text-slate-500">
+              <p className="mt-1 text-xs font-medium leading-5 text-violet-100/70">
                 You will need to
                 sign in again to
                 access your
