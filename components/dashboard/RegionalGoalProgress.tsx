@@ -389,7 +389,7 @@ export default async function RegionalGoalProgress() {
                               }
                             </div>
 
-                            <p className="text-[13px] font-black text-[#2B2028]">
+                            <p className="text-[13px] font-black text-white">
                               {
                                 metric.label
                               }
