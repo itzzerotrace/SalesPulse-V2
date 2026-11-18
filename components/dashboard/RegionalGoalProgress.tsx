@@ -412,7 +412,7 @@ export default async function RegionalGoalProgress() {
                               Current
                             </p>
 
-                            <p className="mt-1 text-[19px] font-black tracking-[-0.02em] text-[#2B2028]">
+                            <p className="mt-1 text-[19px] font-black tracking-[-0.02em] text-white">
                               {formatValue(
                                 metric.key,
                                 current
