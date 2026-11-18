@@ -17,6 +17,8 @@ import {
   Trophy,
   Users,
   Wifi,
+  ChevronRight,
+  Zap,
 } from "lucide-react";
 
 import DashboardLayout from "@/components/layout/DashboardLayout";
@@ -283,7 +285,65 @@ export default async function ManagerDashboard() {
 
   return (
     <DashboardLayout>
-      <div className="space-y-6 sm:space-y-8">
+      <div className="space-y-5 lg:hidden">
+        <section className="relative overflow-hidden rounded-[28px] border border-violet-400/25 bg-gradient-to-br from-[#311250] via-[#1D1034] to-[#10091F] p-5 text-white shadow-[0_18px_55px_rgba(95,33,161,0.18)]">
+          <div className="pointer-events-none absolute -right-14 -top-16 h-48 w-48 rounded-full bg-violet-400/20 blur-3xl" />
+          <div className="relative">
+            <div className="flex items-center justify-between gap-3">
+              <span className="text-[10px] font-extrabold uppercase tracking-[0.2em] text-violet-200">Store Command Center</span>
+              <span className="rounded-full border border-violet-300/25 bg-white/10 px-3 py-1 text-[10px] font-bold text-violet-100">{storeName}</span>
+            </div>
+            <h1 className="mt-5 text-[28px] font-black leading-tight tracking-tight">Good to see you,<br /><span className="text-[#D8B4FE]">{firstName}.</span></h1>
+            <p className="mt-2 text-xs font-medium text-violet-200/75">Your store performance at a glance.</p>
+            <div className="mt-6 rounded-[22px] border border-violet-300/20 bg-[#140B27]/75 p-4">
+              <div className="flex items-center justify-between gap-3">
+                <div>
+                  <p className="text-[10px] font-bold uppercase tracking-[0.17em] text-violet-300">Overall goal progress</p>
+                  <p className="mt-2 text-[42px] font-black leading-none tracking-tight tabular-nums">{overallProgress}<span className="ml-1 text-2xl text-violet-300">%</span></p>
+                </div>
+                <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-violet-500/20 text-violet-200"><TrendingUp size={28}/></div>
+              </div>
+              <div className="mt-4 h-2.5 overflow-hidden rounded-full bg-white/10"><div className="h-full rounded-full bg-gradient-to-r from-[#7C3AED] to-[#D8B4FE]" style={{width:`${overallWidth}%`}} /></div>
+              <p className="mt-2 text-[11px] text-violet-200/65">Average attainment across active goals</p>
+            </div>
+          </div>
+        </section>
+        <div className="grid grid-cols-2 gap-3">
+          <Link href="/team" className="flex min-h-[112px] flex-col justify-between rounded-[22px] border border-violet-400/20 bg-[#1C102E] p-4 text-white">
+            <Users size={20} className="text-violet-300"/>
+            <div><p className="text-2xl font-black tabular-nums">{sortedTeam.length}</p><p className="mt-1 text-[11px] font-semibold text-violet-200/75">Team Members</p></div>
+          </Link>
+          <Link href="/leaderboard" className="flex min-h-[112px] flex-col justify-between rounded-[22px] border border-violet-400/20 bg-[#1C102E] p-4 text-white">
+            <Trophy size={20} className="text-amber-300"/>
+            <div><p className="truncate text-lg font-black">{topPerformer?.employee?.full_name?.split(" ")[0] || "—"}</p><p className="mt-1 text-[11px] font-semibold text-violet-200/75">Top Performer</p></div>
+          </Link>
+        </div>
+        <Link href="/daily-update" className="flex min-h-[62px] items-center justify-between rounded-[22px] bg-gradient-to-r from-[#6D28D9] to-[#A855F7] px-5 text-sm font-black text-white shadow-[0_10px_35px_rgba(109,40,217,0.25)]">
+          <span className="flex items-center gap-3"><Zap size={20}/> View Need Per Day</span><ChevronRight size={21}/>
+        </Link>
+        <section>
+          <div className="mb-3 flex items-end justify-between">
+            <div><p className="text-[10px] font-black uppercase tracking-[0.18em] text-violet-300">Live scorecard</p><h2 className="mt-1 text-xl font-black text-white">Store Performance</h2></div>
+            <Link href="/goals" className="flex items-center gap-1 text-xs font-bold text-violet-300">All goals <ChevronRight size={15}/></Link>
+          </div>
+          <div className="grid grid-cols-2 gap-3">
+            {metrics.map((metric) => {
+              const pct = Math.max(0, Math.min(100, Number(metric.percent) || 0));
+              const fmt = (n: number) => metric.money ? `${Number(n || 0).toLocaleString(undefined, {maximumFractionDigits: metric.title === "Features" ? 2 : 0, minimumFractionDigits: metric.title === "Features" ? 2 : 0})}` : Number(n || 0).toLocaleString();
+              return <div key={metric.title} className="min-w-0 rounded-[22px] border border-violet-400/20 bg-[#1C102E] p-4 text-white">
+                <div className="flex items-center justify-between gap-2"><span className="text-[11px] font-bold text-violet-200">{metric.title}</span><span className="text-violet-300">{metric.icon}</span></div>
+                <p className="mt-4 truncate text-[25px] font-black tracking-tight tabular-nums">{fmt(metric.current)}</p>
+                <div className="mt-1 flex items-center justify-between gap-1 text-[10px]"><span className="truncate text-violet-200/65">of {fmt(metric.goal)}</span><span className="shrink-0 font-black text-violet-200">{Math.round(Number(metric.percent)||0)}%</span></div>
+                <div className="mt-3 h-1.5 overflow-hidden rounded-full bg-white/10"><div className="h-full rounded-full bg-gradient-to-r from-violet-600 to-violet-300" style={{width:`${pct}%`}}/></div>
+              </div>;
+            })}
+          </div>
+        </section>
+        <Link href="/leaderboard" className="flex items-center justify-between rounded-[22px] border border-violet-400/20 bg-[#1C102E] p-4 text-white">
+          <span className="flex items-center gap-3"><Trophy size={20} className="text-amber-300"/><span className="text-sm font-black">Explore Rep Rankings</span></span><ChevronRight size={20} className="text-violet-300"/>
+        </Link>
+      </div>
+      <div className="hidden space-y-6 sm:space-y-8 lg:block">
         <section className="salespulse-dark-gradient relative overflow-hidden rounded-[30px] px-5 py-6 text-white shadow-[0_24px_70px_rgba(23,16,47,0.18)] sm:px-8 sm:py-8 lg:px-10">
           <div className="pointer-events-none absolute -right-16 -top-20 h-64 w-64 rounded-full bg-pink-500/15 blur-3xl" />
 
