@@ -203,17 +203,17 @@ export default async function RegionalDashboard() {
                       store.id ||
                       store.store
                     }
-                    className={`flex items-center gap-3 rounded-[16px] border p-3.5 ${
+                    className={`group flex items-center gap-3 rounded-[18px] border p-3.5 transition-all duration-200 hover:-translate-y-0.5 hover:border-purple-300/50 hover:shadow-[0_10px_28px_rgba(168,85,247,0.16)] ${
                       index === 0
-                        ? "border-[#E3C9FF] bg-[#2B1941]"
-                        : "border-slate-100 bg-[#211431]"
+                        ? "border-purple-300/55 bg-gradient-to-r from-[#3C2058] to-[#241333] shadow-[0_5px_22px_rgba(168,85,247,0.13)]"
+                        : "border-purple-400/25 bg-gradient-to-r from-[#241333] to-[#1B1029] shadow-[0_5px_18px_rgba(0,0,0,0.12)]"
                     }`}
                   >
                     <div
                       className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-[12px] font-black ${
                         index === 0
                           ? "bg-gradient-to-br from-[#7C20D4] to-[#EC168C] text-white shadow-[0_5px_14px_rgba(139,0,255,0.18)]"
-                          : "bg-[#38204E] text-[#E9D5FF] shadow-sm"
+                          : "border border-purple-300/25 bg-[#3A2153] text-white shadow-[0_3px_12px_rgba(168,85,247,0.15)]"
                       }`}
                     >
                       {index === 0 ? (
@@ -245,7 +245,7 @@ export default async function RegionalDashboard() {
                         %
                       </p>
 
-                      <p className="text-[8px] font-black uppercase tracking-[0.14em] text-[#8B00FF]">
+                      <p className="text-[9px] font-black uppercase tracking-[0.14em] text-purple-200">
                         Store Score
                       </p>
                     </div>
@@ -307,9 +307,9 @@ export default async function RegionalDashboard() {
                         store.id ||
                         store.store
                       }
-                      className="flex items-center gap-3 rounded-[16px] border border-slate-100 bg-[#211431] p-3.5"
+                      className="group flex items-center gap-3 rounded-[18px] border border-purple-400/25 bg-gradient-to-r from-[#241333] to-[#1B1029] p-3.5 shadow-[0_5px_18px_rgba(0,0,0,0.12)] transition-all duration-200 hover:-translate-y-0.5 hover:border-purple-300/50 hover:shadow-[0_10px_28px_rgba(168,85,247,0.16)]"
                     >
-                      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[12px] bg-white font-black text-[#8B00FF] shadow-sm">
+                      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[12px] border border-purple-300/25 bg-[#3A2153] font-black text-white shadow-[0_3px_12px_rgba(168,85,247,0.15)]">
                         {districtRank}
                       </div>
 
@@ -335,7 +335,7 @@ export default async function RegionalDashboard() {
                           %
                         </p>
 
-                        <p className="text-[8px] font-black uppercase tracking-[0.14em] text-[#8B00FF]">
+                        <p className="text-[9px] font-black uppercase tracking-[0.14em] text-purple-200">
                           Store Score
                         </p>
                       </div>
