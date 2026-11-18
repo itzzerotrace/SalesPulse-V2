@@ -25,7 +25,6 @@ import {
   Settings,
   Target,
   Trophy,
-  Users,
   X,
   Zap,
 } from "lucide-react";
@@ -105,11 +104,6 @@ export default function MobileMenu({
       title: "Rankings",
       href: "/leaderboard",
       icon: Trophy,
-    },
-    {
-      title: "Team",
-      href: "/team",
-      icon: Users,
     },
     {
       title: "Settings",
@@ -231,7 +225,7 @@ export default function MobileMenu({
           <div className="shrink-0 border-b border-white/10 px-5 pb-5 pt-[max(1.25rem,env(safe-area-inset-top))]">
             <div className="flex items-center justify-between gap-3">
               <div className="flex min-w-0 items-center gap-3">
-                <div className="salespulse-gradient flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl text-lg font-black shadow-lg shadow-pink-500/20">
+                <div className="salespulse-gradient flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl text-lg font-black shadow-lg shadow-purple-500/20">
                   S
                 </div>
 
@@ -243,7 +237,7 @@ export default function MobileMenu({
 
                     <Zap
                       size={14}
-                      className="fill-pink-500 text-pink-500"
+                      className="fill-purple-400 text-purple-400"
                     />
                   </div>
 
@@ -310,7 +304,7 @@ export default function MobileMenu({
                       }
                       className={`flex min-h-12 items-center gap-3 rounded-2xl px-4 py-3 text-sm font-black transition active:scale-[0.98] ${
                         active
-                          ? "bg-white text-[#17102F] shadow-lg"
+                          ? "bg-[#A855F7] text-white shadow-lg"
                           : "text-white/65 hover:bg-white/10 hover:text-white"
                       }`}
                     >
@@ -318,7 +312,7 @@ export default function MobileMenu({
                         size={19}
                         className={
                           active
-                            ? "text-purple-700"
+                            ? "text-white"
                             : ""
                         }
                       />
@@ -330,7 +324,7 @@ export default function MobileMenu({
                       </span>
 
                       {active && (
-                        <span className="h-2 w-2 shrink-0 rounded-full bg-pink-500 shadow-[0_0_8px_rgba(247,37,133,0.8)]" />
+                        <span className="h-2 w-2 shrink-0 rounded-full bg-white shadow-[0_0_8px_rgba(216,180,254,0.8)]" />
                       )}
                     </Link>
                   );
