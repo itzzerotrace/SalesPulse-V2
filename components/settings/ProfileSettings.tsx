@@ -90,21 +90,21 @@ export default function ProfileSettings({
               key={
                 field.label
               }
-              className="rounded-2xl border border-slate-100 bg-[#F8F7FC] p-4"
+              className="rounded-2xl border border-violet-300/20 bg-gradient-to-br from-[#2B1B42] to-[#211431] p-4 shadow-[0_8px_24px_rgba(0,0,0,0.12)]"
             >
-              <div className="flex items-center gap-2 text-purple-600">
+              <div className="flex items-center gap-2 text-violet-300">
                 <Icon
                   size={15}
                 />
 
-                <p className="text-[9px] font-black uppercase tracking-[0.16em] text-slate-400">
+                <p className="text-[9px] font-black uppercase tracking-[0.16em] text-violet-200/70">
                   {
                     field.label
                   }
                 </p>
               </div>
 
-              <p className="mt-2 break-words text-sm font-black text-[#17102F] sm:text-base">
+              <p className="mt-2 break-words text-sm font-black text-white sm:text-base">
                 {
                   field.value
                 }
