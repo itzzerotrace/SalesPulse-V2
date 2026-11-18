@@ -304,8 +304,8 @@ export default function MobileMenu({
                       }
                       className={`flex min-h-12 items-center gap-3 rounded-2xl px-4 py-3 text-sm font-black transition active:scale-[0.98] ${
                         active
-                          ? "bg-[#A855F7] text-white shadow-lg"
-                          : "text-white/65 hover:bg-white/10 hover:text-white"
+                          ? "bg-gradient-to-r from-[#7927C8] to-[#A855F7] text-white shadow-[0_8px_25px_rgba(168,85,247,0.3)]"
+                          : "text-white hover:bg-purple-400/15 hover:text-white"
                       }`}
                     >
                       <Icon
