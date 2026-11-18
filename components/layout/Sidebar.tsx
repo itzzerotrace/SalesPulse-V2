@@ -87,7 +87,7 @@ export default function Sidebar({ profile }: SidebarProps) {
   );
 
   return (
-    <aside className="hidden min-h-screen w-64 shrink-0 bg-[#0B0614] text-white lg:flex lg:flex-col">
+    <aside className="hidden min-h-screen w-64 shrink-0 bg-[radial-gradient(ellipse_at_top_left,rgba(126,34,206,0.18),transparent_65%),#0B0614] text-white lg:flex lg:flex-col">
       <div className="flex h-20 items-center border-b border-white/10 px-6">
         <div className="flex items-center gap-3">
           <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-[#7B22D9] to-[#C38BFF] text-white shadow-lg shadow-purple-500/20">
@@ -107,7 +107,7 @@ export default function Sidebar({ profile }: SidebarProps) {
       </div>
 
       <div className="px-6 pb-2 pt-6">
-        <p className="text-[9px] font-black uppercase tracking-[0.2em] text-white/30">
+        <p className="text-[9px] font-black uppercase tracking-[0.2em] text-purple-200/65">
           Workspace
         </p>
       </div>
@@ -129,10 +129,10 @@ export default function Sidebar({ profile }: SidebarProps) {
             <Link
               key={item.href}
               href={item.href}
-              className={`group flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-bold transition-all ${
+              className={`group relative flex items-center gap-3 rounded-2xl border px-4 py-3.5 text-sm font-bold tracking-[0.01em] transition-all duration-200 ${
                 active
-                  ? "bg-[#A855F7] text-white shadow-lg shadow-purple-500/30"
-                  : "text-[#D8B4FE]/75 hover:bg-purple-500/15 hover:text-white"
+                  ? "border-purple-300/45 bg-gradient-to-r from-[#7927C8] via-[#9333EA] to-[#6D28D9] text-white shadow-[0_8px_28px_rgba(147,51,234,0.35)]"
+                  : "border-transparent text-white hover:border-purple-300/25 hover:bg-purple-400/10 hover:shadow-[0_4px_20px_rgba(168,85,247,0.12)]"
               }`}
             >
               <Icon
@@ -140,7 +140,7 @@ export default function Sidebar({ profile }: SidebarProps) {
                 className={
                   active
                     ? "text-white"
-                    : "text-purple-200/70 transition group-hover:text-purple-200"
+                    : "text-white transition group-hover:text-white"
                 }
               />
 
