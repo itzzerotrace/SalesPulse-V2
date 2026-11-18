@@ -22,6 +22,7 @@ export default async function DailyUpdatePage() {
       "manager",
       "regional_manager",
       "admin",
+      "employee",
     ].includes(
       context.profile.role
     )
@@ -34,7 +35,7 @@ export default async function DailyUpdatePage() {
           </h1>
 
           <p className="mt-2 text-slate-600">
-            Daily store updates are currently available to management.
+            You do not have access to this page.
           </p>
         </div>
       </DashboardLayout>
@@ -506,6 +507,7 @@ export default async function DailyUpdatePage() {
   return (
     <DashboardLayout>
       <DailyUpdateForm
+        readOnly={context.profile.role === "employee"}
         key={activeStore.id}
 
         storeName={
