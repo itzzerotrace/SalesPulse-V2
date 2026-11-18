@@ -28,7 +28,16 @@ export default async function GoalsPage() {
   ]);
 
   if (!stats) {
-    return null;
+    return (
+      <DashboardLayout>
+        <section className="rounded-2xl border border-violet-300/20 bg-[#180D2B] p-6 text-white">
+          <h1 className="text-2xl font-black">Store Goals</h1>
+          <p className="mt-3 text-sm text-violet-200">
+            We couldn&apos;t load your goals right now. Your navigation is still available; try refreshing this page.
+          </p>
+        </section>
+      </DashboardLayout>
+    );
   }
 
   const goals =
