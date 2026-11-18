@@ -677,7 +677,7 @@ const storeAverage =
                                 .value
                             )
                           }
-                          className="mt-1.5 min-w-0 w-full rounded-xl border border-slate-200 bg-[#FAFAFD] px-3 py-3 text-base font-black text-white outline-none transition focus:border-purple-400 focus:bg-white focus:ring-2 focus:ring-purple-100"
+                          className="mt-1.5 min-w-0 w-full rounded-xl border border-purple-400/30 bg-[#241733] px-3 py-3 text-base font-black text-white outline-none transition focus:border-purple-400 focus:bg-[#302044] focus:ring-2 focus:ring-purple-400/30" style={{ color: "#FFFFFF", WebkitTextFillColor: "#FFFFFF", fontSize: "16px" }}
                         />
                       </label>
 
@@ -709,7 +709,7 @@ const storeAverage =
                                 .value
                             )
                           }
-                          className="mt-1.5 min-w-0 w-full rounded-xl border border-slate-200 bg-[#FAFAFD] px-3 py-3 text-base font-black text-white outline-none transition focus:border-purple-400 focus:bg-white focus:ring-2 focus:ring-purple-100"
+                          className="mt-1.5 min-w-0 w-full rounded-xl border border-purple-400/30 bg-[#241733] px-3 py-3 text-base font-black text-white outline-none transition focus:border-purple-400 focus:bg-[#302044] focus:ring-2 focus:ring-purple-400/30" style={{ color: "#FFFFFF", WebkitTextFillColor: "#FFFFFF", fontSize: "16px" }}
                         />
                       </label>
                     </div>
