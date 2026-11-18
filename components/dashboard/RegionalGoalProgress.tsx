@@ -163,47 +163,47 @@ function getStoreAverage(
 function getGoalStatus(
   percent: number
 ) {
-  if (percent >= 100) {
+  if (Math.round(percent) >= 90) {
     return {
       label: "Goal Achieved",
-      color: "#16A34A",
+      color: "#4ADE80",
       text:
-        "text-green-700",
+        "text-green-400",
       bg:
-        "bg-green-50",
+        "bg-green-950/40",
       border:
-        "border-green-200",
+        "border-green-500/40",
       bar:
-        "bg-green-600",
+        "bg-green-400",
     };
   }
 
-  if (percent >= 50) {
+  if (Math.round(percent) >= 51) {
     return {
       label: "On the Way",
-      color: "#EAB308",
+      color: "#FACC15",
       text:
-        "text-yellow-700",
+        "text-yellow-300",
       bg:
-        "bg-yellow-50",
+        "bg-yellow-950/40",
       border:
-        "border-yellow-200",
+        "border-yellow-500/40",
       bar:
-        "bg-yellow-500",
+        "bg-yellow-400",
     };
   }
 
   return {
     label: "Needs Focus",
-    color: "#DC2626",
+    color: "#F87171",
     text:
-      "text-red-700",
+      "text-red-400",
     bg:
-      "bg-red-50",
+      "bg-red-950/40",
     border:
-      "border-red-200",
+      "border-red-500/40",
     bar:
-      "bg-red-600",
+      "bg-red-400",
   };
 }
 
@@ -231,7 +231,7 @@ function PerformanceRing({
         background: `conic-gradient(${status.color} ${progress * 3.6}deg, rgba(255,255,255,.22) 0deg)`,
       }}
     >
-      <div className="absolute inset-[6px] rounded-full bg-white" />
+      <div className="absolute inset-[6px] rounded-full bg-[#160D26]" />
 
       <span
         className={`relative text-[13px] font-black ${status.text}`}
@@ -257,7 +257,7 @@ export default async function RegionalGoalProgress() {
           className="mx-auto text-[#8B00FF]"
         />
 
-        <h3 className="mt-4 text-xl font-black text-[#2B2028]">
+        <h3 className="mt-4 text-xl font-black text-white">
           No stores available
         </h3>
 
@@ -285,11 +285,11 @@ export default async function RegionalGoalProgress() {
           return (
             <article
               key={store.id}
-              className="overflow-hidden rounded-[26px] border border-[#E9DCE4] bg-[#FAF7F9] shadow-[0_14px_40px_rgba(80,20,55,0.10)] transition duration-300 hover:-translate-y-0.5 hover:shadow-[0_20px_55px_rgba(226,0,116,0.14)]"
+              className="overflow-hidden rounded-[26px] border border-purple-400/30 bg-[#140B23] shadow-[0_14px_40px_rgba(80,20,55,0.10)] transition duration-300 hover:-translate-y-0.5 hover:shadow-[0_20px_55px_rgba(226,0,116,0.14)]"
             >
               {/* METRO STORE HEADER */}
 
-              <div className="border-b border-[#E8E1E5] bg-white px-5 py-5">
+              <div className="border-b border-purple-400/20 bg-[#201231] px-5 py-5">
                 <div className="flex items-center justify-between gap-5">
                   <div className="flex min-w-0 items-center gap-3.5">
                     <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-[14px] bg-[#F3E8FF] text-[#8B00FF]">
@@ -301,7 +301,7 @@ export default async function RegionalGoalProgress() {
                         Store Performance
                       </p>
 
-                      <h3 className="mt-1 truncate text-[22px] font-black tracking-[-0.025em] text-[#211A1E]">
+                      <h3 className="mt-1 truncate text-[22px] font-black tracking-[-0.025em] text-white">
                         {store.store}
                       </h3>
                     </div>
@@ -317,7 +317,7 @@ export default async function RegionalGoalProgress() {
                         Overall
                       </p>
 
-                      <p className="mt-1 text-[11px] font-bold text-[#332A2F]">
+                      <p className="mt-1 text-[11px] font-bold text-[#E9D5FF]">
                         Performance
                       </p>
 
@@ -379,7 +379,7 @@ export default async function RegionalGoalProgress() {
                         key={
                           metric.key
                         }
-                        className="rounded-[18px] border border-[#E9E4E7] bg-white p-4 shadow-[0_4px_14px_rgba(40,20,30,0.05)]"
+                        className="rounded-[18px] border border-purple-400/25 bg-[#241536] p-4 shadow-[0_4px_14px_rgba(40,20,30,0.05)]"
                       >
                         <div className="flex items-center justify-between gap-3">
                           <div className="flex items-center gap-2.5">
@@ -434,7 +434,7 @@ export default async function RegionalGoalProgress() {
                           </div>
                         </div>
 
-                        <div className="mt-3 h-[7px] overflow-hidden rounded-full bg-[#EEE9EC]">
+                        <div className="mt-3 h-[7px] overflow-hidden rounded-full bg-[#49375C]">
                           <div
                             className={`h-full rounded-full transition-all duration-500 ${status.bar}`}
                             style={{
