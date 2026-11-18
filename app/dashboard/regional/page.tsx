@@ -183,7 +183,7 @@ export default async function RegionalDashboard() {
                   </p>
                 </div>
 
-                <h2 className="mt-1.5 text-2xl font-black tracking-[-0.03em] text-[#17102F]">
+                <h2 className="mt-1.5 text-2xl font-black tracking-[-0.03em] text-white">
                   Top 5 Stores
                 </h2>
               </div>
@@ -205,15 +205,15 @@ export default async function RegionalDashboard() {
                     }
                     className={`flex items-center gap-3 rounded-[16px] border p-3.5 ${
                       index === 0
-                        ? "border-[#E3C9FF] bg-[#FAF5FF]"
-                        : "border-slate-100 bg-[#F8F8FC]"
+                        ? "border-[#E3C9FF] bg-[#2B1941]"
+                        : "border-slate-100 bg-[#211431]"
                     }`}
                   >
                     <div
                       className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-[12px] font-black ${
                         index === 0
                           ? "bg-gradient-to-br from-[#7C20D4] to-[#EC168C] text-white shadow-[0_5px_14px_rgba(139,0,255,0.18)]"
-                          : "bg-white text-[#8B00FF] shadow-sm"
+                          : "bg-[#38204E] text-[#E9D5FF] shadow-sm"
                       }`}
                     >
                       {index === 0 ? (
@@ -224,7 +224,7 @@ export default async function RegionalDashboard() {
                     </div>
 
                     <div className="min-w-0 flex-1">
-                      <p className="truncate text-[15px] font-black text-[#17102F]">
+                      <p className="truncate text-[15px] font-black text-white">
                         {store.store ||
                           store.store_name ||
                           store.name ||
@@ -237,7 +237,7 @@ export default async function RegionalDashboard() {
                     </div>
 
                     <div className="text-right">
-                      <p className="text-lg font-black text-[#17102F]">
+                      <p className="text-lg font-black text-white">
                         {Number(
                           store.overallScore ||
                             0
@@ -271,7 +271,7 @@ export default async function RegionalDashboard() {
                   </p>
                 </div>
 
-                <h2 className="mt-1.5 text-2xl font-black tracking-[-0.03em] text-[#17102F]">
+                <h2 className="mt-1.5 text-2xl font-black tracking-[-0.03em] text-white">
                   Bottom 5 Stores
                 </h2>
               </div>
@@ -307,14 +307,14 @@ export default async function RegionalDashboard() {
                         store.id ||
                         store.store
                       }
-                      className="flex items-center gap-3 rounded-[16px] border border-slate-100 bg-[#F8F8FC] p-3.5"
+                      className="flex items-center gap-3 rounded-[16px] border border-slate-100 bg-[#211431] p-3.5"
                     >
                       <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[12px] bg-white font-black text-[#8B00FF] shadow-sm">
                         {districtRank}
                       </div>
 
                       <div className="min-w-0 flex-1">
-                        <p className="truncate text-[15px] font-black text-[#17102F]">
+                        <p className="truncate text-[15px] font-black text-white">
                           {store.store ||
                             store.store_name ||
                             store.name ||
@@ -327,7 +327,7 @@ export default async function RegionalDashboard() {
                       </div>
 
                       <div className="text-right">
-                        <p className="text-lg font-black text-[#17102F]">
+                        <p className="text-lg font-black text-white">
                           {Number(
                             store.overallScore ||
                               0
@@ -362,7 +362,7 @@ export default async function RegionalDashboard() {
                 </p>
               </div>
 
-              <h2 className="mt-2 text-2xl font-black tracking-[-0.03em] text-[#17102F] sm:text-[28px]">
+              <h2 className="mt-2 text-2xl font-black tracking-[-0.03em] text-white sm:text-[28px]">
                 Store Goal Performance
               </h2>
 
