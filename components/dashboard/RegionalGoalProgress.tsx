@@ -226,7 +226,7 @@ function PerformanceRing({
 
   return (
     <div
-      className="relative flex h-[70px] w-[70px] shrink-0 items-center justify-center rounded-full"
+      className="relative flex h-[78px] w-[78px] shrink-0 items-center justify-center rounded-full shadow-[0_0_28px_rgba(168,85,247,0.18)]"
       style={{
         background: `conic-gradient(${status.color} ${progress * 3.6}deg, rgba(255,255,255,.22) 0deg)`,
       }}
@@ -269,7 +269,7 @@ export default async function RegionalGoalProgress() {
   }
 
   return (
-    <div className="grid gap-5 xl:grid-cols-2">
+    <div className="grid gap-6 xl:grid-cols-2">
       {stores.map(
         (store: any) => {
           const storeAverage =
@@ -285,19 +285,19 @@ export default async function RegionalGoalProgress() {
           return (
             <article
               key={store.id}
-              className="overflow-hidden rounded-[26px] border border-purple-400/30 bg-[#140B23] shadow-[0_14px_40px_rgba(80,20,55,0.10)] transition duration-300 hover:-translate-y-0.5 hover:shadow-[0_20px_55px_rgba(226,0,116,0.14)]"
+              className="group overflow-hidden rounded-[30px] border border-violet-300/20 bg-[#160D27] shadow-[0_20px_55px_rgba(5,2,15,0.32)] transition-all duration-300 hover:-translate-y-1 hover:border-violet-300/40 hover:shadow-[0_25px_65px_rgba(126,34,206,0.22)]"
             >
               {/* METRO STORE HEADER */}
 
-              <div className="border-b border-purple-400/20 bg-[#201231] px-5 py-5">
+              <div className="relative overflow-hidden border-b border-violet-300/15 bg-gradient-to-br from-[#352052] via-[#241538] to-[#180E2B] px-6 py-6">
                 <div className="flex items-center justify-between gap-5">
                   <div className="flex min-w-0 items-center gap-3.5">
-                    <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-[14px] bg-[#F3E8FF] text-[#8B00FF]">
+                    <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl border border-violet-300/30 bg-violet-400/15 text-violet-200 shadow-[0_6px_24px_rgba(168,85,247,0.2)]">
                       <Building2 size={21} />
                     </div>
 
                     <div className="min-w-0">
-                      <p className="text-[9px] font-black uppercase tracking-[0.18em] text-[#8B00FF]">
+                      <p className="text-[10px] font-black uppercase tracking-[0.18em] text-violet-300">
                         Store Performance
                       </p>
 
@@ -379,17 +379,17 @@ export default async function RegionalGoalProgress() {
                         key={
                           metric.key
                         }
-                        className="rounded-[18px] border border-purple-400/25 bg-[#241536] p-4 shadow-[0_4px_14px_rgba(40,20,30,0.05)]"
+                        className="rounded-[20px] border border-violet-300/15 bg-gradient-to-br from-[#2B1B42] to-[#1C112D] p-4 shadow-[0_8px_25px_rgba(0,0,0,0.18)] transition-all duration-200 hover:border-violet-300/40 hover:from-[#33204E]"
                       >
                         <div className="flex items-center justify-between gap-3">
                           <div className="flex items-center gap-2.5">
-                            <div className="flex h-10 w-10 items-center justify-center rounded-[12px] bg-gradient-to-br from-[#7C20D4] to-[#EC168C] text-white shadow-[0_6px_14px_rgba(139,0,255,0.20)]">
+                            <div className="flex h-10 w-10 items-center justify-center rounded-[13px] border border-violet-300/20 bg-gradient-to-br from-[#7C20D4] to-[#A21CAF] text-white shadow-[0_6px_20px_rgba(139,0,255,0.25)]">
                               {
                                 metric.icon
                               }
                             </div>
 
-                            <p className="text-[13px] font-black text-white">
+                            <p className="text-sm font-black tracking-tight text-white">
                               {
                                 metric.label
                               }
@@ -406,13 +406,13 @@ export default async function RegionalGoalProgress() {
                           </span>
                         </div>
 
-                        <div className="mt-4 flex items-end justify-between gap-4">
+                        <div className="mt-5 flex items-end justify-between gap-4">
                           <div>
-                            <p className="text-[8px] font-black uppercase tracking-[0.15em] text-slate-400">
+                            <p className="text-[10px] font-extrabold uppercase tracking-[0.14em] text-violet-200/60">
                               Current
                             </p>
 
-                            <p className="mt-1 text-[19px] font-black tracking-[-0.02em] text-white">
+                            <p className="mt-1 text-[22px] font-black tracking-[-0.035em] text-white sm:text-[24px]">
                               {formatValue(
                                 metric.key,
                                 current
@@ -421,11 +421,11 @@ export default async function RegionalGoalProgress() {
                           </div>
 
                           <div className="text-right">
-                            <p className="text-[8px] font-black uppercase tracking-[0.15em] text-slate-400">
+                            <p className="text-[10px] font-extrabold uppercase tracking-[0.14em] text-violet-200/60">
                               Goal
                             </p>
 
-                            <p className="mt-1 text-[19px] font-black tracking-[-0.02em] text-white">
+                            <p className="mt-1 text-[22px] font-black tracking-[-0.035em] text-white sm:text-[24px]">
                               {formatValue(
                                 metric.key,
                                 goal
@@ -434,7 +434,7 @@ export default async function RegionalGoalProgress() {
                           </div>
                         </div>
 
-                        <div className="mt-3 h-[7px] overflow-hidden rounded-full bg-[#49375C]">
+                        <div className="mt-4 h-[8px] overflow-hidden rounded-full bg-[#49375C] ring-1 ring-white/5">
                           <div
                             className={`h-full rounded-full transition-all duration-500 ${status.bar}`}
                             style={{
