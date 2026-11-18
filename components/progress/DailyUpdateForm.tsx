@@ -56,6 +56,13 @@ type Props = {
   employees: Employee[];
 };
 
+function goalPercentColor(percent: number): string {
+  const displayedPercent = Math.round(percent);
+  if (displayedPercent <= 50) return "#F87171";
+  if (displayedPercent <= 89) return "#FACC15";
+  return "#4ADE80";
+}
+
 function numericValue(
   value: unknown
 ) {
@@ -633,7 +640,7 @@ const storeAverage =
                       </div>
 
                       <div className="text-right">
-                        <p className="text-2xl font-black tracking-tight text-[#17102F]">
+                        <p className="text-2xl font-black tracking-tight" style={{ color: goal ? goalPercentColor(progress.percent) : "#F3F3F3" }}>
                           {goal
                             ? `${Math.round(
                                 progress.percent
@@ -907,7 +914,7 @@ const storeAverage =
                               </p>
                             </div>
 
-                            <span className="text-[11px] font-black text-purple-700">
+                            <span className="text-[11px] font-black" style={{ color: goal ? goalPercentColor(progress.percent) : "#CBB7DF" }}>
                               {goal
                                 ? `${Math.round(
                                     progress.percent
