@@ -542,7 +542,7 @@ const storeAverage =
                         .value
                     )
                   }
-                  className="block min-w-0 max-w-full w-full box-border rounded-xl border border-white/10 bg-white px-3 py-2.5 text-sm font-black text-[#17102F] outline-none focus:ring-2 focus:ring-pink-300 sm:text-base"
+                  className="block min-w-0 max-w-full w-full box-border rounded-xl border border-white/10 bg-white px-3 py-2.5 text-sm font-black text-white outline-none focus:ring-2 focus:ring-pink-300 sm:text-base"
                   style={{
                     WebkitAppearance:
                       "none",
@@ -562,28 +562,16 @@ const storeAverage =
             </p>
 
             <div className="mt-1 flex flex-col items-stretch gap-3 sm:flex-row sm:flex-wrap sm:items-center">
-              <h2 className="text-[22px] font-black tracking-tight text-[#17102F] sm:text-3xl">
+              <h2 className="text-[22px] font-black tracking-tight text-white sm:text-3xl">
                 {storeName} MTD
               </h2>
 
-              <button
-                type="button"
-                onClick={saveUpdate}
-                disabled={saving}
-                className="salespulse-gradient flex min-h-11 w-full items-center justify-center rounded-xl px-4 py-2.5 text-sm font-black text-white shadow-lg shadow-purple-500/20 transition active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60 sm:min-h-0 sm:w-auto sm:py-2 sm:hover:scale-[1.02]"
-              >
-                {saving
-                  ? "Saving..."
-                  : "Save & Update Goals"}
-              </button>
             </div>
           </div>
 
           <p className="max-w-lg text-sm font-medium text-slate-500">
             Update the MTD snapshot
-            each morning. Store goals
-            can be adjusted here when
-            needed.
+            each morning. Review your current month-to-date progress and remaining targets.
           </p>
         </div>
 
@@ -654,7 +642,7 @@ const storeAverage =
                       </div>
                     </div>
 
-                    <h3 className="mt-5 text-lg font-black text-[#17102F]">
+                    <h3 className="mt-5 text-lg font-black text-white">
                       {
                         metric.label
                       }
@@ -689,7 +677,7 @@ const storeAverage =
                                 .value
                             )
                           }
-                          className="mt-1.5 min-w-0 w-full rounded-xl border border-slate-200 bg-[#FAFAFD] px-3 py-3 text-base font-black text-[#17102F] outline-none transition focus:border-purple-400 focus:bg-white focus:ring-2 focus:ring-purple-100"
+                          className="mt-1.5 min-w-0 w-full rounded-xl border border-slate-200 bg-[#FAFAFD] px-3 py-3 text-base font-black text-white outline-none transition focus:border-purple-400 focus:bg-white focus:ring-2 focus:ring-purple-100"
                         />
                       </label>
 
@@ -721,7 +709,7 @@ const storeAverage =
                                 .value
                             )
                           }
-                          className="mt-1.5 min-w-0 w-full rounded-xl border border-slate-200 bg-[#FAFAFD] px-3 py-3 text-base font-black text-[#17102F] outline-none transition focus:border-purple-400 focus:bg-white focus:ring-2 focus:ring-purple-100"
+                          className="mt-1.5 min-w-0 w-full rounded-xl border border-slate-200 bg-[#FAFAFD] px-3 py-3 text-base font-black text-white outline-none transition focus:border-purple-400 focus:bg-white focus:ring-2 focus:ring-purple-100"
                         />
                       </label>
                     </div>
@@ -741,7 +729,7 @@ const storeAverage =
                           Remaining
                         </p>
 
-                        <p className="mt-1 text-sm font-black text-[#17102F]">
+                        <p className="mt-1 text-sm font-black text-white">
                           {formatValue(
                             progress.remaining,
                             metric.type
@@ -754,7 +742,7 @@ const storeAverage =
                           Need / Day
                         </p>
 
-                        <p className="mt-1 text-sm font-black text-[#17102F]">
+                        <p className="mt-1 text-sm font-black text-white">
                           {progress.neededPerDay ===
                           null
                             ? "—"
@@ -780,7 +768,7 @@ const storeAverage =
               Team Performance
             </p>
 
-            <h2 className="mt-1 text-2xl font-black tracking-tight text-[#17102F] sm:text-3xl">
+            <h2 className="mt-1 text-2xl font-black tracking-tight text-white sm:text-3xl">
               Employee MTD
             </h2>
           </div>
@@ -800,7 +788,7 @@ const storeAverage =
               className="mx-auto text-slate-300"
             />
 
-            <p className="mt-3 font-black text-[#17102F]">
+            <p className="mt-3 font-black text-white">
               No employees yet
             </p>
 
@@ -830,7 +818,7 @@ const storeAverage =
                     </div>
 
                     <div className="min-w-0">
-                      <h3 className="truncate text-xl font-black text-[#17102F]">
+                      <h3 className="truncate text-xl font-black text-white">
                         {
                           employee.full_name
                         }
@@ -907,7 +895,7 @@ const storeAverage =
                                 )}
                               </span>
 
-                              <p className="text-sm font-black text-[#17102F]">
+                              <p className="text-sm font-black text-white">
                                 {
                                   metric.shortLabel
                                 }
@@ -953,7 +941,7 @@ const storeAverage =
                                   .value
                               )
                             }
-                            className="mt-3 min-w-0 w-full rounded-xl border border-slate-200 bg-white px-3 py-3 text-base font-black text-[#17102F] outline-none transition focus:border-purple-400 focus:ring-2 focus:ring-purple-100"
+                            className="mt-3 min-w-0 w-full rounded-xl border border-slate-200 bg-white px-3 py-3 text-base font-black text-white outline-none transition focus:border-purple-400 focus:ring-2 focus:ring-purple-100"
                           />
 
                           <div className="mt-3 h-2 overflow-hidden rounded-full bg-slate-200">
@@ -966,7 +954,7 @@ const storeAverage =
                           </div>
 
                           <div className="mt-3 flex flex-wrap items-center justify-between gap-x-3 gap-y-1 text-sm font-extrabold sm:text-base">
-                            <span className="text-black">
+                            <span className="text-white">
                               Goal{" "}
                               {formatValue(
                                 goal,
@@ -978,7 +966,7 @@ const storeAverage =
                               null &&
                               goal >
                                 0 && (
-                                <span className="text-black">
+                                <span className="text-white">
                                   Need{" "}
                                   {formatValue(
                                     progress.neededPerDay,
