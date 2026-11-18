@@ -554,7 +554,7 @@ const storeAverage =
           </p>
         </div>
 
-        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
           {progressMetrics.map(
             (metric) => {
               const current =
@@ -594,20 +594,20 @@ const storeAverage =
                   key={
                     metric.key
                   }
-                  className="group relative overflow-hidden rounded-[22px] border border-slate-200/80 bg-white p-4 sm:rounded-[28px] sm:p-5 shadow-[0_14px_40px_rgba(31,21,60,0.06)] transition duration-300 hover:-translate-y-1 hover:shadow-[0_18px_50px_rgba(109,40,217,0.11)]"
+                  className="group relative overflow-hidden rounded-[22px] border border-violet-300/20 bg-gradient-to-br from-[#251638] via-[#1D112D] to-[#170D25] p-4 shadow-[0_12px_32px_rgba(5,2,15,0.22)] transition-all duration-200 hover:-translate-y-0.5 hover:border-violet-300/45 sm:p-5"
                 >
-                  <div className="pointer-events-none absolute -right-10 -top-10 h-28 w-28 rounded-full bg-purple-100/60 blur-2xl transition group-hover:bg-pink-100/70" />
+                  <div className="pointer-events-none absolute -right-12 -top-16 h-36 w-36 rounded-full bg-violet-500/10 blur-3xl" />
 
                   <div className="relative">
                     <div className="flex items-start justify-between gap-3">
-                      <div className="salespulse-gradient flex h-11 w-11 items-center justify-center rounded-2xl text-white shadow-lg shadow-purple-500/20">
+                      <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-violet-300/25 bg-violet-500/20 text-violet-100 shadow-[0_4px_16px_rgba(168,85,247,0.14)]">
                         {metricIcon(
                           metric.key
                         )}
                       </div>
 
                       <div className="text-right">
-                        <p className="text-2xl font-black tracking-tight" style={{ color: goal ? goalPercentColor(progress.percent) : "#F3F3F3" }}>
+                        <p className="text-[29px] font-black leading-none tracking-[-0.04em]" style={{ color: goal ? goalPercentColor(progress.percent) : "#E9D5FF" }}>
                           {goal
                             ? `${Math.round(
                                 progress.percent
@@ -615,20 +615,20 @@ const storeAverage =
                             : "—"}
                         </p>
 
-                        <p className="text-[9px] font-black uppercase tracking-[0.16em] text-purple-600">
+                        <p className="text-[10px] font-extrabold uppercase tracking-[0.12em] text-violet-100/65">
                           To Goal
                         </p>
                       </div>
                     </div>
 
-                    <h3 className="mt-5 text-lg font-black text-white">
+                    <h3 className="mt-3 text-lg font-black text-white">
                       {
                         metric.label
                       }
                     </h3>
 
-                    <div className="mt-4 grid min-w-0 grid-cols-2 gap-2">
-                      <label className="text-[10px] font-black uppercase tracking-wide text-slate-400">
+                    <div className="mt-3 grid min-w-0 grid-cols-2 gap-2">
+                      <label className="text-xs font-extrabold uppercase tracking-wide text-violet-200/80">
                         MTD
                         <input
                           type="number"
@@ -656,11 +656,11 @@ const storeAverage =
                                 .value
                             )
                           }
-                          className="mt-1.5 min-w-0 w-full rounded-xl border border-purple-400/30 bg-[#241733] px-3 py-3 text-base font-black text-white outline-none transition focus:border-purple-400 focus:bg-[#302044] focus:ring-2 focus:ring-purple-400/30" style={{ color: "#FFFFFF", WebkitTextFillColor: "#FFFFFF", fontSize: "16px" }}
+                          className="mt-1.5 min-w-0 w-full rounded-xl border border-violet-300/25 bg-[#160E26] px-3 py-2.5 text-base font-black text-white outline-none transition focus:border-violet-300 focus:bg-[#302044] focus:ring-2 focus:ring-violet-400/30" style={{ color: "#FFFFFF", WebkitTextFillColor: "#FFFFFF", fontSize: "16px" }}
                         />
                       </label>
 
-                      <label className="text-[10px] font-black uppercase tracking-wide text-slate-400">
+                      <label className="text-xs font-extrabold uppercase tracking-wide text-violet-200/80">
                         Goal
                         <input
                           type="number"
@@ -688,14 +688,14 @@ const storeAverage =
                                 .value
                             )
                           }
-                          className="mt-1.5 min-w-0 w-full rounded-xl border border-purple-400/30 bg-[#241733] px-3 py-3 text-base font-black text-white outline-none transition focus:border-purple-400 focus:bg-[#302044] focus:ring-2 focus:ring-purple-400/30" style={{ color: "#FFFFFF", WebkitTextFillColor: "#FFFFFF", fontSize: "16px" }}
+                          className="mt-1.5 min-w-0 w-full rounded-xl border border-violet-300/25 bg-[#160E26] px-3 py-2.5 text-base font-black text-white outline-none transition focus:border-violet-300 focus:bg-[#302044] focus:ring-2 focus:ring-violet-400/30" style={{ color: "#FFFFFF", WebkitTextFillColor: "#FFFFFF", fontSize: "16px" }}
                         />
                       </label>
                     </div>
 
-                    <div className="mt-5 h-3 overflow-hidden rounded-full bg-[#ECEAF3]">
+                    <div className="mt-4 h-2.5 overflow-hidden rounded-full bg-white/10">
                       <div
-                        className="salespulse-gradient h-full rounded-full shadow-[0_0_14px_rgba(247,37,133,0.2)]"
+                        className="h-full rounded-full transition-all duration-700" style={{ backgroundColor: goalPercentColor(progress.percent) }}
                         style={{
                           width: `${width}%`,
                         }}
@@ -703,12 +703,12 @@ const storeAverage =
                     </div>
 
                     <div className="mt-4 grid min-w-0 grid-cols-2 gap-2">
-                      <div className="rounded-xl bg-[#F7F6FB] p-2.5">
+                      <div className="rounded-xl border border-violet-300/15 bg-white/[0.06] p-3">
                         <p className="text-[9px] font-black uppercase tracking-wide text-slate-400">
                           Remaining
                         </p>
 
-                        <p className="mt-1 text-sm font-black text-white">
+                        <p className="mt-1 text-lg font-black text-white">
                           {formatValue(
                             progress.remaining,
                             metric.type
@@ -716,12 +716,12 @@ const storeAverage =
                         </p>
                       </div>
 
-                      <div className="rounded-xl bg-[#F7F6FB] p-2.5">
+                      <div className="rounded-xl border border-violet-300/15 bg-white/[0.06] p-3">
                         <p className="text-[9px] font-black uppercase tracking-wide text-slate-400">
                           Need / Day
                         </p>
 
-                        <p className="mt-1 text-sm font-black text-white">
+                        <p className="mt-1 text-lg font-black text-white">
                           {progress.neededPerDay ===
                           null
                             ? "—"
@@ -786,9 +786,9 @@ const storeAverage =
                 key={
                   employee.id
                 }
-                className="overflow-hidden rounded-[22px] border border-slate-200/80 bg-white sm:rounded-[30px] shadow-[0_14px_40px_rgba(31,21,60,0.06)]"
+                className="overflow-hidden rounded-[24px] border border-violet-300/20 bg-[#170D29] shadow-[0_12px_32px_rgba(5,2,15,0.22)]"
               >
-                <div className="flex flex-col gap-3 border-b border-slate-100 bg-gradient-to-r from-white to-purple-50/40 px-4 py-4 sm:flex-row sm:gap-4 sm:px-7 sm:py-5 sm:items-center sm:justify-between sm:px-7">
+                <div className="flex flex-col gap-3 border-b border-violet-300/15 bg-gradient-to-r from-[#322049] to-[#1C112D] px-4 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-5">
                   <div className="flex min-w-0 items-center gap-3">
                     <div className="salespulse-gradient flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl text-white shadow-lg shadow-purple-500/20">
                       <UserRound
@@ -810,7 +810,7 @@ const storeAverage =
                     </div>
                   </div>
 
-                  <div className="inline-flex w-fit items-center gap-2 rounded-full bg-purple-100 px-3 py-1.5 text-[10px] font-black uppercase tracking-wide text-purple-700">
+                  <div className="inline-flex w-fit items-center gap-2 rounded-full border border-violet-300/20 bg-violet-400/10 px-3 py-1.5 text-[10px] font-black uppercase tracking-wide text-violet-200">
                     <Gauge
                       size={13}
                     />
@@ -818,7 +818,7 @@ const storeAverage =
                   </div>
                 </div>
 
-                <div className="grid gap-3 p-3 sm:grid-cols-2 sm:p-5 xl:grid-cols-4">
+                <div className="grid gap-3 p-3 sm:grid-cols-2 sm:p-4 xl:grid-cols-3">
                   {progressMetrics.map(
                     (metric) => {
                       const current =
@@ -863,11 +863,11 @@ const storeAverage =
                           key={
                             metric.key
                           }
-                          className="rounded-2xl border border-slate-100 bg-[#FAFAFD] p-4 transition focus-within:border-purple-200 focus-within:bg-white"
+                          className="rounded-[20px] border border-violet-300/20 bg-gradient-to-br from-[#251638] to-[#1B1029] p-4 transition focus-within:border-violet-300/50"
                         >
                           <div className="flex items-center justify-between gap-2">
                             <div className="flex items-center gap-2">
-                              <span className="text-purple-600">
+                              <span className="text-violet-300">
                                 {metricIcon(
                                   metric.key,
                                   16
@@ -881,7 +881,7 @@ const storeAverage =
                               </p>
                             </div>
 
-                            <span className="text-[11px] font-black" style={{ color: goal ? goalPercentColor(progress.percent) : "#CBB7DF" }}>
+                            <span className="text-2xl font-black tracking-tight" style={{ color: goal ? goalPercentColor(progress.percent) : "#CBB7DF" }}>
                               {goal
                                 ? `${Math.round(
                                     progress.percent
@@ -920,19 +920,19 @@ const storeAverage =
                                   .value
                               )
                             }
-                            className="mt-3 min-w-0 w-full rounded-xl border border-slate-200 bg-white px-3 py-3 text-base font-black text-white outline-none transition focus:border-purple-400 focus:ring-2 focus:ring-purple-100"
+                            className="mt-3 min-w-0 w-full rounded-xl border border-violet-300/25 bg-[#160E26] px-3 py-2.5 text-lg font-black text-white outline-none transition focus:border-violet-300 focus:ring-2 focus:ring-violet-400/30"
                           />
 
-                          <div className="mt-3 h-2 overflow-hidden rounded-full bg-slate-200">
+                          <div className="mt-3 h-2.5 overflow-hidden rounded-full bg-white/10">
                             <div
-                              className="salespulse-gradient h-full rounded-full"
+                              className="h-full rounded-full transition-all duration-700" style={{ backgroundColor: goalPercentColor(progress.percent) }}
                               style={{
                                 width: `${width}%`,
                               }}
                             />
                           </div>
 
-                          <div className="mt-3 flex flex-wrap items-center justify-between gap-x-3 gap-y-1 text-sm font-extrabold sm:text-base">
+                          <div className="mt-3 flex flex-wrap items-center justify-between gap-x-3 gap-y-2 text-base font-extrabold">
                             <span className="text-white">
                               Goal{" "}
                               {formatValue(
