@@ -4,12 +4,12 @@
   --background: #f6f7fb;
   --foreground: #151126;
 
-  --sp-ink: #100b24;
-  --sp-deep: #17102f;
-  --sp-purple: #6d28d9;
-  --sp-violet: #8b5cf6;
-  --sp-pink: #ec4899;
-  --sp-hot-pink: #f72585;
+  --sp-ink: #0b0614;
+  --sp-deep: #160b2a;
+  --sp-purple: #a855f7;
+  --sp-violet: #d8b4fe;
+  --sp-pink: #a855f7;
+  --sp-hot-pink: #c38bff;
   --sp-surface: #ffffff;
   --sp-muted: #64748b;
 }
@@ -118,3 +118,64 @@ textarea {
   box-shadow:
     0 10px 35px rgba(109, 40, 217, 0.18);
 }
+
+
+/* SalesPulse midnight-violet theme.
+   Scoped to authenticated dashboard pages; login/auth screens retain their styles. */
+.salespulse-app {
+  color: #f3f3f3;
+  background:
+    radial-gradient(ellipse at 55% -15%, rgba(168,85,247,.24), transparent 48rem),
+    radial-gradient(ellipse at 100% 60%, rgba(109,40,217,.12), transparent 38rem),
+    #0b0614;
+}
+.salespulse-app main { color: #f3f3f3; }
+.salespulse-app main .bg-white,
+.salespulse-app main .bg-white\/95,
+.salespulse-app main .bg-white\/90,
+.salespulse-app main .bg-slate-50,
+.salespulse-app main .bg-\[\#F6F7FB\] {
+  background-color: #180f29;
+}
+.salespulse-app main .salespulse-panel {
+  background: #180f29;
+  border-color: rgba(195,139,255,.36);
+  box-shadow: 0 8px 28px rgba(0,0,0,.24), 0 0 15px rgba(168,85,247,.08);
+}
+.salespulse-app main .border-slate-200,
+.salespulse-app main .border-slate-100,
+.salespulse-app main .border-slate-300,
+.salespulse-app main .border { border-color: rgba(195,139,255,.24); }
+.salespulse-app main .text-slate-900,
+.salespulse-app main .text-slate-800,
+.salespulse-app main .text-slate-700,
+.salespulse-app main .text-black { color: #f3f3f3; }
+.salespulse-app main .text-slate-600,
+.salespulse-app main .text-slate-500,
+.salespulse-app main .text-slate-400 { color: #c5afd9; }
+.salespulse-app main .text-purple-700,
+.salespulse-app main .text-purple-600 { color: #d8b4fe; }
+.salespulse-app main .bg-purple-50,
+.salespulse-app main .bg-purple-100 { background-color: #34204f; }
+.salespulse-app main .bg-slate-100,
+.salespulse-app main .bg-slate-200 { background-color: #332743; }
+.salespulse-app main input,
+.salespulse-app main select,
+.salespulse-app main textarea {
+  background-color: #241733;
+  color: #f3f3f3;
+  border-color: rgba(195,139,255,.4);
+}
+.salespulse-app main input::placeholder,
+.salespulse-app main textarea::placeholder { color: #ae9abd; }
+.salespulse-app main option { background: #241733; color: white; }
+.salespulse-app main table { border-color: rgba(195,139,255,.25); }
+.salespulse-app main th { color: #e8d5ff; }
+.salespulse-app main td { border-color: rgba(195,139,255,.18); }
+.salespulse-app main .salespulse-gradient {
+  background: linear-gradient(135deg,#7224d6,#a855f7 55%,#d8b4fe);
+}
+.salespulse-app main .salespulse-dark-gradient {
+  background: radial-gradient(circle at 20% 0%,rgba(168,85,247,.35),transparent 25rem),linear-gradient(180deg,#1a0c30,#0b0614);
+}
+.salespulse-app :focus-visible { outline-color: #d8b4fe; outline-offset: 2px; }
