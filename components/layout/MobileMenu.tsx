@@ -79,10 +79,11 @@ export default function MobileMenu({
     role === "manager" ||
     role ===
       "regional_manager" ||
-    role === "admin"
+    role === "admin" ||
+    role === "employee"
   ) {
     links.push({
-      title: "Daily Update",
+      title: "Need Per Day",
       href: "/daily-update",
       icon:
         ClipboardPenLine,
