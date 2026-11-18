@@ -63,7 +63,7 @@ export default function Sidebar({ profile }: SidebarProps) {
       show: false,
     },
     {
-      title: "Rankings",
+      title: "Rep Ranker",
       href: "/leaderboard",
       icon: Trophy,
       show: isManagement,
