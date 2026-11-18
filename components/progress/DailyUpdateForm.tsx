@@ -825,7 +825,7 @@ const storeAverage =
                   </div>
                 </div>
 
-                <div className="grid gap-3 p-3 sm:grid-cols-2 sm:p-4 xl:grid-cols-3">
+                <div className="grid gap-3 p-3 sm:grid-cols-2 sm:p-4 lg:grid-cols-4">
                   {progressMetrics.map(
                     (metric) => {
                       const current =
