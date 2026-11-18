@@ -80,7 +80,7 @@ export default function Topbar({
       .toUpperCase();
 
   return (
-    <header className="hidden border-b border-[#EEE9F2] bg-white/95 px-6 py-3 backdrop-blur-xl lg:block">
+    <header className="hidden border-b border-purple-400/20 bg-[#10091F]/95 px-6 py-3 backdrop-blur-xl lg:block">
       <div className="flex min-h-[58px] items-center justify-between gap-6">
         {/* LEFT */}
 
@@ -88,12 +88,12 @@ export default function Topbar({
           {showStoreSwitcher && (
             <>
               <div className="flex items-center">
-                <span className="text-[16px] font-black uppercase tracking-[0.10em] text-[#8B00FF]">
+                <span className="text-[16px] font-black uppercase tracking-[0.10em] text-[#D8B4FE]">
                   Viewing Store
                 </span>
               </div>
 
-              <div className="h-8 w-px bg-[#E5DDE9]" />
+              <div className="h-8 w-px bg-purple-300/25" />
 
               <StoreSwitcher
                 stores={stores}
@@ -107,20 +107,20 @@ export default function Topbar({
 
         <div className="flex shrink-0 items-center gap-3">
           <div className="hidden text-right md:block">
-            <p className="text-[13px] font-black leading-tight text-[#201722]">
+            <p className="text-[13px] font-black leading-tight text-white">
               {name}
             </p>
 
             <div className="mt-1 flex items-center justify-end gap-1.5">
-              <span className="h-1.5 w-1.5 rounded-full bg-[#8B00FF]" />
+              <span className="h-1.5 w-1.5 rounded-full bg-[#A855F7]" />
 
-              <p className="text-[9px] font-black uppercase tracking-[0.12em] text-[#776B7B]">
+              <p className="text-[9px] font-black uppercase tracking-[0.12em] text-[#C4A6E6]">
                 {roleLabel}
               </p>
             </div>
           </div>
 
-          <div className="ml-1 flex h-10 w-10 items-center justify-center rounded-[13px] bg-gradient-to-br from-[#8B00FF] to-[#A855F7] text-[14px] font-black text-white shadow-[0_6px_18px_rgba(139,0,255,0.22)]">
+          <div className="ml-1 flex h-10 w-10 items-center justify-center rounded-[13px] bg-gradient-to-br from-[#7B22D9] to-[#C38BFF] text-[14px] font-black text-white shadow-[0_6px_18px_rgba(139,0,255,0.22)]">
             {initial}
           </div>
 
@@ -129,7 +129,7 @@ export default function Topbar({
             onClick={logout}
             aria-label="Sign out"
             title="Sign out"
-            className="group flex h-10 w-10 items-center justify-center rounded-[13px] border border-[#E7DFEA] bg-white text-[#756A79] transition-all duration-200 hover:border-[#D8C5E5] hover:bg-[#F8F2FC] hover:text-[#8B00FF]"
+            className="group flex h-10 w-10 items-center justify-center rounded-[13px] border border-purple-400/30 bg-[#1A102B] text-[#D8B4FE] transition-all duration-200 hover:border-purple-300 hover:bg-purple-500/20 hover:text-white"
           >
             <LogOut
               size={17}
