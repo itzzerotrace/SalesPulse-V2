@@ -161,24 +161,38 @@ export default async function RegionalDashboard() {
 
   return (
     <DashboardLayout>
-      <div className="space-y-6 pb-10">
+      <div className="space-y-8 pb-12">
+<section className="relative isolate overflow-hidden rounded-[32px] border border-violet-300/20 bg-[#130B25] px-6 py-8 shadow-[0_24px_90px_rgba(7,3,22,0.45)] sm:px-9 sm:py-10">
+<div className="pointer-events-none absolute -right-20 -top-44 h-[380px] w-[380px] rounded-full bg-fuchsia-600/20 blur-[95px]" />
+<div className="pointer-events-none absolute -bottom-40 left-1/3 h-[320px] w-[320px] rounded-full bg-violet-600/20 blur-[95px]" />
+<div className="relative flex flex-col gap-7 lg:flex-row lg:items-end lg:justify-between">
+<div className="max-w-xl">
+<div className="inline-flex items-center gap-2 rounded-full border border-violet-300/25 bg-violet-300/10 px-3 py-1.5 text-[10px] font-extrabold uppercase tracking-[0.2em] text-violet-200"><Sparkles size={13} /> SalesPulse / District Command</div>
+<h1 className="mt-5 text-4xl font-black tracking-[-0.055em] text-white sm:text-5xl">Performance <span className="bg-gradient-to-r from-[#E9D5FF] via-[#C084FC] to-[#F0ABFC] bg-clip-text text-transparent">at a glance.</span></h1>
+<p className="mt-3 max-w-lg text-sm leading-6 text-violet-100/65">Your district, every store, every target. See the momentum and where to focus next.</p>
+</div>
+<div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+<div className="rounded-2xl border border-white/10 bg-white/[0.06] px-5 py-4 backdrop-blur-xl"><p className="text-[10px] font-bold uppercase tracking-widest text-violet-200/65">Active stores</p><p className="mt-2 text-3xl font-black tracking-tight text-white">{overview.stores}</p></div>
+<div className="rounded-2xl border border-white/10 bg-white/[0.06] px-5 py-4 backdrop-blur-xl"><p className="text-[10px] font-bold uppercase tracking-widest text-violet-200/65">Avg. to goal</p><p className="mt-2 text-3xl font-black tracking-tight text-white">{averageStoreScore.toFixed(1)}%</p></div>
+<div className="col-span-2 rounded-2xl border border-violet-300/25 bg-gradient-to-br from-violet-600/25 to-fuchsia-600/10 px-5 py-4 backdrop-blur-xl sm:col-span-1"><p className="text-[10px] font-bold uppercase tracking-widest text-violet-200/65">Leading store</p><p className="mt-2 truncate text-lg font-black text-white">{topFiveStores[0]?.store || "—"}</p><p className="mt-1 text-xs font-bold text-violet-200">{topFiveStores.length ? topFiveStores[0].overallScore.toFixed(1) + "% to goal" : "No ranking data"}</p></div>
+</div></div></section>
 
         {/* DISTRICT STORE RANKINGS */}
 
-        <div className="grid gap-5 xl:grid-cols-2">
+        <div className="grid gap-6 xl:grid-cols-2">
 
           {/* TOP 5 STORES */}
 
-          <section className="overflow-hidden rounded-[26px] border border-slate-200 bg-white shadow-[0_16px_45px_rgba(31,21,60,0.06)]">
-            <div className="flex items-center justify-between border-b border-slate-100 px-5 py-5 sm:px-6">
+          <section className="overflow-hidden rounded-[28px] border border-violet-300/20 bg-[#170D29] shadow-[0_18px_55px_rgba(5,2,15,0.3)]">
+            <div className="flex items-center justify-between border-b border-violet-300/15 bg-gradient-to-r from-violet-700/20 to-transparent px-5 py-6 sm:px-6">
               <div>
                 <div className="flex items-center gap-2">
                   <Trophy
                     size={14}
-                    className="text-[#8B00FF]"
+                    className="text-violet-300"
                   />
 
-                  <p className="text-[9px] font-black uppercase tracking-[0.2em] text-[#8B00FF]">
+                  <p className="text-[10px] font-black uppercase tracking-[0.2em] text-violet-300">
                     District Rankings
                   </p>
                 </div>
@@ -257,16 +271,16 @@ export default async function RegionalDashboard() {
 
           {/* BOTTOM 5 STORES */}
 
-          <section className="overflow-hidden rounded-[26px] border border-slate-200 bg-white shadow-[0_16px_45px_rgba(31,21,60,0.06)]">
-            <div className="flex items-center justify-between border-b border-slate-100 px-5 py-5 sm:px-6">
+          <section className="overflow-hidden rounded-[28px] border border-violet-300/20 bg-[#170D29] shadow-[0_18px_55px_rgba(5,2,15,0.3)]">
+            <div className="flex items-center justify-between border-b border-violet-300/15 bg-gradient-to-r from-violet-700/20 to-transparent px-5 py-6 sm:px-6">
               <div>
                 <div className="flex items-center gap-2">
                   <Gauge
                     size={14}
-                    className="text-[#8B00FF]"
+                    className="text-violet-300"
                   />
 
-                  <p className="text-[9px] font-black uppercase tracking-[0.2em] text-[#8B00FF]">
+                  <p className="text-[10px] font-black uppercase tracking-[0.2em] text-violet-300">
                     Opportunity Stores
                   </p>
                 </div>
@@ -353,11 +367,11 @@ export default async function RegionalDashboard() {
           <div className="mb-4 flex flex-col gap-3 px-1 sm:flex-row sm:items-end sm:justify-between">
             <div>
               <div className="flex items-center gap-2">
-                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-purple-100 text-purple-700">
+                <div className="flex h-9 w-9 items-center justify-center rounded-xl border border-violet-400/30 bg-violet-500/15 text-violet-200">
                   <Zap size={15} />
                 </div>
 
-                <p className="text-[9px] font-black uppercase tracking-[0.2em] text-purple-600">
+                <p className="text-[10px] font-black uppercase tracking-[0.2em] text-violet-300">
                   District Performance
                 </p>
               </div>
@@ -366,12 +380,12 @@ export default async function RegionalDashboard() {
                 Store Goal Performance
               </h2>
 
-              <p className="mt-1 text-xs font-semibold text-[#8B00FF] sm:text-sm">
+              <p className="mt-2 text-xs font-semibold text-violet-200/65 sm:text-sm">
                 Current month-to-date performance compared with monthly goals.
               </p>
             </div>
 
-            <div className="inline-flex w-fit items-center gap-2 rounded-full border border-slate-200 bg-white px-3.5 py-2 text-[10px] font-black text-slate-600 shadow-sm">
+            <div className="inline-flex w-fit items-center gap-2 rounded-full border border-violet-300/20 bg-violet-500/10 px-4 py-2.5 text-[11px] font-black text-white">
               <Building2
                 size={13}
                 className="text-purple-600"
