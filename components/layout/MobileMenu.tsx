@@ -101,7 +101,7 @@ export default function MobileMenu({
       icon: BarChart3,
     },
     {
-      title: "Rankings",
+      title: "Rep Ranker",
       href: "/leaderboard",
       icon: Trophy,
     },
