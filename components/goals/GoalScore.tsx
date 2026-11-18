@@ -78,11 +78,6 @@ export default function GoalScore({ score }: GoalScoreProps) {
               style={{ width: `${width}%` }}
             />
           </div>
-          <div className="mt-3 flex flex-wrap items-center gap-2 text-[10px] font-semibold text-slate-500">
-            <span><span className="font-black text-red-700">Red</span> 0–50%</span>
-            <span><span className="font-black text-amber-700">Yellow</span> 51–89%</span>
-            <span><span className="font-black text-emerald-700">Green</span> 90%+</span>
-          </div>
         </div>
       </div>
     </div>
