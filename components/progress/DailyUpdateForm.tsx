@@ -53,6 +53,7 @@ type Props = {
   initialStoreStats: any;
   initialStoreGoals: any;
   employees: Employee[];
+  readOnly?: boolean;
 };
 
 function goalPercentColor(percent: number): string {
@@ -184,6 +185,7 @@ export default function DailyUpdateForm({
   initialStoreStats,
   initialStoreGoals,
   employees,
+  readOnly = false,
 }: Props) {
   const router =
     useRouter();
@@ -322,6 +324,7 @@ const storeAverage =
     key: string,
     value: string
   ) {
+    if (readOnly) return;
     setStoreStats(
       (current: any) => ({
         ...current,
@@ -337,6 +340,7 @@ const storeAverage =
     key: string,
     value: string
   ) {
+    if (readOnly) return;
     setStoreGoals(
       (current: any) => ({
         ...current,
@@ -353,6 +357,7 @@ const storeAverage =
     key: string,
     value: string
   ) {
+    if (readOnly) return;
     setEmployeeStats(
       (current: any) => ({
         ...current,
@@ -374,6 +379,7 @@ const storeAverage =
   const [saving, setSaving] = useState(false);
 
   async function saveUpdate() {
+    if (readOnly) return;
     setSaving(true);
 
     try {
@@ -526,7 +532,7 @@ const storeAverage =
           </div>
 
           <p className="max-w-lg text-sm font-medium text-slate-500">
-            Update the MTD snapshot
+            Review the MTD snapshot
             each morning. Review your current month-to-date progress and remaining targets.
           </p>
         </div>
@@ -609,6 +615,8 @@ const storeAverage =
                         MTD
                         <input
                           type="number"
+                          readOnly={readOnly}
+                          aria-readonly={readOnly}
                           min="0"
                           step={
                             metric.type ===
@@ -641,6 +649,8 @@ const storeAverage =
                         Goal
                         <input
                           type="number"
+                          readOnly={readOnly}
+                          aria-readonly={readOnly}
                           min="0"
                           step={
                             metric.type ===
@@ -869,6 +879,8 @@ const storeAverage =
 
                           <input
                             type="number"
+                          readOnly={readOnly}
+                          aria-readonly={readOnly}
                             min="0"
                             step={
                               metric.type ===
