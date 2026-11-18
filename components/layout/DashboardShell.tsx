@@ -36,13 +36,13 @@ export default function DashboardShell({
           : "/dashboard/employee";
 
   return (
-    <div className="min-h-screen bg-[#F6F7FB] lg:flex">
+    <div className="salespulse-app min-h-screen lg:flex">
       <Sidebar
         profile={profile}
       />
 
       <div className="min-w-0 flex-1">
-        <header className="sticky top-0 z-30 border-b border-white/10 bg-[#120C28]/95 px-4 py-3 text-white shadow-lg shadow-purple-950/10 backdrop-blur-xl lg:hidden">
+        <header className="sticky top-0 z-30 border-b border-white/10 bg-[#0B0614]/95 px-4 py-3 text-white shadow-lg shadow-purple-950/10 backdrop-blur-xl lg:hidden">
           <div className="flex min-h-12 items-center justify-between gap-3">
             <div className="flex min-w-0 items-center gap-3">
               <MobileMenu
@@ -55,7 +55,7 @@ export default function DashboardShell({
                 className="min-w-0 rounded-xl transition active:scale-[0.98]"
               >
                 <div className="flex items-center gap-2">
-                  <div className="salespulse-gradient flex h-8 w-8 shrink-0 items-center justify-center rounded-xl text-sm font-black text-white shadow-lg shadow-pink-500/20">
+                  <div className="salespulse-gradient flex h-8 w-8 shrink-0 items-center justify-center rounded-xl text-sm font-black text-white shadow-lg shadow-purple-500/20">
                     S
                   </div>
 
@@ -66,7 +66,7 @@ export default function DashboardShell({
               </Link>
             </div>
 
-            <div className="h-2.5 w-2.5 shrink-0 rounded-full bg-pink-500 shadow-[0_0_14px_rgba(247,37,133,0.9)]" />
+            <div className="h-2.5 w-2.5 shrink-0 rounded-full bg-purple-400 shadow-[0_0_14px_rgba(168,85,247,0.9)]" />
           </div>
 
           {(role === "manager" ||
