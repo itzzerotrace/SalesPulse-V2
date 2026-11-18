@@ -10,24 +10,21 @@ export function renderSalesPulseIcon(size: number) {
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          background: "#0C0618",
+          background: "linear-gradient(135deg, #8C24E6 0%, #A34CF0 55%, #B76CF5 100%)",
         }}
       >
         <div
           style={{
-            width: "74%",
-            height: "74%",
+            width: "100%",
+            height: "100%",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            borderRadius: "27%",
-            background: "linear-gradient(135deg, #8C24E6 0%, #A34CF0 55%, #B76CF5 100%)",
-            boxShadow: "0 10px 28px rgba(132, 45, 223, 0.4)",
           }}
         >
           <svg
-            width="53%"
-            height="53%"
+            width="43%"
+            height="43%"
             viewBox="0 0 48 48"
             fill="none"
             xmlns="http://www.w3.org/2000/svg"
