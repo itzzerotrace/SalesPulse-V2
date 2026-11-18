@@ -87,10 +87,10 @@ export default function Sidebar({ profile }: SidebarProps) {
   );
 
   return (
-    <aside className="hidden min-h-screen w-64 shrink-0 bg-[#160D2C] text-white lg:flex lg:flex-col">
+    <aside className="hidden min-h-screen w-64 shrink-0 bg-[#0B0614] text-white lg:flex lg:flex-col">
       <div className="flex h-20 items-center border-b border-white/10 px-6">
         <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-purple-500 to-pink-500 text-white shadow-lg shadow-purple-500/20">
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-[#7B22D9] to-[#C38BFF] text-white shadow-lg shadow-purple-500/20">
             <Zap size={21} />
           </div>
 
@@ -131,15 +131,15 @@ export default function Sidebar({ profile }: SidebarProps) {
               href={item.href}
               className={`group flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-bold transition-all ${
                 active
-                  ? "bg-white text-[#17102F] shadow-lg shadow-black/10"
-                  : "text-white/65 hover:bg-white/10 hover:text-white"
+                  ? "bg-[#A855F7] text-white shadow-lg shadow-purple-500/30"
+                  : "text-[#D8B4FE]/75 hover:bg-purple-500/15 hover:text-white"
               }`}
             >
               <Icon
                 size={19}
                 className={
                   active
-                    ? "text-purple-600"
+                    ? "text-white"
                     : "text-purple-200/70 transition group-hover:text-purple-200"
                 }
               />
@@ -147,7 +147,7 @@ export default function Sidebar({ profile }: SidebarProps) {
               <span>{item.title}</span>
 
               {active && (
-                <span className="ml-auto h-2 w-2 rounded-full bg-pink-500" />
+                <span className="ml-auto h-2 w-2 rounded-full bg-white" />
               )}
             </Link>
           );
