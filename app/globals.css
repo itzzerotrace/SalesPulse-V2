@@ -179,3 +179,49 @@ textarea {
   background: radial-gradient(circle at 20% 0%,rgba(168,85,247,.35),transparent 25rem),linear-gradient(180deg,#1a0c30,#0b0614);
 }
 .salespulse-app :focus-visible { outline-color: #d8b4fe; outline-offset: 2px; }
+
+/* Contrast pass: keep all figures, labels and controls legible on dark surfaces. */
+.salespulse-app main .text-\[\#17102F\],
+.salespulse-app main .text-\[\#201722\],
+.salespulse-app main .text-\[\#151126\] { color: #f7f2ff; }
+.salespulse-app main .bg-\[\#FAFAFD\],
+.salespulse-app main .bg-\[\#F7F6FB\],
+.salespulse-app main .bg-\[\#ECEAF3\] { background-color: #241733; }
+.salespulse-app main .bg-gradient-to-r.from-white {
+  background-image: linear-gradient(to right,#1b102c,#29183f);
+}
+.salespulse-app main .bg-purple-100\/60,
+.salespulse-app main .bg-pink-100\/70 { background-color: rgba(168,85,247,.10); }
+.salespulse-app main .bg-white\/10 { background-color: rgba(255,255,255,.10); }
+.salespulse-app main .bg-white\/\[0\.07\] { background-color: rgba(255,255,255,.07); }
+.salespulse-app main .bg-white\/\[0\.06\] { background-color: rgba(255,255,255,.06); }
+.salespulse-app main .bg-white\/95,
+.salespulse-app main .bg-white\/90,
+.salespulse-app main .bg-white { background-color: #180f29; }
+.salespulse-app main input,
+.salespulse-app main select,
+.salespulse-app main textarea {
+  background: #241733;
+  color: #fff;
+  -webkit-text-fill-color: #fff;
+}
+.salespulse-app main input:focus,
+.salespulse-app main select:focus,
+.salespulse-app main textarea:focus { background: #302044; color: #fff; }
+.salespulse-app main .text-slate-300 { color: #d6c2e7; }
+.salespulse-app main .text-slate-400 { color: #cbb7df; }
+.salespulse-app main .text-slate-500 { color: #c7b4da; }
+.salespulse-app main .text-slate-600 { color: #d1bee4; }
+.salespulse-app main .text-\[\#17102F\] { color: #f7f2ff; }
+.salespulse-app main .bg-\[\#F7F6FB\] .text-slate-900,
+.salespulse-app main .bg-\[\#F7F6FB\] .text-black { color: #fff; }
+.salespulse-app main .bg-\[\#FAFAFD\] .text-slate-900 { color: #fff; }
+.salespulse-app main .group > .pointer-events-none.blur-2xl { opacity: .22; }
+.salespulse-app main .bg-white.text-slate-900 { color: #fff; }
+.salespulse-app main .text-purple-900 { color: #f1dcff; }
+.salespulse-app main .text-purple-800 { color: #e9ceff; }
+.salespulse-app main .text-purple-700 { color: #d8b4fe; }
+.salespulse-app main .text-slate-900,
+.salespulse-app main .text-slate-800 { color: #f7f2ff; }
+.salespulse-app main .bg-\[\#F7F6FB\],
+.salespulse-app main .bg-\[\#FAFAFD\] { border: 1px solid rgba(195,139,255,.22); }
