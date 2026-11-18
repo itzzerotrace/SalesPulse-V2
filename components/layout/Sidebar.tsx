@@ -41,7 +41,7 @@ export default function Sidebar({ profile }: SidebarProps) {
       title: "Need Per Day",
       href: "/daily-update",
       icon: ClipboardPenLine,
-      show: isManagement,
+      show: isManagement || role === "employee",
     },
     {
       title: "Store Goals",
