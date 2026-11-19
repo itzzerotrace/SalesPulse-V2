@@ -51,7 +51,6 @@ export default async function GoalsPage() {
     goals.hsi,
     goals.bts,
     goals.accessories,
-    goals.features,
   ];
 
   const goalsWithTargets =
@@ -213,35 +212,6 @@ export default async function GoalsPage() {
           .percent,
       icon: (
         <Headphones
-          size={23}
-        />
-      ),
-    },
-    {
-      title: "Features",
-      current: `$${Number(
-        goals.features
-          .current || 0
-      ).toLocaleString(
-        undefined,
-        {
-          maximumFractionDigits: 2,
-        }
-      )}`,
-      target: `$${Number(
-        goals.features.goal ||
-          0
-      ).toLocaleString(
-        undefined,
-        {
-          maximumFractionDigits: 2,
-        }
-      )}`,
-      percent:
-        goals.features
-          .percent,
-      icon: (
-        <Star
           size={23}
         />
       ),
