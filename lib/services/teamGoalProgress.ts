@@ -193,10 +193,6 @@ export async function getTeamGoalProgress() {
           Number(goal.accessory_goal || 0)
         ),
 
-        features: percent(
-          Number(stats.features || 0),
-          Number(goal.features_goal || 0)
-        ),
       },
     };
   });
