@@ -40,7 +40,6 @@ function averageGoalProgress(
     goals.hsi,
     goals.bts,
     goals.accessories,
-    goals.features,
   ].filter(
     (metric) =>
       Number(metric?.goal || 0) >
@@ -245,21 +244,6 @@ export default async function ManagerDashboard() {
         />
       ),
     },
-    {
-      title: "Features",
-      percent:
-        goals.features.percent,
-      current:
-        goals.features.current,
-      goal:
-        goals.features.goal,
-      money: true,
-      icon: (
-        <Star
-          size={24}
-        />
-      ),
-    },
   ];
 
   const overallWidth =
@@ -329,7 +313,7 @@ export default async function ManagerDashboard() {
           <div className="grid grid-cols-2 gap-3">
             {metrics.map((metric) => {
               const pct = Math.max(0, Math.min(100, Number(metric.percent) || 0));
-              const fmt = (n: number) => metric.money ? `${Number(n || 0).toLocaleString(undefined, {maximumFractionDigits: metric.title === "Features" ? 2 : 0, minimumFractionDigits: metric.title === "Features" ? 2 : 0})}` : Number(n || 0).toLocaleString();
+              const fmt = (n: number) => metric.money ? `${Number(n || 0).toLocaleString(undefined, {maximumFractionDigits: 0, minimumFractionDigits: metric.title === "Features" ? 2 : 0})}` : Number(n || 0).toLocaleString();
               return <div key={metric.title} className="min-w-0 rounded-[22px] border border-violet-400/20 bg-[#1C102E] p-4 text-white">
                 <div className="flex items-center justify-between gap-2"><span className="text-[11px] font-bold text-violet-200">{metric.title}</span><span className="text-violet-300">{metric.icon}</span></div>
                 <p className="mt-4 truncate text-[25px] font-black tracking-tight tabular-nums">{fmt(metric.current)}</p>
