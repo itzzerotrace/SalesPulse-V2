@@ -67,7 +67,6 @@ export function emptyProgressStats(): ProgressStats {
     hsi: 0,
     bts: 0,
     accessories: 0,
-    features: 0,
   };
 }
 
@@ -88,11 +87,8 @@ export function getProgress(
       ? (safeCurrent / safeGoal) * 100
       : 0;
 
-  // Features are intentionally excluded from per-day pacing.
   const neededPerDay =
-    metricKey === "features"
-      ? null
-      : safeGoal > 0
+    safeGoal > 0
         ? Math.ceil(
             remaining /
               Math.max(1, daysRemaining)
