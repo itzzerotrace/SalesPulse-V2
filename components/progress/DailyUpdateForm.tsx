@@ -162,14 +162,7 @@ function metricIcon(
         />
       );
 
-    case "features":
-      return (
-        <Star
-          {...props}
-        />
-      );
-
-    default:
+default:
       return (
         <Target
           {...props}
@@ -464,7 +457,7 @@ const storeAverage =
 
                 <p className="text-xs font-bold text-white/40">
                   {activeGoals}
-                  /8 active goals
+                  /{progressMetrics.length} active goals
                 </p>
               </div>
 
