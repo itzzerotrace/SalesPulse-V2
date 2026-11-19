@@ -23,7 +23,7 @@ type MetricKey =
   | "hsi"
   | "bts"
   | "accessories"
-  | "features";
+;
 
 const metrics: Array<{
   key: MetricKey;
@@ -65,11 +65,6 @@ const metrics: Array<{
     label: "Accessories",
     icon: <Headphones size={15} />,
   },
-  {
-    key: "features",
-    label: "Features",
-    icon: <Star size={15} />,
-  },
 ];
 
 function safeNumber(
@@ -91,16 +86,6 @@ function formatValue(
 ) {
   const number =
     safeNumber(value);
-
-  if (key === "features") {
-    return `$${number.toLocaleString(
-      undefined,
-      {
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2,
-      }
-    )}`;
-  }
 
   if (
     key === "gp" ||
