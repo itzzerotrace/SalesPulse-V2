@@ -50,7 +50,6 @@ export default async function RegionalDashboard() {
     "hsi",
     "bts",
     "accessories",
-    "features",
   ] as const;
 
   const storeScores =
