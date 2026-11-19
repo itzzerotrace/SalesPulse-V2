@@ -30,7 +30,6 @@ export default async function EmployeeDashboard() {
     goals.hsi,
     goals.bts,
     goals.accessories,
-    goals.features,
   ];
 
   const activeGoals =
@@ -202,32 +201,6 @@ export default async function EmployeeDashboard() {
             icon="🎧"
           />
 
-          <GoalCard
-            title="Features"
-            current={`$${Number(
-              goals.features
-                .current || 0
-            ).toLocaleString(
-              undefined,
-              {
-                maximumFractionDigits: 2,
-              }
-            )}`}
-            target={`$${Number(
-              goals.features.goal ||
-                0
-            ).toLocaleString(
-              undefined,
-              {
-                maximumFractionDigits: 2,
-              }
-            )}`}
-            percent={
-              goals.features
-                .percent
-            }
-            icon="⭐"
-          />
         </section>
 
         <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:rounded-3xl sm:p-7">
