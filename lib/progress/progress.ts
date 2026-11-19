@@ -48,13 +48,6 @@ export const progressMetrics = [
     type: "money",
     goalKey: "accessory_goal",
   },
-  {
-    key: "features",
-    label: "Features",
-    shortLabel: "Features",
-    type: "money",
-    goalKey: "features_goal",
-  },
 ] as const;
 
 export type ProgressMetricKey =
